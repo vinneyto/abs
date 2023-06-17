@@ -6,8 +6,8 @@ import {
 import { ViewComponent } from '../components/ViewComponent';
 import { System } from '../ecs';
 
-export class ViewLifeCircleSystem extends System {
-  public constructor(public readonly scene: Scene) {
+export class ViewAddSystem extends System {
+  public constructor(private readonly scene: Scene) {
     super();
   }
 
@@ -18,14 +18,12 @@ export class ViewLifeCircleSystem extends System {
     const lifeCircleComponent = components.get(LifeCircleComponent);
     const { view } = components.get(ViewComponent);
 
-    switch (lifeCircleComponent.state) {
-      case LifeCircle.New:
-        this.scene.add(view);
-        lifeCircleComponent.state = LifeCircle.Added;
-        break;
-      case LifeCircle.Destroy:
-        this.scene.remove(view);
-        break;
+    if (lifeCircleComponent.state !== LifeCircle.New) {
+      return;
     }
+
+    this.scene.add(view);
+
+    console.log('add to scene', view);
   }
 }

@@ -4,17 +4,16 @@ import {
 } from '../components/LifeCircleComponent';
 import { System } from '../ecs';
 
-export class EntityDestroySystem extends System {
+export class InitFinishSystem extends System {
   public componentsRequired = [LifeCircleComponent];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
-    const { state } = components.get(LifeCircleComponent);
 
-    if (state === LifeCircle.Destroy) {
-      this.ecs.removeEntity(entity);
+    const lifeCircleComponent = components.get(LifeCircleComponent);
 
-      console.log('destroy entity', entity);
+    if (lifeCircleComponent.state === LifeCircle.New) {
+      lifeCircleComponent.state = LifeCircle.Added;
     }
   }
 }

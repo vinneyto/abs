@@ -65,12 +65,14 @@ export class ECS {
   private entitiesToDestroy = new Array<Entity>();
   private entities = new Map<Entity, ComponentContainer>();
   private systems = new Map<System, Set<Entity>>();
-  public addEntity(components: ComponentBuilder[] = []): Entity {
+  public addEntity(...componentSets: Array<ComponentBuilder[]>): Entity {
     let entity = this.nextEntityID;
     this.nextEntityID++;
     this.entities.set(entity, new ComponentContainer());
-    for (const component of components) {
-      this.addComponent(entity, component.build());
+    for (const somponentSet of componentSets) {
+      for (const component of somponentSet) {
+        this.addComponent(entity, component.build());
+      }
     }
     return entity;
   }
