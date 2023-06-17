@@ -1,6 +1,7 @@
 import { CanvasSizeComponent } from '../components/CanvasSizeComponent';
 import { RendererComponent } from '../components/RendererComponent';
+import { component } from '../ecs';
 
 export function canvasSize() {
-  return new Set([new RendererComponent(), new CanvasSizeComponent()]);
+  return [component(RendererComponent), component(CanvasSizeComponent)];
 }

@@ -7,7 +7,7 @@ export class SetRendererSystem extends System {
     super();
   }
 
-  public componentsRequired = new Set([RendererComponent]);
+  public componentsRequired = [RendererComponent];
 
   public update(entity: Entity): void {
     const components = this.ecs.getComponents(entity);

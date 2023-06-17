@@ -3,7 +3,7 @@ import { RendererComponent } from '../components/RendererComponent';
 import { Entity, System } from '../ecs';
 
 export class CanvasResizeSystem extends System {
-  public componentsRequired = new Set([RendererComponent, CanvasSizeComponent]);
+  public componentsRequired = [RendererComponent, CanvasSizeComponent];
 
   public update(entity: Entity): void {
     const components = this.ecs.getComponents(entity);

@@ -1,7 +1,7 @@
 export type Entity = number;
 export abstract class Component {}
 export abstract class System {
-  public abstract componentsRequired: Set<Function>;
+  public abstract componentsRequired: Function[];
   public abstract update(entity: Entity): void;
   public updateAll(entities: Set<Entity>) {
     for (const entity of entities) {
@@ -34,17 +34,43 @@ export class ComponentContainer {
     this.map.delete(componentClass);
   }
 }
+
+export class ComponentBuilder<T extends Component = Component> {
+  private component: T;
+
+  constructor(C: new () => T) {
+    this.component = new C();
+  }
+
+  assign(props: Partial<{ [key in keyof T]: T[key] }>) {
+    for (const key of Object.keys(props) as Array<keyof T>) {
+      if (props[key] !== undefined) {
+        this.component[key] = props[key] as T[keyof T];
+      }
+    }
+    return this;
+  }
+
+  build() {
+    return this.component;
+  }
+}
+
+export function component<T extends Component>(C: new () => T) {
+  return new ComponentBuilder(C);
+}
+
 export class ECS {
   private nextEntityID = 0;
   private entitiesToDestroy = new Array<Entity>();
   private entities = new Map<Entity, ComponentContainer>();
   private systems = new Map<System, Set<Entity>>();
-  public addEntity(components: Set<Component> = new Set()): Entity {
+  public addEntity(components: ComponentBuilder[] = []): Entity {
     let entity = this.nextEntityID;
     this.nextEntityID++;
     this.entities.set(entity, new ComponentContainer());
     for (const component of components) {
-      this.addComponent(entity, component);
+      this.addComponent(entity, component.build());
     }
     return entity;
   }
@@ -83,7 +109,7 @@ export class ECS {
     }
   }
   public addSystem(system: System): void {
-    if (system.componentsRequired.size == 0) {
+    if (system.componentsRequired.length == 0) {
       console.warn('System ' + system + ' not added: empty components list.');
       return;
     }
