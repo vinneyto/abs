@@ -1,11 +1,11 @@
 import {
   AmbientLight,
+  BoxGeometry,
   Color,
   DirectionalLight,
   Mesh,
   MeshPhysicalMaterial,
   PerspectiveCamera,
-  PlaneGeometry,
   Scene,
   WebGLRenderer,
 } from 'three';
@@ -91,7 +91,7 @@ import('@dimforge/rapier3d').then(RAPIER => {
   ecs.addEntity(
     view({
       view: new Mesh(
-        new PlaneGeometry(6, 6).rotateX(-Math.PI / 2),
+        new BoxGeometry(6, 0.2, 6),
         new MeshPhysicalMaterial({ color: 'green' })
       ),
     }),
