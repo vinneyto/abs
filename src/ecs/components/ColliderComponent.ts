@@ -11,4 +11,6 @@ export class ColliderComponent {
 
   public rigidBody?: RigidBody;
   public collider?: Collider;
+
+  public initTransform = true;
 }

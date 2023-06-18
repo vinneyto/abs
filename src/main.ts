@@ -7,8 +7,6 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   Scene,
-  SphereGeometry,
-  Vector3,
   WebGLRenderer,
 } from 'three';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
@@ -32,6 +30,9 @@ import { Time } from './Time';
 import { DestroyCountdownSystem } from './ecs/systems/DestroyCountdownSystem';
 import { BallSpawnSystem } from './ecs/systems/BallSpawnSystem';
 import { BallSpawnComponent } from './ecs/components/BallSpawnComponent';
+import { PhysicsSystem } from './ecs/systems/PhysicsSystem';
+import { RenderSystem } from './ecs/systems/RenderSystem';
+import { update } from './ecs/entities/update';
 
 import('@dimforge/rapier3d').then(RAPIER => {
   const renderer = createRenderer();
@@ -71,7 +72,8 @@ import('@dimforge/rapier3d').then(RAPIER => {
   ecs.addSystem(new ColliderAddSystem(world));
   ecs.addSystem(new InitFinishSystem());
 
-  // copy systems
+  // world update systems
+  ecs.addSystem(new PhysicsSystem(world));
   ecs.addSystem(new ColliderTransformSystem());
   ecs.addSystem(new ViewTransformSystem());
 
@@ -80,9 +82,11 @@ import('@dimforge/rapier3d').then(RAPIER => {
   ecs.addSystem(new ColliderRemoveSystem(world));
   ecs.addSystem(new EntityDestroySystem());
 
-  //
+  // render system
+  ecs.addSystem(new RenderSystem(renderer, scene, camera));
 
   ecs.addEntity(canvasSize());
+  ecs.addEntity(update());
 
   ecs.addEntity([component(BallSpawnComponent)]);
 
@@ -104,14 +108,7 @@ import('@dimforge/rapier3d').then(RAPIER => {
   Time.init();
 
   renderer.setAnimationLoop(() => {
-    world.step();
-
     ecs.update();
-
-    camera.aspect = renderer.domElement.width / renderer.domElement.height;
-    camera.updateProjectionMatrix();
-
-    renderer.render(scene, camera);
 
     Time.update();
   });

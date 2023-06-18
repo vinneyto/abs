@@ -5,9 +5,10 @@ import { System } from '../ecs';
 import { view } from '../entities/view';
 import { collider } from '../entities/collider';
 import { destroyCountdown } from '../entities/destroyCountdown';
+import { RapierModule } from '../../types';
 
 export class BallSpawnSystem extends System {
-  constructor(private readonly RAPIER: typeof import('@dimforge/rapier3d')) {
+  constructor(private readonly RAPIER: RapierModule) {
     super();
   }
 

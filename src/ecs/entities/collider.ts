@@ -4,7 +4,14 @@ import { ColliderComponent } from '../components/ColliderComponent';
 
 export function collider(
   rigidBodyDesc: RigidBodyDesc,
-  colliderDesc: ColliderDesc
+  colliderDesc: ColliderDesc,
+  initTransform = true
 ) {
-  return [component(ColliderComponent).assign({ rigidBodyDesc, colliderDesc })];
+  return [
+    component(ColliderComponent).assign({
+      rigidBodyDesc,
+      colliderDesc,
+      initTransform,
+    }),
+  ];
 }

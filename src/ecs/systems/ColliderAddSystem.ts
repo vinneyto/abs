@@ -39,12 +39,14 @@ export class ColliderAddSystem extends System {
       throw new Error('unable to instantiate undefined collider or rigid body');
     }
 
-    colliderComponent.rigidBodyDesc.setTranslation(
-      position.x,
-      position.y,
-      position.z
-    );
-    colliderComponent.rigidBodyDesc.setRotation(quaternion);
+    if (colliderComponent.initTransform) {
+      colliderComponent.rigidBodyDesc.setTranslation(
+        position.x,
+        position.y,
+        position.z
+      );
+      colliderComponent.rigidBodyDesc.setRotation(quaternion);
+    }
 
     const rigidBody = this.world.createRigidBody(
       colliderComponent.rigidBodyDesc
