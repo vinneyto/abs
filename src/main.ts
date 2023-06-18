@@ -12,7 +12,6 @@ import {
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { ECS, component } from './ecs/ecs';
 import { CanvasResizeSystem } from './ecs/systems/CanvasResizeSystem';
-import { SetRendererSystem } from './ecs/systems/SetRendererSystem';
 import { canvasSize } from './ecs/entities/canvasSize';
 import 'normalize.css';
 import './style.css';
@@ -60,8 +59,7 @@ import('@dimforge/rapier3d').then(RAPIER => {
   scene.background = new Color('gray');
 
   // service systems
-  ecs.addSystem(new SetRendererSystem(renderer));
-  ecs.addSystem(new CanvasResizeSystem());
+  ecs.addSystem(new CanvasResizeSystem(renderer));
 
   // logic systems
   ecs.addSystem(new BallSpawnSystem(RAPIER));

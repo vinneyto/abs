@@ -1,14 +1,19 @@
+import { WebGLRenderer } from 'three';
 import { CanvasSizeComponent } from '../components/CanvasSizeComponent';
-import { RendererComponent } from '../components/RendererComponent';
 import { Entity, System } from '../ecs';
 
 export class CanvasResizeSystem extends System {
-  public componentsRequired = [RendererComponent, CanvasSizeComponent];
+  constructor(private readonly renderer: WebGLRenderer) {
+    super();
+  }
+
+  public componentsRequired = [CanvasSizeComponent];
 
   public update(entity: Entity): void {
+    const { renderer } = this;
+
     const components = this.ecs.getComponents(entity);
 
-    const { renderer } = components.get(RendererComponent);
     const { size } = components.get(CanvasSizeComponent);
 
     if (window.devicePixelRatio !== renderer.getPixelRatio()) {
