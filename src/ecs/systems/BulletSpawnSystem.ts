@@ -1,6 +1,6 @@
 import { Vector3 } from 'three';
 import { Time } from '../../Time';
-import { BallSpawnComponent } from '../components/BallSpawnComponent';
+import { BulletSpawnComponent } from '../components/BulletSpawnComponent';
 import { System } from '../ecs';
 import { destroyCountdown } from '../entities/destroyCountdown';
 import { RapierModule } from '../../types';
@@ -12,16 +12,16 @@ export class BallSpawnSystem extends System {
     super();
   }
 
-  public componentsRequired = [BallSpawnComponent];
+  public componentsRequired = [BulletSpawnComponent];
 
   public update(entity: number): void {
     const { RAPIER } = this;
 
     const components = this.ecs.getComponents(entity);
 
-    const ballSpawnComponent = components.get(BallSpawnComponent);
+    const bulletSpawnComponent = components.get(BulletSpawnComponent);
 
-    if (ballSpawnComponent.countdownToSpawn <= 0) {
+    if (bulletSpawnComponent.countdownToSpawn <= 0) {
       this.ecs.addEntity(
         Math.random() > 0.5
           ? ball(
@@ -39,10 +39,10 @@ export class BallSpawnSystem extends System {
         destroyCountdown(4)
       );
 
-      ballSpawnComponent.countdownToSpawn = ballSpawnComponent.everySeconds;
+      bulletSpawnComponent.countdownToSpawn = bulletSpawnComponent.everySeconds;
       return;
     }
 
-    ballSpawnComponent.countdownToSpawn -= Time.deltaSeconds();
+    bulletSpawnComponent.countdownToSpawn -= Time.deltaSeconds();
   }
 }

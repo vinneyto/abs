@@ -1,21 +1,17 @@
-import { PositionComponent } from '../components/PositionComponent';
-import { RotationComponent } from '../components/RotationComponent';
+import { TransformComponent } from '../components/TransformComponent';
 import { ViewComponent } from '../components/ViewComponent';
 import { System } from '../ecs';
 
 export class ViewTransformSystem extends System {
-  public componentsRequired = [
-    ViewComponent,
-    PositionComponent,
-    RotationComponent,
-  ];
+  public componentsRequired = [ViewComponent, TransformComponent];
+
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
-    const { position } = components.get(PositionComponent);
-    const { quaternion } = components.get(RotationComponent);
+    const { position, quaternion, scale } = components.get(TransformComponent);
     const { view } = components.get(ViewComponent);
 
     view.position.copy(position);
     view.quaternion.copy(quaternion);
+    view.scale.copy(scale);
   }
 }

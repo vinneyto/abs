@@ -1,18 +1,12 @@
 import { ColliderComponent } from '../components/ColliderComponent';
-import { PositionComponent } from '../components/PositionComponent';
-import { RotationComponent } from '../components/RotationComponent';
+import { TransformComponent } from '../components/TransformComponent';
 import { System } from '../ecs';
 
 export class ColliderTransformSystem extends System {
-  public componentsRequired = [
-    ColliderComponent,
-    PositionComponent,
-    RotationComponent,
-  ];
+  public componentsRequired = [ColliderComponent, TransformComponent];
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
-    const { position } = components.get(PositionComponent);
-    const { quaternion } = components.get(RotationComponent);
+    const { position, quaternion } = components.get(TransformComponent);
     const { collider } = components.get(ColliderComponent);
 
     if (collider === undefined) {

@@ -5,8 +5,7 @@ import {
   LifeCircleComponent,
 } from '../components/LifeCircleComponent';
 import { System } from '../ecs';
-import { PositionComponent } from '../components/PositionComponent';
-import { RotationComponent } from '../components/RotationComponent';
+import { TransformComponent } from '../components/TransformComponent';
 
 export class ColliderAddSystem extends System {
   constructor(private readonly world: World) {
@@ -16,8 +15,7 @@ export class ColliderAddSystem extends System {
   public componentsRequired = [
     LifeCircleComponent,
     ColliderComponent,
-    PositionComponent,
-    RotationComponent,
+    TransformComponent,
   ];
 
   public update(entity: number): void {
@@ -25,8 +23,7 @@ export class ColliderAddSystem extends System {
 
     const lifeCircleComponent = components.get(LifeCircleComponent);
     const colliderComponent = components.get(ColliderComponent);
-    const { position } = components.get(PositionComponent);
-    const { quaternion } = components.get(RotationComponent);
+    const { position, quaternion } = components.get(TransformComponent);
 
     if (lifeCircleComponent.state !== LifeCircle.New) {
       return;

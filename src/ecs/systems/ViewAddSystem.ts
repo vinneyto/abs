@@ -16,14 +16,21 @@ export class ViewAddSystem extends System {
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
     const lifeCircleComponent = components.get(LifeCircleComponent);
-    const { view } = components.get(ViewComponent);
+    const { view, addTo } = components.get(ViewComponent);
 
     if (lifeCircleComponent.state !== LifeCircle.New) {
       return;
     }
 
-    this.scene.add(view);
+    const container = this.scene.getObjectByName(addTo);
 
-    console.log('add to scene', view);
+    if (container === undefined) {
+      console.log(this.scene);
+      throw new Error(`unable add object to container ${addTo}`);
+    }
+
+    container.add(view);
+
+    console.log('add view', view);
   }
 }

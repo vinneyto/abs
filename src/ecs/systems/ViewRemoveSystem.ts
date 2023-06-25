@@ -1,4 +1,3 @@
-import { Scene } from 'three';
 import {
   LifeCircle,
   LifeCircleComponent,
@@ -7,10 +6,6 @@ import { ViewComponent } from '../components/ViewComponent';
 import { System } from '../ecs';
 
 export class ViewRemoveSystem extends System {
-  public constructor(private readonly scene: Scene) {
-    super();
-  }
-
   public componentsRequired = [LifeCircleComponent, ViewComponent];
 
   public update(entity: number): void {
@@ -22,8 +17,10 @@ export class ViewRemoveSystem extends System {
       return;
     }
 
-    this.scene.remove(view);
+    if (view.parent) {
+      view.parent.remove(view);
+    }
 
-    console.log('remove from scene', view);
+    console.log('remove view', view);
   }
 }

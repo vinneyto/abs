@@ -1,21 +1,28 @@
 import { Object3D, Quaternion, Vector3 } from 'three';
 import { LifeCircleComponent } from '../components/LifeCircleComponent';
-import { PositionComponent } from '../components/PositionComponent';
-import { RotationComponent } from '../components/RotationComponent';
+import { TransformComponent } from '../components/TransformComponent';
 import { ViewComponent } from '../components/ViewComponent';
 import { component } from '../ecs';
+import { VisibilityComponent } from '../components/VIsibilityComponent';
 
 export interface ViewDerscriptor {
   position?: Vector3;
   quaternion?: Quaternion;
+  scale?: Vector3;
   view?: Object3D;
+  addTo?: string;
+  visible?: boolean;
 }
 
 export function view(dsc: ViewDerscriptor) {
   return [
     component(LifeCircleComponent),
-    component(PositionComponent).assign({ position: dsc.position }),
-    component(RotationComponent).assign({ quaternion: dsc.quaternion }),
-    component(ViewComponent).assign({ view: dsc.view }),
+    component(VisibilityComponent).assign({ visible: dsc.visible }),
+    component(TransformComponent).assign({
+      position: dsc.position,
+      quaternion: dsc.quaternion,
+      scale: dsc.scale,
+    }),
+    component(ViewComponent).assign({ view: dsc.view, addTo: dsc.addTo }),
   ];
 }

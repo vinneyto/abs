@@ -1,5 +1,6 @@
 import {
   AmbientLight,
+  AxesHelper,
   BoxGeometry,
   Color,
   DirectionalLight,
@@ -28,21 +29,39 @@ import { ColliderRemoveSystem } from './ecs/systems/ColliderRemoveSystem';
 import { ColliderTransformSystem } from './ecs/systems/ColliderTransformSystem';
 import { Time } from './Time';
 import { DestroyCountdownSystem } from './ecs/systems/DestroyCountdownSystem';
-import { BallSpawnSystem } from './ecs/systems/BallSpawnSystem';
-import { BallSpawnComponent } from './ecs/components/BallSpawnComponent';
+import { BulletSpawnComponent } from './ecs/components/BulletSpawnComponent';
 import { PhysicsSystem } from './ecs/systems/PhysicsSystem';
 import { RenderSystem } from './ecs/systems/RenderSystem';
 import { update } from './ecs/entities/update';
 import { Sky } from 'three/addons/objects/Sky.js';
+import { loadAssets } from './Assets';
+import { MAIN_SCENE } from './ecs/components/ViewComponent';
+import { ViewVisibilitySystem } from './ecs/systems/ViewVisibilitySystem';
+import { ControllerVisibilitySystem } from './ecs/systems/ControllerVisibilitySystem';
+import { ControllerTransformSystem } from './ecs/systems/ControllerTransformSystem';
+import { controller } from './ecs/entities/controller';
+import { ControllerGamepadSystem } from './ecs/systems/ControllerGamepadSystem';
 
-import('@dimforge/rapier3d').then(RAPIER => {
+import('@dimforge/rapier3d').then(async RAPIER => {
+  const assets = await loadAssets();
+
   const renderer = createRenderer();
   const ecs = new ECS();
+  const scene = new Scene();
+  scene.name = MAIN_SCENE;
 
   renderer.xr.enabled = true;
 
-  // adds son and sky
-  const scene = new Scene();
+  // adds controllers
+  const controller0 = renderer.xr.getControllerGrip(0);
+  const controller1 = renderer.xr.getControllerGrip(1);
+  const controllers = [controller0, controller1];
+
+  // adds sun and sky
+  const axes = new AxesHelper();
+  axes.position.y = 1.0;
+  scene.add(axes);
+
   const sun = new DirectionalLight();
   scene.add(sun);
 
@@ -84,11 +103,12 @@ import('@dimforge/rapier3d').then(RAPIER => {
 
   scene.background = new Color('gray');
 
-  // service systems
-  ecs.addSystem(new CanvasResizeSystem(renderer));
+  // input system
+  ecs.addSystem(new ControllerGamepadSystem(controllers));
+  ecs.addSystem(new ControllerVisibilitySystem(controllers));
+  ecs.addSystem(new ControllerTransformSystem(controllers));
 
   // logic systems
-  ecs.addSystem(new BallSpawnSystem(RAPIER));
   ecs.addSystem(new DestroyCountdownSystem());
 
   // initialize systems
@@ -100,20 +120,23 @@ import('@dimforge/rapier3d').then(RAPIER => {
   ecs.addSystem(new PhysicsSystem(world));
   ecs.addSystem(new ColliderTransformSystem());
   ecs.addSystem(new ViewTransformSystem());
+  ecs.addSystem(new ViewVisibilitySystem());
 
   // destroy systems
-  ecs.addSystem(new ViewRemoveSystem(scene));
+  ecs.addSystem(new ViewRemoveSystem());
   ecs.addSystem(new ColliderRemoveSystem(world));
   ecs.addSystem(new EntityDestroySystem());
 
   // render system
+  ecs.addSystem(new CanvasResizeSystem(renderer));
   ecs.addSystem(new RenderSystem(renderer, scene, camera));
 
   ecs.addEntity(canvasSize());
   ecs.addEntity(update());
 
-  ecs.addEntity([component(BallSpawnComponent)]);
+  ecs.addEntity([component(BulletSpawnComponent)]);
 
+  // ground
   ecs.addEntity(
     view({
       view: new Mesh(
@@ -127,12 +150,32 @@ import('@dimforge/rapier3d').then(RAPIER => {
     )
   );
 
+  // left hand gun
+  ecs.addEntity(
+    view({
+      view: assets.gun.clone(),
+    }),
+    controller(1)
+  );
+
+  // right hand gun
+  ecs.addEntity(
+    view({
+      view: assets.gun.clone(),
+    }),
+    controller(0)
+  );
+
   document.body.appendChild(VRButton.createButton(renderer));
 
   Time.init();
 
   renderer.setAnimationLoop(() => {
     ecs.update();
+
+    // if (gamepad0 && gamepad0.buttons.some(b => b.pressed)) {
+    //   console.log('pressed', JSON.stringify(gamepad0.buttons));
+    // }
 
     Time.update();
   });
