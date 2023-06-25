@@ -3,6 +3,7 @@ import {
   BoxGeometry,
   Color,
   DirectionalLight,
+  MathUtils,
   Mesh,
   MeshPhysicalMaterial,
   PerspectiveCamera,
@@ -32,6 +33,7 @@ import { BallSpawnComponent } from './ecs/components/BallSpawnComponent';
 import { PhysicsSystem } from './ecs/systems/PhysicsSystem';
 import { RenderSystem } from './ecs/systems/RenderSystem';
 import { update } from './ecs/entities/update';
+import { Sky } from 'three/addons/objects/Sky.js';
 
 import('@dimforge/rapier3d').then(RAPIER => {
   const renderer = createRenderer();
@@ -39,12 +41,35 @@ import('@dimforge/rapier3d').then(RAPIER => {
 
   renderer.xr.enabled = true;
 
+  // adds son and sky
   const scene = new Scene();
   const sun = new DirectionalLight();
-  sun.position.y = 20;
-  sun.position.x = -10;
   scene.add(sun);
 
+  const sky = new Sky();
+  sky.scale.setScalar(10000);
+  scene.add(sky);
+
+  const skyUniforms = sky.material.uniforms;
+
+  skyUniforms['turbidity'].value = 10;
+  skyUniforms['rayleigh'].value = 0.1;
+  skyUniforms['mieCoefficient'].value = 0.00007;
+  skyUniforms['mieDirectionalG'].value = 0.8;
+
+  const parameters = {
+    elevation: 45,
+    azimuth: 180,
+  };
+
+  const phi = MathUtils.degToRad(90 - parameters.elevation);
+  const theta = MathUtils.degToRad(parameters.azimuth);
+
+  sun.position.setFromSphericalCoords(1, phi, theta);
+
+  skyUniforms['sunPosition'].value.copy(sun.position);
+
+  // ambient light
   const ambientLight = new AmbientLight();
   ambientLight.intensity = 0.1;
   scene.add(ambientLight);
@@ -53,6 +78,7 @@ import('@dimforge/rapier3d').then(RAPIER => {
   camera.position.z = 2;
   camera.position.y = 1;
 
+  // physics
   const gravity = { x: 0.0, y: -9.81, z: 0.0 };
   const world = new RAPIER.World(gravity);
 
