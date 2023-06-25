@@ -2,17 +2,22 @@ import { Vector3 } from 'three';
 import { Time } from '../../Time';
 import { BulletSpawnComponent } from '../components/BulletSpawnComponent';
 import { System } from '../ecs';
-import { destroyCountdown } from '../entities/destroyCountdown';
 import { RapierModule } from '../../types';
-import { ball } from '../entities/primitives/ball';
-import { cuboid } from '../entities/primitives/cuboid';
+import { ControllerComponent } from '../components/ControllerComponent';
+import { ViewComponent } from '../components/ViewComponent';
+import { getObjectByType } from '../../Assets';
+import { bullet } from '../entities/bullet';
 
-export class BallSpawnSystem extends System {
+export class BulletSpawnSystem extends System {
   constructor(private readonly RAPIER: RapierModule) {
     super();
   }
 
-  public componentsRequired = [BulletSpawnComponent];
+  public componentsRequired = [
+    BulletSpawnComponent,
+    ControllerComponent,
+    ViewComponent,
+  ];
 
   public update(entity: number): void {
     const { RAPIER } = this;
@@ -20,24 +25,28 @@ export class BallSpawnSystem extends System {
     const components = this.ecs.getComponents(entity);
 
     const bulletSpawnComponent = components.get(BulletSpawnComponent);
+    const { gamepad } = components.get(ControllerComponent);
+    const { view } = components.get(ViewComponent);
 
-    if (bulletSpawnComponent.countdownToSpawn <= 0) {
-      this.ecs.addEntity(
-        Math.random() > 0.5
-          ? ball(
-              RAPIER,
-              new Vector3(Math.random() * 0.3, 2, Math.random() * 0.3),
-              0.2
-            )
-          : cuboid(
-              RAPIER,
-              new Vector3(Math.random() * 0.3, 2, Math.random() * 0.3),
-              0.4,
-              0.4,
-              0.4
-            ),
-        destroyCountdown(4)
-      );
+    if (!gamepad) {
+      return;
+    }
+
+    const firePressed = gamepad.buttons[0].pressed;
+
+    if (firePressed && bulletSpawnComponent.countdownToSpawn <= 0) {
+      view.updateMatrixWorld();
+
+      const bulletSpawnHint = getObjectByType(view, 'bullet_spawn');
+      const spawnPoint = new Vector3();
+      const direction = new Vector3();
+
+      spawnPoint.setFromMatrixPosition(bulletSpawnHint.matrixWorld);
+      direction
+        .setFromMatrixColumn(bulletSpawnHint.matrixWorld, 2)
+        .multiplyScalar(-1); // hack - fixes model rotation
+
+      this.ecs.addEntity(bullet(RAPIER, spawnPoint, direction));
 
       bulletSpawnComponent.countdownToSpawn = bulletSpawnComponent.everySeconds;
       return;

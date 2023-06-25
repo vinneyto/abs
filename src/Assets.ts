@@ -2,6 +2,9 @@ import { Object3D } from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import modelsUrl from './data/models.glb';
 
+export const TYPE_GUN = 'gun';
+export const TYPE_BULLET_SPAWN = 'bullet_spawn';
+
 export interface Assets {
   gun: Object3D;
 }
@@ -17,11 +20,12 @@ export async function loadAssets(): Promise<Assets> {
   gun.children[0].scale.y *= -1;
   gun.children[0].scale.multiplyScalar(0.5);
   gun.children[0].rotation.x = Math.PI * -1.25;
+  getObjectByType(gun, 'bullet_spawn').visible = false;
 
   return { gun };
 }
 
-function getObjectByType(scene: Object3D, type: string) {
+export function getObjectByType(scene: Object3D, type: string) {
   let object: Object3D | undefined;
 
   scene.traverse(child => {

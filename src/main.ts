@@ -9,10 +9,11 @@ import {
   MeshPhysicalMaterial,
   PerspectiveCamera,
   Scene,
+  Vector3,
   WebGLRenderer,
 } from 'three';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
-import { ECS, component } from './ecs/ecs';
+import { ECS } from './ecs/ecs';
 import { CanvasResizeSystem } from './ecs/systems/CanvasResizeSystem';
 import { canvasSize } from './ecs/entities/canvasSize';
 import 'normalize.css';
@@ -29,7 +30,6 @@ import { ColliderRemoveSystem } from './ecs/systems/ColliderRemoveSystem';
 import { ColliderTransformSystem } from './ecs/systems/ColliderTransformSystem';
 import { Time } from './Time';
 import { DestroyCountdownSystem } from './ecs/systems/DestroyCountdownSystem';
-import { BulletSpawnComponent } from './ecs/components/BulletSpawnComponent';
 import { PhysicsSystem } from './ecs/systems/PhysicsSystem';
 import { RenderSystem } from './ecs/systems/RenderSystem';
 import { update } from './ecs/entities/update';
@@ -39,8 +39,10 @@ import { MAIN_SCENE } from './ecs/components/ViewComponent';
 import { ViewVisibilitySystem } from './ecs/systems/ViewVisibilitySystem';
 import { ControllerVisibilitySystem } from './ecs/systems/ControllerVisibilitySystem';
 import { ControllerTransformSystem } from './ecs/systems/ControllerTransformSystem';
-import { controller } from './ecs/entities/controller';
 import { ControllerGamepadSystem } from './ecs/systems/ControllerGamepadSystem';
+import { BulletSpawnSystem } from './ecs/systems/BulletSpawnSystem';
+import { gun } from './ecs/entities/gun';
+import { cuboid } from './ecs/entities/primitives/cuboid';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -109,6 +111,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   ecs.addSystem(new ControllerTransformSystem(controllers));
 
   // logic systems
+  ecs.addSystem(new BulletSpawnSystem(RAPIER));
   ecs.addSystem(new DestroyCountdownSystem());
 
   // initialize systems
@@ -131,40 +134,33 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   ecs.addSystem(new CanvasResizeSystem(renderer));
   ecs.addSystem(new RenderSystem(renderer, scene, camera));
 
+  // entities
+
   ecs.addEntity(canvasSize());
   ecs.addEntity(update());
-
-  ecs.addEntity([component(BulletSpawnComponent)]);
 
   // ground
   ecs.addEntity(
     view({
+      position: new Vector3(0, -0.1, 0),
       view: new Mesh(
-        new BoxGeometry(6, 0.2, 6),
+        new BoxGeometry(10, 0.2, 10),
         new MeshPhysicalMaterial({ color: 'green' })
       ),
     }),
     collider(
       RAPIER.RigidBodyDesc.fixed(),
-      RAPIER.ColliderDesc.cuboid(3, 0.1, 3)
+      RAPIER.ColliderDesc.cuboid(5, 0.1, 5)
     )
   );
 
-  // left hand gun
-  ecs.addEntity(
-    view({
-      view: assets.gun.clone(),
-    }),
-    controller(1)
-  );
+  // guns - left and right
+  ecs.addEntity(gun(assets, 1));
+  ecs.addEntity(gun(assets, 0));
 
-  // right hand gun
-  ecs.addEntity(
-    view({
-      view: assets.gun.clone(),
-    }),
-    controller(0)
-  );
+  ecs.addEntity(cuboid(RAPIER, new Vector3(-0.5, 0.5, -3), 1, 1, 1));
+  ecs.addEntity(cuboid(RAPIER, new Vector3(0.5, 0.5, -3), 1, 1, 1));
+  ecs.addEntity(cuboid(RAPIER, new Vector3(0.0, 1.5, -3), 1, 1, 1));
 
   document.body.appendChild(VRButton.createButton(renderer));
 
