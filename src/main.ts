@@ -111,7 +111,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   ecs.addSystem(new ControllerTransformSystem(controllers));
 
   // logic systems
-  ecs.addSystem(new BulletSpawnSystem(RAPIER));
+  ecs.addSystem(new BulletSpawnSystem(RAPIER, assets.gun.bulletSpawnTransform));
   ecs.addSystem(new DestroyCountdownSystem());
 
   // initialize systems

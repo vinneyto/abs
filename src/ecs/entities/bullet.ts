@@ -9,14 +9,14 @@ export function bullet(
   spawn: Vector3,
   direction: Vector3
 ) {
-  const radius = 0.01;
-  const velocity = direction.clone().multiplyScalar(1000);
+  const radius = 0.03;
+  const velocity = direction.clone().multiplyScalar(500);
 
   return [
     ...view({
       position: spawn,
       view: new Mesh(
-        new SphereGeometry(0.03, 16, 16),
+        new SphereGeometry(radius, 16, 16),
         new MeshPhysicalMaterial({ color: 'yellow' })
       ),
     }),
@@ -25,7 +25,7 @@ export function bullet(
         .setLinvel(velocity.x, velocity.y, velocity.z)
         .setCcdEnabled(true)
         .setGravityScale(0)
-        .setAdditionalMass(100),
+        .setAdditionalMass(1),
       RAPIER.ColliderDesc.ball(radius)
     ),
     ...destroyCountdown(1),

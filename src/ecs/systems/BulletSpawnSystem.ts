@@ -1,22 +1,24 @@
-import { Vector3 } from 'three';
+import { Matrix4, Vector3 } from 'three';
 import { Time } from '../../Time';
 import { BulletSpawnComponent } from '../components/BulletSpawnComponent';
 import { System } from '../ecs';
 import { RapierModule } from '../../types';
 import { ControllerComponent } from '../components/ControllerComponent';
-import { ViewComponent } from '../components/ViewComponent';
-import { getObjectByType } from '../../Assets';
 import { bullet } from '../entities/bullet';
+import { TransformComponent } from '../components/TransformComponent';
 
 export class BulletSpawnSystem extends System {
-  constructor(private readonly RAPIER: RapierModule) {
+  constructor(
+    private readonly RAPIER: RapierModule,
+    private readonly bulletSpawnTransform: Matrix4
+  ) {
     super();
   }
 
   public componentsRequired = [
     BulletSpawnComponent,
     ControllerComponent,
-    ViewComponent,
+    TransformComponent,
   ];
 
   public update(entity: number): void {
@@ -26,7 +28,7 @@ export class BulletSpawnSystem extends System {
 
     const bulletSpawnComponent = components.get(BulletSpawnComponent);
     const { gamepad } = components.get(ControllerComponent);
-    const { view } = components.get(ViewComponent);
+    const { position, quaternion, scale } = components.get(TransformComponent);
 
     if (!gamepad) {
       return;
@@ -35,16 +37,15 @@ export class BulletSpawnSystem extends System {
     const firePressed = gamepad.buttons[0].pressed;
 
     if (firePressed && bulletSpawnComponent.countdownToSpawn <= 0) {
-      view.updateMatrixWorld();
+      const bulletSpawnMatrix = new Matrix4()
+        .compose(position, quaternion, scale)
+        .multiply(this.bulletSpawnTransform);
 
-      const bulletSpawnHint = getObjectByType(view, 'bullet_spawn');
       const spawnPoint = new Vector3();
       const direction = new Vector3();
 
-      spawnPoint.setFromMatrixPosition(bulletSpawnHint.matrixWorld);
-      direction
-        .setFromMatrixColumn(bulletSpawnHint.matrixWorld, 2)
-        .multiplyScalar(-1); // hack - fixes model rotation
+      spawnPoint.setFromMatrixPosition(bulletSpawnMatrix);
+      direction.setFromMatrixColumn(bulletSpawnMatrix, 2).multiplyScalar(-1); // hack - fixes model rotation
 
       this.ecs.addEntity(bullet(RAPIER, spawnPoint, direction));
 
