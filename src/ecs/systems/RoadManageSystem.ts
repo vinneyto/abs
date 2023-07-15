@@ -18,6 +18,15 @@ export class RoadManageSystem extends System {
 
     const roadComponent = components.get(RoadComponent);
 
+    // move road segments
+    {
+      for (const segmentEntity of roadComponent.segments) {
+        const { position } = getTransform(this.ecs, segmentEntity);
+
+        position.z += Time.deltaSeconds() * roadComponent.velocity;
+      }
+    }
+
     // delete back segments
     {
       let continueDeleting = roadComponent.segments.length > 0;
@@ -59,15 +68,6 @@ export class RoadManageSystem extends System {
         );
         roadComponent.segments.push(roadSegmentEntity);
         console.log('add road segment');
-      }
-    }
-
-    // move road segments
-    {
-      for (const segmentEntity of roadComponent.segments) {
-        const { position } = getTransform(this.ecs, segmentEntity);
-
-        position.z += Time.deltaSeconds() * roadComponent.velocity;
       }
     }
   }
