@@ -1,4 +1,4 @@
-import { VisibilityComponent } from '../components/VIsibilityComponent';
+import { VisibilityComponent } from '../components/VisibilityComponent';
 import { ViewComponent } from '../components/ViewComponent';
 import { System } from '../ecs';
 

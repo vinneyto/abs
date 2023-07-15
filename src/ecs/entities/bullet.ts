@@ -4,21 +4,21 @@ import { view } from './view';
 import { destroyCountdown } from './destroyCountdown';
 import { RapierModule } from '../../types';
 
+const BULLET_RADIUS = 0.03;
+const bulletGeometry = new SphereGeometry(BULLET_RADIUS, 16, 16);
+const bulletMaterial = new MeshPhysicalMaterial({ color: 'yellow' });
+
 export function bullet(
   RAPIER: RapierModule,
   spawn: Vector3,
   direction: Vector3
 ) {
-  const radius = 0.03;
   const velocity = direction.clone().multiplyScalar(500);
 
   return [
     ...view({
       position: spawn,
-      view: new Mesh(
-        new SphereGeometry(radius, 16, 16),
-        new MeshPhysicalMaterial({ color: 'yellow' })
-      ),
+      view: new Mesh(bulletGeometry, bulletMaterial),
     }),
     ...collider(
       RAPIER.RigidBodyDesc.dynamic()
@@ -26,7 +26,7 @@ export function bullet(
         .setCcdEnabled(true)
         .setGravityScale(0)
         .setAdditionalMass(1),
-      RAPIER.ColliderDesc.ball(radius)
+      RAPIER.ColliderDesc.ball(BULLET_RADIUS)
     ),
     ...destroyCountdown(1),
   ];

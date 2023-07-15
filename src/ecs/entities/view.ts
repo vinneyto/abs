@@ -3,7 +3,7 @@ import { LifeCircleComponent } from '../components/LifeCircleComponent';
 import { TransformComponent } from '../components/TransformComponent';
 import { ViewComponent } from '../components/ViewComponent';
 import { component } from '../ecs';
-import { VisibilityComponent } from '../components/VIsibilityComponent';
+import { VisibilityComponent } from '../components/VisibilityComponent';
 
 export interface ViewDerscriptor {
   position?: Vector3;

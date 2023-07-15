@@ -1,15 +1,11 @@
 import {
   AmbientLight,
   AxesHelper,
-  BoxGeometry,
   Color,
   DirectionalLight,
   MathUtils,
-  Mesh,
-  MeshPhysicalMaterial,
   PerspectiveCamera,
   Scene,
-  Vector3,
   WebGLRenderer,
 } from 'three';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
@@ -21,10 +17,8 @@ import './style.css';
 import { ViewAddSystem } from './ecs/systems/ViewAddSystem';
 import { EntityDestroySystem as EntityDestroySystem } from './ecs/systems/EntityDestroySystem';
 import { ViewTransformSystem } from './ecs/systems/ViewTransformSystem';
-import { view } from './ecs/entities/view';
 import { ViewRemoveSystem } from './ecs/systems/ViewRemoveSystem';
 import { InitFinishSystem } from './ecs/systems/InitFinishSystem';
-import { collider } from './ecs/entities/collider';
 import { ColliderAddSystem } from './ecs/systems/ColliderAddSystem';
 import { ColliderRemoveSystem } from './ecs/systems/ColliderRemoveSystem';
 import { ColliderTransformSystem } from './ecs/systems/ColliderTransformSystem';
@@ -42,7 +36,8 @@ import { ControllerTransformSystem } from './ecs/systems/ControllerTransformSyst
 import { ControllerGamepadSystem } from './ecs/systems/ControllerGamepadSystem';
 import { BulletSpawnSystem } from './ecs/systems/BulletSpawnSystem';
 import { gun } from './ecs/entities/gun';
-import { cuboid } from './ecs/entities/primitives/cuboid';
+import { road } from './ecs/entities/road';
+import { RoadManageSystem } from './ecs/systems/RoadManageSystem';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -79,7 +74,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   skyUniforms['mieDirectionalG'].value = 0.8;
 
   const parameters = {
-    elevation: 45,
+    elevation: 25,
     azimuth: 180,
   };
 
@@ -113,6 +108,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   // logic systems
   ecs.addSystem(new BulletSpawnSystem(RAPIER, assets.gun.bulletSpawnTransform));
   ecs.addSystem(new DestroyCountdownSystem());
+  ecs.addSystem(new RoadManageSystem(assets.road.model));
 
   // initialize systems
   ecs.addSystem(new ViewAddSystem(scene));
@@ -140,27 +136,29 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   ecs.addEntity(update());
 
   // ground
-  ecs.addEntity(
-    view({
-      position: new Vector3(0, -0.1, 0),
-      view: new Mesh(
-        new BoxGeometry(10, 0.2, 10),
-        new MeshPhysicalMaterial({ color: 'green' })
-      ),
-    }),
-    collider(
-      RAPIER.RigidBodyDesc.fixed(),
-      RAPIER.ColliderDesc.cuboid(5, 0.1, 5)
-    )
-  );
+  // ecs.addEntity(
+  //   view({
+  //     position: new Vector3(0, -0.1, 0),
+  //     view: new Mesh(
+  //       new BoxGeometry(10, 0.2, 10),
+  //       new MeshPhysicalMaterial({ color: 'green' })
+  //     ),
+  //   }),
+  //   collider(
+  //     RAPIER.RigidBodyDesc.fixed(),
+  //     RAPIER.ColliderDesc.cuboid(5, 0.1, 5)
+  //   )
+  // );
 
   // guns - left and right
   ecs.addEntity(gun(assets, 1));
   ecs.addEntity(gun(assets, 0));
 
-  ecs.addEntity(cuboid(RAPIER, new Vector3(-0.5, 0.5, -3), 1, 1, 1));
-  ecs.addEntity(cuboid(RAPIER, new Vector3(0.5, 0.5, -3), 1, 1, 1));
-  ecs.addEntity(cuboid(RAPIER, new Vector3(0.0, 1.5, -3), 1, 1, 1));
+  ecs.addEntity(road());
+
+  // ecs.addEntity(cuboid(RAPIER, new Vector3(-0.5, 0.5, -3), 1, 1, 1));
+  // ecs.addEntity(cuboid(RAPIER, new Vector3(0.5, 0.5, -3), 1, 1, 1));
+  // ecs.addEntity(cuboid(RAPIER, new Vector3(0.0, 1.5, -3), 1, 1, 1));
 
   document.body.appendChild(VRButton.createButton(renderer));
 
