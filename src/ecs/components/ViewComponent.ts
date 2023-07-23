@@ -7,4 +7,7 @@ export class ViewComponent extends Component {
   public view = new Object3D();
 
   public addTo = MAIN_SCENE;
+
+  public castShadow = false;
+  public receiveShadow = true;
 }

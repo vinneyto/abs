@@ -1,6 +1,7 @@
 import {
   AmbientLight,
   AxesHelper,
+  CameraHelper,
   Color,
   DirectionalLight,
   MathUtils,
@@ -38,11 +39,15 @@ import { BulletSpawnSystem } from './ecs/systems/BulletSpawnSystem';
 import { gun } from './ecs/entities/gun';
 import { road } from './ecs/entities/road';
 import { RoadManageSystem } from './ecs/systems/RoadManageSystem';
+import { TurntableCameraSystem } from './ecs/systems/TurntableCameraSystem';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
 
   const renderer = createRenderer();
+  renderer.shadowMap.enabled = true;
+  // renderer.shadowMap.type = PCFSoftShadowMap;
+
   const ecs = new ECS();
   const scene = new Scene();
   scene.name = MAIN_SCENE;
@@ -60,7 +65,19 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   scene.add(axes);
 
   const sun = new DirectionalLight();
+  sun.castShadow = true;
+  sun.shadow.mapSize.width = 512; // default
+  sun.shadow.mapSize.height = 512; // default
+  sun.shadow.camera.near = 0.5; // default
+  sun.shadow.camera.far = 500; // default
+  sun.shadow.camera.left = -10;
+  sun.shadow.camera.right = 10;
+  sun.shadow.camera.top = 10;
+  sun.shadow.camera.bottom = -10;
   scene.add(sun);
+
+  const helper = new CameraHelper(sun.shadow.camera);
+  scene.add(helper);
 
   const sky = new Sky();
   sky.scale.setScalar(10000);
@@ -81,7 +98,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   const phi = MathUtils.degToRad(90 - parameters.elevation);
   const theta = MathUtils.degToRad(parameters.azimuth);
 
-  sun.position.setFromSphericalCoords(1, phi, theta);
+  sun.position.setFromSphericalCoords(50, phi, theta);
 
   skyUniforms['sunPosition'].value.copy(sun.position);
 
@@ -108,7 +125,8 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   // logic systems
   ecs.addSystem(new BulletSpawnSystem(RAPIER, assets.gun.bulletSpawnTransform));
   ecs.addSystem(new DestroyCountdownSystem());
-  ecs.addSystem(new RoadManageSystem(assets.road.model));
+  ecs.addSystem(new RoadManageSystem(assets.road.model, assets.barrier.model));
+  ecs.addSystem(new TurntableCameraSystem(renderer, camera));
 
   // initialize systems
   ecs.addSystem(new ViewAddSystem(scene));

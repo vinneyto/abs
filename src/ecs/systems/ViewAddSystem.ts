@@ -16,7 +16,8 @@ export class ViewAddSystem extends System {
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
     const lifeCircleComponent = components.get(LifeCircleComponent);
-    const { view, addTo } = components.get(ViewComponent);
+    const { view, addTo, castShadow, receiveShadow } =
+      components.get(ViewComponent);
 
     if (lifeCircleComponent.state !== LifeCircle.New) {
       return;
@@ -30,6 +31,11 @@ export class ViewAddSystem extends System {
     }
 
     container.add(view);
+
+    view.traverse(obj => {
+      obj.castShadow = castShadow;
+      obj.receiveShadow = receiveShadow;
+    });
 
     console.log('add view', view);
   }

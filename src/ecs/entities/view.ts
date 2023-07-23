@@ -12,6 +12,8 @@ export interface ViewDerscriptor {
   view?: Object3D;
   addTo?: string;
   visible?: boolean;
+  castShadow?: boolean;
+  receiveShadow?: boolean;
 }
 
 export function view(dsc: ViewDerscriptor) {
@@ -23,6 +25,11 @@ export function view(dsc: ViewDerscriptor) {
       quaternion: dsc.quaternion,
       scale: dsc.scale,
     }),
-    component(ViewComponent).assign({ view: dsc.view, addTo: dsc.addTo }),
+    component(ViewComponent).assign({
+      view: dsc.view,
+      addTo: dsc.addTo,
+      castShadow: dsc.castShadow,
+      receiveShadow: dsc.receiveShadow,
+    }),
   ];
 }

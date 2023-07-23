@@ -18,6 +18,6 @@ export class Time {
     const currentTime = Date.now();
     const delta = currentTime - this._currentTime;
     this._currentTime = currentTime;
-    this._delta = delta;
+    this._delta = Math.min(delta, 50);
   }
 }

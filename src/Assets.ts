@@ -5,18 +5,18 @@ import modelsUrl from './data/models.glb';
 export const TYPE_GUN = 'gun';
 export const TYPE_BULLET_SPAWN = 'bullet_spawn';
 
-interface Gun {
+interface Model {
   model: Object3D;
-  bulletSpawnTransform: Matrix4;
 }
 
-interface Road {
-  model: Object3D;
+interface Gun extends Model {
+  bulletSpawnTransform: Matrix4;
 }
 
 export interface Assets {
   gun: Gun;
-  road: Road;
+  road: Model;
+  barrier: Model;
 }
 
 export async function loadAssets(): Promise<Assets> {
@@ -26,8 +26,9 @@ export async function loadAssets(): Promise<Assets> {
 
   const gun = extractGun(gltf);
   const road = extractRoad(gltf);
+  const barrier = extractBarrier(gltf);
 
-  return { gun, road };
+  return { gun, road, barrier };
 }
 
 function extractGun(gltf: GLTF) {
@@ -53,6 +54,12 @@ function extractRoad(gltf: GLTF) {
   road.rotation.z = Math.PI / 2;
 
   return { model: wrapTransform(road) };
+}
+
+function extractBarrier(gltf: GLTF) {
+  const barrier = getObjectByType(gltf.scene, 'barrier');
+
+  return { model: wrapTransform(barrier) };
 }
 
 function wrapTransform(obj: Object3D) {

@@ -1,4 +1,4 @@
-import { Mesh, MeshPhysicalMaterial, SphereGeometry, Vector3 } from 'three';
+import { Mesh, MeshBasicMaterial, SphereGeometry, Vector3 } from 'three';
 import { collider } from './collider';
 import { view } from './view';
 import { destroyCountdown } from './destroyCountdown';
@@ -6,7 +6,7 @@ import { RapierModule } from '../../types';
 
 const BULLET_RADIUS = 0.03;
 const bulletGeometry = new SphereGeometry(BULLET_RADIUS, 16, 16);
-const bulletMaterial = new MeshPhysicalMaterial({ color: 'yellow' });
+const bulletMaterial = new MeshBasicMaterial({ color: 0xff0000 });
 
 export function bullet(
   RAPIER: RapierModule,
