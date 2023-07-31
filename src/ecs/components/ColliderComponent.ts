@@ -13,4 +13,5 @@ export class ColliderComponent {
   public collider?: Collider;
 
   public initTransform = true;
+  public readTransform = false;
 }

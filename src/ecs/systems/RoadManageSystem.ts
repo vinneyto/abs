@@ -1,55 +1,41 @@
-import { Object3D, Vector3 } from 'three';
-import { RoadComponent } from '../components/RoadComponent';
 import { System } from '../ecs';
-import { view } from '../entities/view';
 import { destroyEntity, getTransform } from '../selectors';
-import { Time } from '../../Time';
+import { UpdateComponent } from '../components/UpdateComponent';
+import { GameState } from '../model/GameState';
+import { Assets } from '../../Assets';
+import { barrier } from '../entities/barrier';
+import { roadSegment } from '../entities/roadSegment';
 
 export class RoadManageSystem extends System {
-  public componentsRequired = [RoadComponent];
+  public componentsRequired = [UpdateComponent];
 
   constructor(
-    private readonly roadSegmentObject: Object3D,
-    private readonly barrierObject: Object3D
+    private readonly state: GameState,
+    private readonly assets: Assets
   ) {
     super();
   }
 
-  public update(entity: number): void {
-    const components = this.ecs.getComponents(entity);
-
-    const roadComponent = components.get(RoadComponent);
-
-    // move road segments
-    {
-      for (const segment of roadComponent.segments) {
-        const distDelta = Time.deltaSeconds() * roadComponent.velocity;
-
-        getTransform(this.ecs, segment.roadSegmentEntity).position.z +=
-          distDelta;
-
-        if (segment.barrierEntity) {
-          getTransform(this.ecs, segment.barrierEntity).position.z += distDelta;
-        }
-      }
-    }
+  public update(): void {
+    const { state, assets } = this;
+    const { road } = state;
 
     // delete back segments
     {
-      let continueDeleting = roadComponent.segments.length > 0;
+      let continueDeleting = road.segments.length > 0;
 
       while (continueDeleting) {
-        const entity = roadComponent.segments[0];
+        const entity = road.segments[0];
         const { position } = getTransform(this.ecs, entity.roadSegmentEntity);
 
-        if (position.z > roadComponent.backDistance) {
+        if (position.z > road.backDistance) {
           destroyEntity(this.ecs, entity.roadSegmentEntity);
 
           if (entity.barrierEntity !== undefined) {
             destroyEntity(this.ecs, entity.barrierEntity);
           }
 
-          roadComponent.segments.splice(0, 1);
+          road.segments.splice(0, 1);
 
           console.log('remove road segment');
         } else {
@@ -60,34 +46,21 @@ export class RoadManageSystem extends System {
 
     // add front segments
     {
-      let backDistance = roadComponent.backDistance;
+      let backDistance = road.backDistance;
 
-      if (roadComponent.segments.length > 0) {
-        const entity =
-          roadComponent.segments[roadComponent.segments.length - 1];
+      if (road.segments.length > 0) {
+        const entity = road.segments[road.segments.length - 1];
         const { position } = getTransform(this.ecs, entity.roadSegmentEntity);
-        backDistance = position.z - roadComponent.segmentSize;
+        backDistance = position.z - road.segmentSize;
       }
 
-      const { frontDistance, segmentSize } = roadComponent;
+      const { frontDistance, segmentSize } = road;
 
       for (let pos = backDistance; pos >= frontDistance; pos -= segmentSize) {
-        const roadSegmentEntity = this.ecs.addEntity(
-          view({
-            position: new Vector3(0, 0, pos),
-            view: this.roadSegmentObject.clone(),
-          })
-        );
+        const roadSegmentEntity = this.ecs.addEntity(roadSegment(assets, pos));
+        const barrierEntity = this.ecs.addEntity(barrier(assets, pos));
 
-        const barrierEntity = this.ecs.addEntity(
-          view({
-            position: new Vector3(5, 0, pos),
-            view: this.barrierObject.clone(),
-            castShadow: true,
-          })
-        );
-
-        roadComponent.segments.push({ roadSegmentEntity, barrierEntity });
+        road.segments.push({ roadSegmentEntity, barrierEntity });
         console.log('add road segment');
       }
     }

@@ -37,9 +37,10 @@ import { ControllerTransformSystem } from './ecs/systems/ControllerTransformSyst
 import { ControllerGamepadSystem } from './ecs/systems/ControllerGamepadSystem';
 import { BulletSpawnSystem } from './ecs/systems/BulletSpawnSystem';
 import { gun } from './ecs/entities/gun';
-import { road } from './ecs/entities/road';
 import { RoadManageSystem } from './ecs/systems/RoadManageSystem';
 import { TurntableCameraSystem } from './ecs/systems/TurntableCameraSystem';
+import { GameState } from './ecs/model/GameState';
+import { RoadSegmentMovementSystem } from './ecs/systems/RoadSegmentMovementSystem';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -115,6 +116,8 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   const gravity = { x: 0.0, y: -9.81, z: 0.0 };
   const world = new RAPIER.World(gravity);
 
+  const state = new GameState();
+
   scene.background = new Color('gray');
 
   // input system
@@ -125,7 +128,12 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   // logic systems
   ecs.addSystem(new BulletSpawnSystem(RAPIER, assets.gun.bulletSpawnTransform));
   ecs.addSystem(new DestroyCountdownSystem());
-  ecs.addSystem(new RoadManageSystem(assets.road.model, assets.barrier.model));
+
+  // logic systems - road
+  ecs.addSystem(new RoadSegmentMovementSystem(state));
+  ecs.addSystem(new RoadManageSystem(state, assets));
+
+  // logic systems - debug
   ecs.addSystem(new TurntableCameraSystem(renderer, camera));
 
   // initialize systems
@@ -171,8 +179,6 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   // guns - left and right
   ecs.addEntity(gun(assets, 1));
   ecs.addEntity(gun(assets, 0));
-
-  ecs.addEntity(road());
 
   // ecs.addEntity(cuboid(RAPIER, new Vector3(-0.5, 0.5, -3), 1, 1, 1));
   // ecs.addEntity(cuboid(RAPIER, new Vector3(0.5, 0.5, -3), 1, 1, 1));
