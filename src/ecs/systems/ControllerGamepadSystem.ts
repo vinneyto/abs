@@ -1,5 +1,5 @@
 import { Object3D } from 'three';
-import { ControllerComponent } from '../components/ControllerComponent';
+import { ControllerComponent } from '../components';
 import { System } from '../ecs';
 
 export class ControllerGamepadSystem extends System {

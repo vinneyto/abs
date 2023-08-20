@@ -1,4 +1,4 @@
-import { BulletSpawnComponent } from '../components/BulletSpawnComponent';
+import { BulletSpawnComponent } from '../components';
 import { component } from '../ecs';
 
 export function bulletSpawn(everySeconds = 0.2) {

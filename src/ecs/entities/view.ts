@@ -1,11 +1,13 @@
 import { Object3D, Quaternion, Vector3 } from 'three';
-import { LifeCircleComponent } from '../components/LifeCircleComponent';
-import { TransformComponent } from '../components/TransformComponent';
-import { ViewComponent } from '../components/ViewComponent';
+import {
+  LifeCircleComponent,
+  TransformComponent,
+  ViewComponent,
+  VisibilityComponent,
+} from '../components';
 import { component } from '../ecs';
-import { VisibilityComponent } from '../components/VisibilityComponent';
 
-export interface ViewDerscriptor {
+export interface ViewDescriptor {
   position?: Vector3;
   quaternion?: Quaternion;
   scale?: Vector3;
@@ -16,7 +18,7 @@ export interface ViewDerscriptor {
   receiveShadow?: boolean;
 }
 
-export function view(dsc: ViewDerscriptor) {
+export function view(dsc: ViewDescriptor) {
   return [
     component(LifeCircleComponent),
     component(VisibilityComponent).assign({ visible: dsc.visible }),

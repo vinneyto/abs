@@ -1,5 +1,4 @@
-import { VisibilityComponent } from '../components/VisibilityComponent';
-import { ViewComponent } from '../components/ViewComponent';
+import { VisibilityComponent, ViewComponent } from '../components';
 import { System } from '../ecs';
 
 export class ViewVisibilitySystem extends System {

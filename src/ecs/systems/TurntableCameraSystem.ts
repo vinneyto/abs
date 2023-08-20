@@ -1,5 +1,5 @@
 import { Camera, Vector2, Vector3, WebGLRenderer } from 'three';
-import { UpdateComponent } from '../components/UpdateComponent';
+import { UpdateComponent } from '../components';
 import { System } from '../ecs';
 
 export class TurntableCameraSystem extends System {

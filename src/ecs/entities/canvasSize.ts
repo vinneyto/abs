@@ -1,4 +1,4 @@
-import { CanvasSizeComponent } from '../components/CanvasSizeComponent';
+import { CanvasSizeComponent } from '../components';
 import { component } from '../ecs';
 
 export function canvasSize() {

@@ -1,9 +1,9 @@
 import { World } from '@dimforge/rapier3d';
-import { ColliderComponent } from '../components/ColliderComponent';
 import {
+  ColliderComponent,
   LifeCircle,
   LifeCircleComponent,
-} from '../components/LifeCircleComponent';
+} from '../components';
 import { System } from '../ecs';
 
 export class ColliderRemoveSystem extends System {

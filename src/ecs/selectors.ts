@@ -1,8 +1,8 @@
 import {
   LifeCircle,
   LifeCircleComponent,
-} from './components/LifeCircleComponent';
-import { TransformComponent } from './components/TransformComponent';
+  TransformComponent,
+} from './components';
 import { ECS, Entity } from './ecs';
 
 export function getTransform(ecs: ECS, entity: Entity) {

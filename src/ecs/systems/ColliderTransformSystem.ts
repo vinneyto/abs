@@ -1,5 +1,4 @@
-import { ColliderComponent } from '../components/ColliderComponent';
-import { TransformComponent } from '../components/TransformComponent';
+import { ColliderComponent, TransformComponent } from '../components';
 import { System } from '../ecs';
 
 export class ColliderTransformSystem extends System {

@@ -1,4 +1,4 @@
-import { UpdateComponent } from '../components/UpdateComponent';
+import { UpdateComponent } from '../components';
 import { component } from '../ecs';
 
 export function update() {

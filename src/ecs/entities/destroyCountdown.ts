@@ -1,4 +1,4 @@
-import { DestroyCountdownComponent } from '../components/DestroyCountdownComponent';
+import { DestroyCountdownComponent } from '../components';
 import { component } from '../ecs';
 
 export function destroyCountdown(countdown: number) {

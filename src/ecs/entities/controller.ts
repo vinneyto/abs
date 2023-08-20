@@ -1,4 +1,4 @@
-import { ControllerComponent } from '../components/ControllerComponent';
+import { ControllerComponent } from '../components';
 import { component } from '../ecs';
 
 export function controller(index: number) {

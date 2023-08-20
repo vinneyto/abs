@@ -1,5 +1,5 @@
 import { World } from '@dimforge/rapier3d';
-import { UpdateComponent } from '../components/UpdateComponent';
+import { UpdateComponent } from '../components';
 import { System } from '../ecs';
 
 export class PhysicsSystem extends System {

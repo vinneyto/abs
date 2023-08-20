@@ -2,7 +2,7 @@ import { Vector3 } from 'three';
 import { Assets } from '../../Assets';
 import { view } from './view';
 import { component } from '../ecs';
-import { RoadSegmentComponent } from '../components/RoadSegmentComponent';
+import { RoadSegmentComponent } from '../components';
 
 export function roadSegment(assets: Assets, pos: number) {
   return [

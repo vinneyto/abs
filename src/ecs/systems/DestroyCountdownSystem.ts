@@ -1,9 +1,9 @@
 import { Time } from '../../Time';
-import { DestroyCountdownComponent } from '../components/DestroyCountdownComponent';
 import {
   LifeCircle,
   LifeCircleComponent,
-} from '../components/LifeCircleComponent';
+  DestroyCountdownComponent,
+} from '../components';
 import { System } from '../ecs';
 
 export class DestroyCountdownSystem extends System {

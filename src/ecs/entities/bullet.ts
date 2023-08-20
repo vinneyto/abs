@@ -3,6 +3,8 @@ import { collider } from './collider';
 import { view } from './view';
 import { destroyCountdown } from './destroyCountdown';
 import { RapierModule } from '../../types';
+import { CollisionGroups } from '../components';
+import { GROUP_ENEMIES } from '.';
 
 const BULLET_RADIUS = 0.03;
 const bulletGeometry = new SphereGeometry(BULLET_RADIUS, 16, 16);
@@ -26,7 +28,10 @@ export function bullet(
         .setCcdEnabled(true)
         .setGravityScale(0)
         .setAdditionalMass(1),
-      RAPIER.ColliderDesc.ball(BULLET_RADIUS)
+      RAPIER.ColliderDesc.ball(BULLET_RADIUS),
+      true,
+      false,
+      new CollisionGroups([GROUP_ENEMIES]) // query contacts with enemies
     ),
     ...destroyCountdown(1),
   ];

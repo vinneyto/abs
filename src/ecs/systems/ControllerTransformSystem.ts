@@ -1,6 +1,5 @@
 import { Object3D } from 'three';
-import { ControllerComponent } from '../components/ControllerComponent';
-import { TransformComponent } from '../components/TransformComponent';
+import { ControllerComponent, TransformComponent } from '../components';
 import { System } from '../ecs';
 
 export class ControllerTransformSystem extends System {

@@ -1,24 +1,25 @@
-import { System } from '../ecs';
+import { Entity, System } from '../ecs';
 import { destroyEntity, getTransform } from '../selectors';
-import { UpdateComponent } from '../components/UpdateComponent';
-import { GameState } from '../model/GameState';
+import { RoadComponent } from '../components';
 import { Assets } from '../../Assets';
-import { barrier } from '../entities/barrier';
-import { roadSegment } from '../entities/roadSegment';
+import { roadSegment, barrier } from '../entities';
+import { RapierModule } from '../../types';
 
 export class RoadManageSystem extends System {
-  public componentsRequired = [UpdateComponent];
+  public componentsRequired = [RoadComponent];
 
   constructor(
-    private readonly state: GameState,
+    private readonly RAPIER: RapierModule,
     private readonly assets: Assets
   ) {
     super();
   }
 
-  public update(): void {
-    const { state, assets } = this;
-    const { road } = state;
+  public update(entity: Entity): void {
+    const { assets, RAPIER } = this;
+
+    const components = this.ecs.getComponents(entity);
+    const road = components.get(RoadComponent);
 
     // delete back segments
     {
@@ -58,7 +59,7 @@ export class RoadManageSystem extends System {
 
       for (let pos = backDistance; pos >= frontDistance; pos -= segmentSize) {
         const roadSegmentEntity = this.ecs.addEntity(roadSegment(assets, pos));
-        const barrierEntity = this.ecs.addEntity(barrier(assets, pos));
+        const barrierEntity = this.ecs.addEntity(barrier(RAPIER, assets, pos));
 
         road.segments.push({ roadSegmentEntity, barrierEntity });
         console.log('add road segment');

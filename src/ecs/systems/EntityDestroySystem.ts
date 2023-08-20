@@ -1,7 +1,4 @@
-import {
-  LifeCircle,
-  LifeCircleComponent,
-} from '../components/LifeCircleComponent';
+import { LifeCircle, LifeCircleComponent } from '../components';
 import { System } from '../ecs';
 
 export class EntityDestroySystem extends System {

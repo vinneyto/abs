@@ -7,40 +7,42 @@ import {
   MathUtils,
   PerspectiveCamera,
   Scene,
+  Vector3,
   WebGLRenderer,
 } from 'three';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { ECS } from './ecs/ecs';
-import { CanvasResizeSystem } from './ecs/systems/CanvasResizeSystem';
-import { canvasSize } from './ecs/entities/canvasSize';
+import {
+  CanvasResizeSystem,
+  ViewAddSystem,
+  EntityDestroySystem,
+  ViewTransformSystem,
+  ViewRemoveSystem,
+  InitFinishSystem,
+  ColliderAddSystem,
+  ColliderRemoveSystem,
+  ColliderTransformSystem,
+  DestroyCountdownSystem,
+  PhysicsSystem,
+  RenderSystem,
+  ViewVisibilitySystem,
+  ControllerVisibilitySystem,
+  ControllerTransformSystem,
+  ControllerGamepadSystem,
+  BulletSpawnSystem,
+  RoadManageSystem,
+  TurntableCameraSystem,
+  RoadMovementSystem,
+  HeadBarrierHitSystem,
+} from './ecs/systems';
+import { canvasSize, update, gun, head, road } from './ecs/entities';
 import 'normalize.css';
 import './style.css';
-import { ViewAddSystem } from './ecs/systems/ViewAddSystem';
-import { EntityDestroySystem as EntityDestroySystem } from './ecs/systems/EntityDestroySystem';
-import { ViewTransformSystem } from './ecs/systems/ViewTransformSystem';
-import { ViewRemoveSystem } from './ecs/systems/ViewRemoveSystem';
-import { InitFinishSystem } from './ecs/systems/InitFinishSystem';
-import { ColliderAddSystem } from './ecs/systems/ColliderAddSystem';
-import { ColliderRemoveSystem } from './ecs/systems/ColliderRemoveSystem';
-import { ColliderTransformSystem } from './ecs/systems/ColliderTransformSystem';
 import { Time } from './Time';
-import { DestroyCountdownSystem } from './ecs/systems/DestroyCountdownSystem';
-import { PhysicsSystem } from './ecs/systems/PhysicsSystem';
-import { RenderSystem } from './ecs/systems/RenderSystem';
-import { update } from './ecs/entities/update';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { loadAssets } from './Assets';
-import { MAIN_SCENE } from './ecs/components/ViewComponent';
-import { ViewVisibilitySystem } from './ecs/systems/ViewVisibilitySystem';
-import { ControllerVisibilitySystem } from './ecs/systems/ControllerVisibilitySystem';
-import { ControllerTransformSystem } from './ecs/systems/ControllerTransformSystem';
-import { ControllerGamepadSystem } from './ecs/systems/ControllerGamepadSystem';
-import { BulletSpawnSystem } from './ecs/systems/BulletSpawnSystem';
-import { gun } from './ecs/entities/gun';
-import { RoadManageSystem } from './ecs/systems/RoadManageSystem';
-import { TurntableCameraSystem } from './ecs/systems/TurntableCameraSystem';
+import { MAIN_SCENE } from './ecs/components';
 import { GameState } from './ecs/model/GameState';
-import { RoadSegmentMovementSystem } from './ecs/systems/RoadSegmentMovementSystem';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -121,45 +123,55 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   scene.background = new Color('gray');
 
   // input system
-  ecs.addSystem(new ControllerGamepadSystem(controllers));
-  ecs.addSystem(new ControllerVisibilitySystem(controllers));
-  ecs.addSystem(new ControllerTransformSystem(controllers));
+  {
+    ecs.addSystem(new ControllerGamepadSystem(controllers));
+    ecs.addSystem(new ControllerVisibilitySystem(controllers));
+    ecs.addSystem(new ControllerTransformSystem(controllers));
+  }
 
   // logic systems
-  ecs.addSystem(new BulletSpawnSystem(RAPIER, assets.gun.bulletSpawnTransform));
-  ecs.addSystem(new DestroyCountdownSystem());
+  {
+    ecs.addSystem(
+      new BulletSpawnSystem(RAPIER, assets.gun.bulletSpawnTransform)
+    );
+    ecs.addSystem(new DestroyCountdownSystem());
 
-  // logic systems - road
-  ecs.addSystem(new RoadSegmentMovementSystem(state));
-  ecs.addSystem(new RoadManageSystem(state, assets));
+    // logic systems - road
+    ecs.addSystem(new RoadMovementSystem(state));
+    ecs.addSystem(new RoadManageSystem(RAPIER, assets));
+    ecs.addSystem(new HeadBarrierHitSystem(world));
+  }
 
-  // logic systems - debug
-  ecs.addSystem(new TurntableCameraSystem(renderer, camera));
+  // engine system
+  {
+    ecs.addSystem(new TurntableCameraSystem(renderer, camera));
 
-  // initialize systems
-  ecs.addSystem(new ViewAddSystem(scene));
-  ecs.addSystem(new ColliderAddSystem(world));
-  ecs.addSystem(new InitFinishSystem());
+    // initialize systems
+    ecs.addSystem(new ViewAddSystem(scene));
+    ecs.addSystem(new ColliderAddSystem(world));
+    ecs.addSystem(new InitFinishSystem());
 
-  // world update systems
-  ecs.addSystem(new PhysicsSystem(world));
-  ecs.addSystem(new ColliderTransformSystem());
-  ecs.addSystem(new ViewTransformSystem());
-  ecs.addSystem(new ViewVisibilitySystem());
+    // world update systems
+    ecs.addSystem(new PhysicsSystem(world));
+    ecs.addSystem(new ColliderTransformSystem());
+    ecs.addSystem(new ViewTransformSystem());
+    ecs.addSystem(new ViewVisibilitySystem());
 
-  // destroy systems
-  ecs.addSystem(new ViewRemoveSystem());
-  ecs.addSystem(new ColliderRemoveSystem(world));
-  ecs.addSystem(new EntityDestroySystem());
+    // destroy systems
+    ecs.addSystem(new ViewRemoveSystem());
+    ecs.addSystem(new ColliderRemoveSystem(world));
+    ecs.addSystem(new EntityDestroySystem());
 
-  // render system
-  ecs.addSystem(new CanvasResizeSystem(renderer));
-  ecs.addSystem(new RenderSystem(renderer, scene, camera));
+    // render system
+    ecs.addSystem(new CanvasResizeSystem(renderer));
+    ecs.addSystem(new RenderSystem(renderer, scene, camera));
+  }
 
   // entities
 
   ecs.addEntity(canvasSize());
   ecs.addEntity(update());
+  ecs.addEntity(road());
 
   // ground
   // ecs.addEntity(
@@ -179,6 +191,8 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   // guns - left and right
   ecs.addEntity(gun(assets, 1));
   ecs.addEntity(gun(assets, 0));
+
+  ecs.addEntity(head(RAPIER, new Vector3(0.0, 1.2, -2), 0.15));
 
   // ecs.addEntity(cuboid(RAPIER, new Vector3(-0.5, 0.5, -3), 1, 1, 1));
   // ecs.addEntity(cuboid(RAPIER, new Vector3(0.5, 0.5, -3), 1, 1, 1));
