@@ -13,3 +13,4 @@ export * from './update';
 export * from './view';
 export * from './road';
 export * from './closestBarrierPointer';
+export * from './closestBarrierLabel';

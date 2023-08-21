@@ -5,8 +5,9 @@ import {
   LifeCircleComponent,
 } from '../../components';
 import { System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class ColliderRemoveSystem extends System {
+export class ColliderRemoveSystem extends System<GameState> {
   constructor(private readonly world: World) {
     super();
   }

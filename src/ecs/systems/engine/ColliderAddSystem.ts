@@ -1,4 +1,3 @@
-import { World } from '@dimforge/rapier3d';
 import {
   ColliderComponent,
   LifeCircle,
@@ -6,19 +5,17 @@ import {
   TransformComponent,
 } from '../../components';
 import { Entity, System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class ColliderAddSystem extends System {
-  constructor(private readonly world: World) {
-    super();
-  }
-
+export class ColliderAddSystem extends System<GameState> {
   public componentsRequired = [
     LifeCircleComponent,
     ColliderComponent,
     TransformComponent,
   ];
 
-  public update(entity: Entity): void {
+  public update(entity: Entity, state: GameState): void {
+    const { world } = state;
     const components = this.ecs.getComponents(entity);
 
     const lifeCircleComponent = components.get(LifeCircleComponent);
@@ -49,11 +46,9 @@ export class ColliderAddSystem extends System {
       .setCollisionGroups(colliderComponent.collisionGroups.getMask())
       .setSolverGroups(colliderComponent.solverGroups.getMask());
 
-    const rigidBody = this.world.createRigidBody(
-      colliderComponent.rigidBodyDesc
-    );
+    const rigidBody = world.createRigidBody(colliderComponent.rigidBodyDesc);
 
-    const collider = this.world.createCollider(
+    const collider = world.createCollider(
       colliderComponent.colliderDesc,
       rigidBody
     );

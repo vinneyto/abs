@@ -1,19 +1,16 @@
-import { Scene } from 'three';
 import {
   LifeCircle,
   LifeCircleComponent,
   ViewComponent,
 } from '../../components';
 import { System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class ViewAddSystem extends System {
-  public constructor(private readonly scene: Scene) {
-    super();
-  }
-
+export class ViewAddSystem extends System<GameState> {
   public componentsRequired = [LifeCircleComponent, ViewComponent];
 
-  public update(entity: number): void {
+  public update(entity: number, state: GameState): void {
+    const { scene } = state;
     const components = this.ecs.getComponents(entity);
     const lifeCircleComponent = components.get(LifeCircleComponent);
     const { view, addTo, castShadow, receiveShadow } =
@@ -23,10 +20,10 @@ export class ViewAddSystem extends System {
       return;
     }
 
-    const container = this.scene.getObjectByName(addTo);
+    const container = scene.getObjectByName(addTo);
 
     if (container === undefined) {
-      console.log(this.scene);
+      console.log(scene);
       throw new Error(`unable add object to container ${addTo}`);
     }
 

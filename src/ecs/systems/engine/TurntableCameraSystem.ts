@@ -1,8 +1,9 @@
-import { Camera, Vector2, Vector3, WebGLRenderer } from 'three';
+import { Vector2, Vector3 } from 'three';
 import { UpdateComponent } from '../../components';
-import { System } from '../../ecs';
+import { Entity, System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class TurntableCameraSystem extends System {
+export class TurntableCameraSystem extends System<GameState> {
   public componentsRequired = [UpdateComponent];
 
   public onRotate?: () => void;
@@ -11,8 +12,6 @@ export class TurntableCameraSystem extends System {
   private polarAngle = Math.PI / 8;
 
   constructor(
-    private readonly renderer: WebGLRenderer,
-    private readonly camera: Camera,
     private readonly radius = 20,
     private readonly sensitivity = 0.01,
     private readonly center = new Vector3(0, 0, 0),
@@ -66,12 +65,12 @@ export class TurntableCameraSystem extends System {
     document.addEventListener('touchstart', onMouseDown);
   }
 
-  public update(): void {
-    if (this.renderer.xr.getSession() !== null) {
+  public update(_: Entity, state: GameState): void {
+    if (state.renderer.xr.getSession() !== null) {
       return;
     }
 
-    const { camera } = this;
+    const { camera } = state;
 
     const theta = this.polarAngle;
     const phi = this.azimuthalAngle;

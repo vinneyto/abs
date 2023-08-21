@@ -5,8 +5,9 @@ import {
   DestroyCountdownComponent,
 } from '../../components';
 import { System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class DestroyCountdownSystem extends System {
+export class DestroyCountdownSystem extends System<GameState> {
   public componentsRequired = [LifeCircleComponent, DestroyCountdownComponent];
 
   public update(entity: number): void {

@@ -1,14 +1,14 @@
 export type Entity = number;
 export abstract class Component {}
-export abstract class System {
+export abstract class System<State> {
   public abstract componentsRequired: Function[];
-  public abstract update(entity: Entity): void;
-  public updateAll(entities: Set<Entity>) {
+  public abstract update(entity: Entity, state: State): void;
+  public updateAll(entities: Set<Entity>, state: State) {
     for (const entity of entities) {
-      this.update(entity);
+      this.update(entity, state);
     }
   }
-  public ecs!: ECS;
+  public ecs!: ECS<State>;
 }
 export type ComponentClass<T extends Component> = new (...args: any[]) => T;
 export class ComponentContainer {
@@ -60,11 +60,11 @@ export function component<T extends Component>(C: new () => T) {
   return new ComponentBuilder(C);
 }
 
-export class ECS {
+export class ECS<State> {
   private nextEntityID = 1;
   private entitiesToDestroy = new Array<Entity>();
   private entities = new Map<Entity, ComponentContainer>();
-  private systems = new Map<System, Set<Entity>>();
+  private systems = new Map<System<State>, Set<Entity>>();
   public addEntity(...componentSets: Array<ComponentBuilder[]>): Entity {
     let entity = this.nextEntityID;
     this.nextEntityID++;
@@ -101,7 +101,7 @@ export class ECS {
       this.checkES(entity, system);
     }
   }
-  private checkES(entity: Entity, system: System): void {
+  private checkES(entity: Entity, system: System<State>): void {
     let have = this.entities.get(entity);
     let need = system.componentsRequired;
     if (have?.hasAll(need)) {
@@ -110,7 +110,7 @@ export class ECS {
       this.systems.get(system)?.delete(entity); // no-op if doesn't have it
     }
   }
-  public addSystem(system: System): void {
+  public addSystem(system: System<State>): void {
     if (system.componentsRequired.length == 0) {
       console.warn('System ' + system + ' not added: empty components list.');
       return;
@@ -121,12 +121,12 @@ export class ECS {
       this.checkES(entity, system);
     }
   }
-  public removeSystem(system: System): void {
+  public removeSystem(system: System<State>): void {
     this.systems.delete(system);
   }
-  public update(): void {
+  public update(state: State): void {
     for (let [system, entities] of this.systems.entries()) {
-      system.updateAll(entities);
+      system.updateAll(entities, state);
     }
     while (this.entitiesToDestroy.length > 0) {
       this.destroyEntity(this.entitiesToDestroy.pop()!);

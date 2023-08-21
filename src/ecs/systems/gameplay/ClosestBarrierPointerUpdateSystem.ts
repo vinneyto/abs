@@ -7,22 +7,19 @@ import { System } from '../../ecs';
 import { GameState } from '../../model/GameState';
 import { getRoadComponent, getTransform } from '../../selectors';
 
-export class ClosestBarrierPointerUpdateSystem extends System {
+export class ClosestBarrierPointerUpdateSystem extends System<GameState> {
   public componentsRequired = [
     ClosestBarrierPointerComponent,
     TransformComponent,
     VisibilityComponent,
   ];
 
-  constructor(public readonly state: GameState) {
-    super();
-  }
-
-  public update(entity: number): void {
+  public update(entity: number, state: GameState): void {
     const components = this.ecs.getComponents(entity);
 
-    const { ecs, state } = this;
+    const { ecs } = this;
     const { position } = components.get(TransformComponent);
+    const { pan } = components.get(ClosestBarrierPointerComponent);
     const visibilityComponent = components.get(VisibilityComponent);
 
     const { closestBarrierEntity } = getRoadComponent(ecs, state);
@@ -32,7 +29,11 @@ export class ClosestBarrierPointerUpdateSystem extends System {
       return;
     }
 
-    position.set(0, 3, getTransform(ecs, closestBarrierEntity).position.z);
+    position.set(
+      pan.x,
+      pan.y,
+      getTransform(ecs, closestBarrierEntity).position.z
+    );
 
     visibilityComponent.visible = true;
   }

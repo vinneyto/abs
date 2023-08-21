@@ -4,8 +4,9 @@ import {
   ViewComponent,
 } from '../../components';
 import { System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class ViewRemoveSystem extends System {
+export class ViewRemoveSystem extends System<GameState> {
   public componentsRequired = [LifeCircleComponent, ViewComponent];
 
   public update(entity: number): void {

@@ -6,25 +6,18 @@ import {
   TransformComponent,
 } from '../../components';
 import { System } from '../../ecs';
-import { RapierModule } from '../../../types';
 import { bullet } from '../../entities';
+import { GameState } from '../../model/GameState';
 
-export class BulletSpawnSystem extends System {
-  constructor(
-    private readonly RAPIER: RapierModule,
-    private readonly bulletSpawnTransform: Matrix4
-  ) {
-    super();
-  }
-
+export class BulletSpawnSystem extends System<GameState> {
   public componentsRequired = [
     BulletSpawnComponent,
     ControllerComponent,
     TransformComponent,
   ];
 
-  public update(entity: number): void {
-    const { RAPIER } = this;
+  public update(entity: number, state: GameState): void {
+    const { RAPIER, assets } = state;
 
     const components = this.ecs.getComponents(entity);
 
@@ -41,7 +34,7 @@ export class BulletSpawnSystem extends System {
     if (firePressed && bulletSpawnComponent.countdownToSpawn <= 0) {
       const bulletSpawnMatrix = new Matrix4()
         .compose(position, quaternion, scale)
-        .multiply(this.bulletSpawnTransform);
+        .multiply(assets.gun.bulletSpawnTransform);
 
       const spawnPoint = new Vector3();
       const direction = new Vector3();

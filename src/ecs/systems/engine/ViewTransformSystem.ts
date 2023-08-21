@@ -1,7 +1,8 @@
 import { TransformComponent, ViewComponent } from '../../components';
 import { System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class ViewTransformSystem extends System {
+export class ViewTransformSystem extends System<GameState> {
   public componentsRequired = [ViewComponent, TransformComponent];
 
   public update(entity: number): void {

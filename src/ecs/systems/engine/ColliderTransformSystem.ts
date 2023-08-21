@@ -1,7 +1,8 @@
 import { ColliderComponent, TransformComponent } from '../../components';
 import { System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class ColliderTransformSystem extends System {
+export class ColliderTransformSystem extends System<GameState> {
   public componentsRequired = [ColliderComponent, TransformComponent];
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);

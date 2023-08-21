@@ -3,7 +3,7 @@ import { System } from '../../ecs';
 import { GameState } from '../../model/GameState';
 import { ColliderComponent } from '../../components';
 
-export class IntersectionsCollectSystem extends System {
+export class IntersectionsCollectSystem extends System<GameState> {
   public componentsRequired = [ColliderComponent];
 
   constructor(

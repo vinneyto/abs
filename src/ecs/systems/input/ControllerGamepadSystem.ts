@@ -1,8 +1,9 @@
 import { Object3D } from 'three';
 import { ControllerComponent } from '../../components';
 import { System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class ControllerGamepadSystem extends System {
+export class ControllerGamepadSystem extends System<GameState> {
   private gamepads: Array<Gamepad | undefined> = [];
 
   constructor(controllers: Object3D[]) {

@@ -12,41 +12,43 @@ import {
 import { ECS, Entity } from './ecs';
 import { GameState } from './model/GameState';
 
-export function getView(ecs: ECS, entity: Entity) {
+export type GameECS = ECS<GameState>;
+
+export function getView(ecs: GameECS, entity: Entity) {
   const components = ecs.getComponents(entity);
   return components.get(ViewComponent);
 }
 
-export function getTransform(ecs: ECS, entity: Entity) {
+export function getTransform(ecs: GameECS, entity: Entity) {
   const components = ecs.getComponents(entity);
   return components.get(TransformComponent);
 }
 
-export function getVisibility(ecs: ECS, entity: Entity) {
+export function getVisibility(ecs: GameECS, entity: Entity) {
   const components = ecs.getComponents(entity);
   return components.get(VisibilityComponent);
 }
 
-export function getLifeCircle(ecs: ECS, entity: Entity) {
+export function getLifeCircle(ecs: GameECS, entity: Entity) {
   const components = ecs.getComponents(entity);
   return components.get(LifeCircleComponent);
 }
 
-export function destroyEntity(ecs: ECS, entity: Entity) {
+export function destroyEntity(ecs: GameECS, entity: Entity) {
   getLifeCircle(ecs, entity).state = LifeCircle.Destroy;
 }
 
-export function getRoadComponent(ecs: ECS, state: GameState) {
-  const components = ecs.getComponents(state.roadEntity);
+export function getRoadComponent(ecs: GameECS, state: GameState) {
+  const components = ecs.getComponents(state.entities.road);
   return components.get(RoadComponent);
 }
 
-export function getHeadComponent(ecs: ECS, state: GameState) {
-  const components = ecs.getComponents(state.headEntity);
+export function getHeadComponent(ecs: GameECS, state: GameState) {
+  const components = ecs.getComponents(state.entities.head);
   return components.get(HeadComponent);
 }
 
-export function getRoadSegmentComponent(ecs: ECS, entity: Entity) {
+export function getRoadSegmentComponent(ecs: GameECS, entity: Entity) {
   const components = ecs.getComponents(entity);
   return components.get(RoadSegmentComponent);
 }

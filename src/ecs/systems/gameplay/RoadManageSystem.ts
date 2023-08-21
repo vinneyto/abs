@@ -1,22 +1,14 @@
 import { Entity, System } from '../../ecs';
 import { destroyEntity, getTransform } from '../../selectors';
 import { RoadComponent, RoadSegment } from '../../components';
-import { Assets } from '../../../Assets';
 import { roadSegment, barrier } from '../../entities';
-import { RapierModule } from '../../../types';
+import { GameState } from '../../model/GameState';
 
-export class RoadManageSystem extends System {
+export class RoadManageSystem extends System<GameState> {
   public componentsRequired = [RoadComponent];
 
-  constructor(
-    private readonly RAPIER: RapierModule,
-    private readonly assets: Assets
-  ) {
-    super();
-  }
-
-  public update(entity: Entity): void {
-    const { assets, RAPIER } = this;
+  public update(entity: Entity, state: GameState): void {
+    const { assets, RAPIER } = state;
 
     const components = this.ecs.getComponents(entity);
     const road = components.get(RoadComponent);
@@ -58,24 +50,34 @@ export class RoadManageSystem extends System {
       const { frontDistance, segmentSize } = road;
 
       for (let pos = backDistance; pos >= frontDistance; pos -= segmentSize) {
+        road.segmentCount++;
+
         const roadSegmentEntity = this.ecs.addEntity(roadSegment(assets, pos));
-        const barrierEntity = this.ecs.addEntity(barrier(RAPIER, assets, pos));
+
+        let barrierEntity: Entity | undefined;
+
+        if (road.segmentCount % road.barrierFrequency === 0) {
+          barrierEntity = this.ecs.addEntity(barrier(RAPIER, assets, pos));
+        }
 
         road.segments.push({ roadSegmentEntity, barrierEntity });
         console.log('add road segment');
       }
     }
 
-    road.closestBarrierEntity = this.getClosestBarrier(road.segments);
+    road.closestBarrierEntity = this.getClosestBarrier(
+      road.segments,
+      road.segmentSize * road.barrierFrequency
+    );
   }
 
-  private getClosestBarrier(segments: RoadSegment[]) {
+  private getClosestBarrier(segments: RoadSegment[], distance: number) {
     // reverse order
     for (let i = segments.length - 1; i >= 0; i--) {
       const segment = segments[i];
       if (segment.barrierEntity) {
         const transform = getTransform(this.ecs, segment.barrierEntity);
-        if (transform.position.z > -10) {
+        if (transform.position.z > -distance) {
           return segment.barrierEntity;
         }
       }

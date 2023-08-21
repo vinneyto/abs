@@ -1,7 +1,8 @@
 import { LifeCircle, LifeCircleComponent } from '../../components';
 import { System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class InitFinishSystem extends System {
+export class InitFinishSystem extends System<GameState> {
   public componentsRequired = [LifeCircleComponent];
 
   public update(entity: number): void {

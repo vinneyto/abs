@@ -1,20 +1,12 @@
-import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { UpdateComponent } from '../../components';
-import { System } from '../../ecs';
+import { Entity, System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class RenderSystem extends System {
-  constructor(
-    private readonly renderer: WebGLRenderer,
-    private readonly scene: Scene,
-    private readonly camera: PerspectiveCamera
-  ) {
-    super();
-  }
-
+export class RenderSystem extends System<GameState> {
   public componentsRequired = [UpdateComponent];
 
-  public update(): void {
-    const { renderer, scene, camera } = this;
+  public update(_: Entity, state: GameState): void {
+    const { renderer, scene, camera } = state;
 
     camera.aspect = renderer.domElement.width / renderer.domElement.height;
     camera.updateProjectionMatrix();

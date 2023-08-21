@@ -1,4 +1,4 @@
-import { Collider, World } from '@dimforge/rapier3d';
+import { Collider } from '@dimforge/rapier3d';
 import {
   CollisionGroups,
   HeadComponent,
@@ -9,8 +9,9 @@ import { Entity, System } from '../../ecs';
 import { Mesh, MeshPhysicalMaterial } from 'three';
 import { GROUP_BARRIER } from '../../entities';
 import { getColliderEntity } from '../../selectors';
+import { GameState } from '../../model/GameState';
 
-export class HeadBarrierHitSystem extends System {
+export class HeadBarrierHitSystem extends System<GameState> {
   private colliderEntity?: Entity;
 
   private barrierMask = new CollisionGroups([GROUP_BARRIER]).getMask();
@@ -21,11 +22,7 @@ export class HeadBarrierHitSystem extends System {
     ViewComponent,
   ];
 
-  constructor(private readonly world: World) {
-    super();
-  }
-
-  public update(entity: number): void {
+  public update(entity: number, state: GameState): void {
     const components = this.ecs.getComponents(entity);
 
     const { position, quaternion } = components.get(TransformComponent);
@@ -36,7 +33,7 @@ export class HeadBarrierHitSystem extends System {
 
     this.colliderEntity = undefined;
 
-    this.world.intersectionsWithShape(
+    state.world.intersectionsWithShape(
       position,
       quaternion,
       headComponent.shape,

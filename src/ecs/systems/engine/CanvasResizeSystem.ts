@@ -1,16 +1,12 @@
-import { WebGLRenderer } from 'three';
 import { CanvasSizeComponent } from '../../components';
 import { Entity, System } from '../../ecs';
+import { GameState } from '../../model/GameState';
 
-export class CanvasResizeSystem extends System {
-  constructor(private readonly renderer: WebGLRenderer) {
-    super();
-  }
-
+export class CanvasResizeSystem extends System<GameState> {
   public componentsRequired = [CanvasSizeComponent];
 
-  public update(entity: Entity): void {
-    const { renderer } = this;
+  public update(entity: Entity, state: GameState): void {
+    const { renderer } = state;
 
     const components = this.ecs.getComponents(entity);
 

@@ -34,6 +34,7 @@ import {
   RoadMovementSystem,
   HeadBarrierHitSystem,
   ClosestBarrierPointerUpdateSystem,
+  ClosestBarrierLabelUpdateSystem,
 } from './ecs/systems';
 import {
   canvasSize,
@@ -42,6 +43,7 @@ import {
   head,
   road,
   closestBarrierPointer,
+  closestBarrierLabel,
 } from './ecs/entities';
 import 'normalize.css';
 import './style.css';
@@ -49,7 +51,7 @@ import { Time } from './Time';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { loadAssets } from './Assets';
 import { MAIN_SCENE } from './ecs/components';
-import { GameState } from './ecs/model/GameState';
+import { GameState, GameStateEntities } from './ecs/model/GameState';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -58,7 +60,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   renderer.shadowMap.enabled = true;
   // renderer.shadowMap.type = PCFSoftShadowMap;
 
-  const ecs = new ECS();
+  const ecs = new ECS<GameState>();
   const scene = new Scene();
   scene.name = MAIN_SCENE;
 
@@ -125,8 +127,6 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   const gravity = { x: 0.0, y: -9.81, z: 0.0 };
   const world = new RAPIER.World(gravity);
 
-  const state = new GameState();
-
   scene.background = new Color('gray');
 
   // input system
@@ -138,29 +138,28 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   // logic systems
   {
-    ecs.addSystem(
-      new BulletSpawnSystem(RAPIER, assets.gun.bulletSpawnTransform)
-    );
+    ecs.addSystem(new BulletSpawnSystem());
     ecs.addSystem(new DestroyCountdownSystem());
 
     // logic systems - road
-    ecs.addSystem(new RoadMovementSystem(state));
-    ecs.addSystem(new RoadManageSystem(RAPIER, assets));
-    ecs.addSystem(new ClosestBarrierPointerUpdateSystem(state));
-    ecs.addSystem(new HeadBarrierHitSystem(world));
+    ecs.addSystem(new ClosestBarrierPointerUpdateSystem());
+    ecs.addSystem(new ClosestBarrierLabelUpdateSystem());
+    ecs.addSystem(new RoadMovementSystem());
+    ecs.addSystem(new RoadManageSystem());
+    ecs.addSystem(new HeadBarrierHitSystem());
   }
 
   // engine system
   {
-    ecs.addSystem(new TurntableCameraSystem(renderer, camera));
+    ecs.addSystem(new TurntableCameraSystem());
 
     // initialize systems
-    ecs.addSystem(new ViewAddSystem(scene));
-    ecs.addSystem(new ColliderAddSystem(world));
+    ecs.addSystem(new ViewAddSystem());
+    ecs.addSystem(new ColliderAddSystem());
     ecs.addSystem(new InitFinishSystem());
 
     // world update systems
-    ecs.addSystem(new PhysicsSystem(world));
+    ecs.addSystem(new PhysicsSystem());
     ecs.addSystem(new ColliderTransformSystem());
     ecs.addSystem(new ViewTransformSystem());
     ecs.addSystem(new ViewVisibilitySystem());
@@ -171,8 +170,8 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     ecs.addSystem(new EntityDestroySystem());
 
     // render system
-    ecs.addSystem(new CanvasResizeSystem(renderer));
-    ecs.addSystem(new RenderSystem(renderer, scene, camera));
+    ecs.addSystem(new CanvasResizeSystem());
+    ecs.addSystem(new RenderSystem());
   }
 
   // entities
@@ -180,9 +179,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   ecs.addEntity(canvasSize());
   ecs.addEntity(update());
   ecs.addEntity(closestBarrierPointer());
-
-  state.headEntity = ecs.addEntity(head(RAPIER));
-  state.roadEntity = ecs.addEntity(road());
+  ecs.addEntity(closestBarrierLabel());
 
   // ground
   // ecs.addEntity(
@@ -207,12 +204,25 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   // ecs.addEntity(cuboid(RAPIER, new Vector3(0.5, 0.5, -3), 1, 1, 1));
   // ecs.addEntity(cuboid(RAPIER, new Vector3(0.0, 1.5, -3), 1, 1, 1));
 
+  const headEntity = ecs.addEntity(head(RAPIER));
+  const roadEntity = ecs.addEntity(road());
+
+  const gameState = new GameState(
+    scene,
+    camera,
+    world,
+    renderer,
+    RAPIER,
+    assets,
+    new GameStateEntities(roadEntity, headEntity)
+  );
+
   document.body.appendChild(VRButton.createButton(renderer));
 
   Time.init();
 
   renderer.setAnimationLoop(() => {
-    ecs.update();
+    ecs.update(gameState);
 
     // if (gamepad0 && gamepad0.buttons.some(b => b.pressed)) {
     //   console.log('pressed', JSON.stringify(gamepad0.buttons));

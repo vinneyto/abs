@@ -4,15 +4,11 @@ import { System } from '../../ecs';
 import { GameState } from '../../model/GameState';
 import { getRoadComponent } from '../../selectors';
 
-export class RoadMovementSystem extends System {
+export class RoadMovementSystem extends System<GameState> {
   public componentsRequired = [RoadSegmentComponent, TransformComponent];
 
-  constructor(private readonly state: GameState) {
-    super();
-  }
-
-  public update(entity: number): void {
-    const { ecs, state } = this;
+  public update(entity: number, state: GameState): void {
+    const { ecs } = this;
     const components = this.ecs.getComponents(entity);
 
     const { position } = components.get(TransformComponent);

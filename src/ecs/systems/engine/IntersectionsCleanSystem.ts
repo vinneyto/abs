@@ -2,7 +2,7 @@ import { UpdateComponent } from '../../components';
 import { System } from '../../ecs';
 import { GameState } from '../../model/GameState';
 
-export class IntersectionsCleanSystem extends System {
+export class IntersectionsCleanSystem extends System<GameState> {
   public componentsRequired = [UpdateComponent];
 
   constructor(private readonly state: GameState) {

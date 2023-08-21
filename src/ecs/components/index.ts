@@ -12,3 +12,4 @@ export * from './UpdateComponent';
 export * from './ViewComponent';
 export * from './VisibilityComponent';
 export * from './ClosestBarrierPointerComponent';
+export * from './ClosestBarrierCountComponent';
