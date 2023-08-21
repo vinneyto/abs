@@ -7,7 +7,6 @@ import {
   MathUtils,
   PerspectiveCamera,
   Scene,
-  Vector3,
   WebGLRenderer,
 } from 'three';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
@@ -34,8 +33,16 @@ import {
   TurntableCameraSystem,
   RoadMovementSystem,
   HeadBarrierHitSystem,
+  ClosestBarrierPointerUpdateSystem,
 } from './ecs/systems';
-import { canvasSize, update, gun, head, road } from './ecs/entities';
+import {
+  canvasSize,
+  update,
+  gun,
+  head,
+  road,
+  closestBarrierPointer,
+} from './ecs/entities';
 import 'normalize.css';
 import './style.css';
 import { Time } from './Time';
@@ -139,6 +146,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     // logic systems - road
     ecs.addSystem(new RoadMovementSystem(state));
     ecs.addSystem(new RoadManageSystem(RAPIER, assets));
+    ecs.addSystem(new ClosestBarrierPointerUpdateSystem(state));
     ecs.addSystem(new HeadBarrierHitSystem(world));
   }
 
@@ -171,7 +179,10 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   ecs.addEntity(canvasSize());
   ecs.addEntity(update());
-  ecs.addEntity(road());
+  ecs.addEntity(closestBarrierPointer());
+
+  state.headEntity = ecs.addEntity(head(RAPIER));
+  state.roadEntity = ecs.addEntity(road());
 
   // ground
   // ecs.addEntity(
@@ -191,8 +202,6 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   // guns - left and right
   ecs.addEntity(gun(assets, 1));
   ecs.addEntity(gun(assets, 0));
-
-  ecs.addEntity(head(RAPIER, new Vector3(0.0, 1.2, -2), 0.15));
 
   // ecs.addEntity(cuboid(RAPIER, new Vector3(-0.5, 0.5, -3), 1, 1, 1));
   // ecs.addEntity(cuboid(RAPIER, new Vector3(0.5, 0.5, -3), 1, 1, 1));

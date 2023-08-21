@@ -1,6 +1,7 @@
 import { Shape } from '@dimforge/rapier3d';
-import { Component } from '../ecs';
+import { Component, Entity } from '../ecs';
 
 export class HeadComponent extends Component {
   shape!: Shape;
+  colliderEntity?: Entity;
 }

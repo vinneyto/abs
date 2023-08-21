@@ -1,5 +1,5 @@
-import { TransformComponent, ViewComponent } from '../components';
-import { System } from '../ecs';
+import { TransformComponent, ViewComponent } from '../../components';
+import { System } from '../../ecs';
 
 export class ViewTransformSystem extends System {
   public componentsRequired = [ViewComponent, TransformComponent];

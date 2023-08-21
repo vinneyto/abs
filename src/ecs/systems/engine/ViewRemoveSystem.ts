@@ -1,5 +1,9 @@
-import { LifeCircle, LifeCircleComponent, ViewComponent } from '../components';
-import { System } from '../ecs';
+import {
+  LifeCircle,
+  LifeCircleComponent,
+  ViewComponent,
+} from '../../components';
+import { System } from '../../ecs';
 
 export class ViewRemoveSystem extends System {
   public componentsRequired = [LifeCircleComponent, ViewComponent];

@@ -1,6 +1,6 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { UpdateComponent } from '../components';
-import { System } from '../ecs';
+import { UpdateComponent } from '../../components';
+import { System } from '../../ecs';
 
 export class RenderSystem extends System {
   constructor(

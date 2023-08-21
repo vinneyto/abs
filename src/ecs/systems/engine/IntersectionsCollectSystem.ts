@@ -1,7 +1,7 @@
 import { World } from '@dimforge/rapier3d';
-import { System } from '../ecs';
-import { GameState } from '../model/GameState';
-import { ColliderComponent } from '../components';
+import { System } from '../../ecs';
+import { GameState } from '../../model/GameState';
+import { ColliderComponent } from '../../components';
 
 export class IntersectionsCollectSystem extends System {
   public componentsRequired = [ColliderComponent];

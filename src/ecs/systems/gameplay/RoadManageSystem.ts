@@ -1,9 +1,9 @@
-import { Entity, System } from '../ecs';
-import { destroyEntity, getTransform } from '../selectors';
-import { RoadComponent } from '../components';
-import { Assets } from '../../Assets';
-import { roadSegment, barrier } from '../entities';
-import { RapierModule } from '../../types';
+import { Entity, System } from '../../ecs';
+import { destroyEntity, getTransform } from '../../selectors';
+import { RoadComponent, RoadSegment } from '../../components';
+import { Assets } from '../../../Assets';
+import { roadSegment, barrier } from '../../entities';
+import { RapierModule } from '../../../types';
 
 export class RoadManageSystem extends System {
   public componentsRequired = [RoadComponent];
@@ -65,5 +65,21 @@ export class RoadManageSystem extends System {
         console.log('add road segment');
       }
     }
+
+    road.closestBarrierEntity = this.getClosestBarrier(road.segments);
+  }
+
+  private getClosestBarrier(segments: RoadSegment[]) {
+    // reverse order
+    for (let i = segments.length - 1; i >= 0; i--) {
+      const segment = segments[i];
+      if (segment.barrierEntity) {
+        const transform = getTransform(this.ecs, segment.barrierEntity);
+        if (transform.position.z > -10) {
+          return segment.barrierEntity;
+        }
+      }
+    }
+    return undefined;
   }
 }

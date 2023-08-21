@@ -11,3 +11,4 @@ export * from './TransformComponent';
 export * from './UpdateComponent';
 export * from './ViewComponent';
 export * from './VisibilityComponent';
+export * from './ClosestBarrierPointerComponent';

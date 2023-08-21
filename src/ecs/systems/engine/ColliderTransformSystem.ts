@@ -1,5 +1,5 @@
-import { ColliderComponent, TransformComponent } from '../components';
-import { System } from '../ecs';
+import { ColliderComponent, TransformComponent } from '../../components';
+import { System } from '../../ecs';
 
 export class ColliderTransformSystem extends System {
   public componentsRequired = [ColliderComponent, TransformComponent];

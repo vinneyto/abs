@@ -1,13 +1,13 @@
 import { Matrix4, Vector3 } from 'three';
-import { Time } from '../../Time';
+import { Time } from '../../../Time';
 import {
   BulletSpawnComponent,
   ControllerComponent,
   TransformComponent,
-} from '../components';
-import { System } from '../ecs';
-import { RapierModule } from '../../types';
-import { bullet } from '../entities';
+} from '../../components';
+import { System } from '../../ecs';
+import { RapierModule } from '../../../types';
+import { bullet } from '../../entities';
 
 export class BulletSpawnSystem extends System {
   constructor(

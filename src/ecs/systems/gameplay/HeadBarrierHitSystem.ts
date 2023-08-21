@@ -4,13 +4,15 @@ import {
   HeadComponent,
   TransformComponent,
   ViewComponent,
-} from '../components';
-import { System } from '../ecs';
+} from '../../components';
+import { Entity, System } from '../../ecs';
 import { Mesh, MeshPhysicalMaterial } from 'three';
-import { GROUP_BARRIER } from '../entities';
+import { GROUP_BARRIER } from '../../entities';
+import { getColliderEntity } from '../../selectors';
 
 export class HeadBarrierHitSystem extends System {
-  private hasCollision = false;
+  private colliderEntity?: Entity;
+
   private barrierMask = new CollisionGroups([GROUP_BARRIER]).getMask();
 
   public componentsRequired = [
@@ -27,27 +29,39 @@ export class HeadBarrierHitSystem extends System {
     const components = this.ecs.getComponents(entity);
 
     const { position, quaternion } = components.get(TransformComponent);
-    const { shape } = components.get(HeadComponent);
+    const headComponent = components.get(HeadComponent);
     const { view } = components.get(ViewComponent);
 
     const material = (view as Mesh).material as MeshPhysicalMaterial;
 
-    this.hasCollision = false;
+    this.colliderEntity = undefined;
 
     this.world.intersectionsWithShape(
       position,
       quaternion,
-      shape,
+      headComponent.shape,
       this.checkCollision,
       undefined,
       this.barrierMask
     );
 
-    material.color.setColorName(this.hasCollision ? 'red' : 'yellow');
+    material.color.setColorName(
+      this.colliderEntity !== undefined ? 'red' : 'yellow'
+    );
+
+    if (headComponent.colliderEntity !== this.colliderEntity) {
+      headComponent.colliderEntity = this.colliderEntity;
+    }
   }
 
-  checkCollision = (_handle: Collider) => {
-    this.hasCollision = true;
+  checkCollision = (handle: Collider) => {
+    const colliderEntity = getColliderEntity(handle);
+
+    if (colliderEntity !== undefined) {
+      this.colliderEntity = colliderEntity;
+      return false;
+    }
+
     return true;
   };
 }

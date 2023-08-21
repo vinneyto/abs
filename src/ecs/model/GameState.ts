@@ -1,4 +1,5 @@
 import RAPIER from '@dimforge/rapier3d';
+import { Entity } from '../ecs';
 
 interface IntersectionPair {
   collider1: RAPIER.Collider;
@@ -6,6 +7,8 @@ interface IntersectionPair {
 }
 
 export class GameState {
-  public roadVelocity = 2;
+  public roadEntity: Entity = 0;
+  public headEntity: Entity = 0;
+
   public intersections: IntersectionPair[] = [];
 }

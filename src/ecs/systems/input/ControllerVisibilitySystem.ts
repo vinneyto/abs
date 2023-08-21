@@ -1,6 +1,6 @@
 import { Object3D } from 'three';
-import { ControllerComponent, VisibilityComponent } from '../components';
-import { System } from '../ecs';
+import { ControllerComponent, VisibilityComponent } from '../../components';
+import { System } from '../../ecs';
 
 export class ControllerVisibilitySystem extends System {
   constructor(private readonly controllers: Object3D[]) {

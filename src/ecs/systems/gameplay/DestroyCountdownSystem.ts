@@ -1,10 +1,10 @@
-import { Time } from '../../Time';
+import { Time } from '../../../Time';
 import {
   LifeCircle,
   LifeCircleComponent,
   DestroyCountdownComponent,
-} from '../components';
-import { System } from '../ecs';
+} from '../../components';
+import { System } from '../../ecs';
 
 export class DestroyCountdownSystem extends System {
   public componentsRequired = [LifeCircleComponent, DestroyCountdownComponent];

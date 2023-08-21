@@ -4,15 +4,17 @@ import { view } from './view';
 import { component } from '../ecs';
 import { HeadComponent } from '../components';
 
-export function head(RAPIER: RapierModule, position: Vector3, radius: number) {
+const HEAD_RADIUS = 0.15;
+
+export function head(RAPIER: RapierModule) {
   return [
     ...view({
-      position,
+      position: new Vector3(0.0, 1.2, -2),
       view: new Mesh(
-        new SphereGeometry(radius, 32, 32),
+        new SphereGeometry(HEAD_RADIUS, 32, 32),
         new MeshPhysicalMaterial({ color: 'yellow' })
       ),
     }),
-    component(HeadComponent).assign({ shape: new RAPIER.Ball(radius) }),
+    component(HeadComponent).assign({ shape: new RAPIER.Ball(HEAD_RADIUS) }),
   ];
 }

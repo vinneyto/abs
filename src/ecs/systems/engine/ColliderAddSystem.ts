@@ -4,8 +4,8 @@ import {
   LifeCircle,
   LifeCircleComponent,
   TransformComponent,
-} from '../components';
-import { Entity, System } from '../ecs';
+} from '../../components';
+import { Entity, System } from '../../ecs';
 
 export class ColliderAddSystem extends System {
   constructor(private readonly world: World) {

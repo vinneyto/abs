@@ -1,6 +1,6 @@
 import { WebGLRenderer } from 'three';
-import { CanvasSizeComponent } from '../components';
-import { Entity, System } from '../ecs';
+import { CanvasSizeComponent } from '../../components';
+import { Entity, System } from '../../ecs';
 
 export class CanvasResizeSystem extends System {
   constructor(private readonly renderer: WebGLRenderer) {

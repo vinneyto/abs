@@ -1,6 +1,6 @@
 import { Object3D } from 'three';
-import { ControllerComponent } from '../components';
-import { System } from '../ecs';
+import { ControllerComponent } from '../../components';
+import { System } from '../../ecs';
 
 export class ControllerGamepadSystem extends System {
   private gamepads: Array<Gamepad | undefined> = [];

@@ -1,6 +1,10 @@
 import { Scene } from 'three';
-import { LifeCircle, LifeCircleComponent, ViewComponent } from '../components';
-import { System } from '../ecs';
+import {
+  LifeCircle,
+  LifeCircleComponent,
+  ViewComponent,
+} from '../../components';
+import { System } from '../../ecs';
 
 export class ViewAddSystem extends System {
   public constructor(private readonly scene: Scene) {

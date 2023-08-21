@@ -61,7 +61,7 @@ export function component<T extends Component>(C: new () => T) {
 }
 
 export class ECS {
-  private nextEntityID = 0;
+  private nextEntityID = 1;
   private entitiesToDestroy = new Array<Entity>();
   private entities = new Map<Entity, ComponentContainer>();
   private systems = new Map<System, Set<Entity>>();

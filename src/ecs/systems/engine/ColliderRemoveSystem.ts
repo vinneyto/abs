@@ -3,8 +3,8 @@ import {
   ColliderComponent,
   LifeCircle,
   LifeCircleComponent,
-} from '../components';
-import { System } from '../ecs';
+} from '../../components';
+import { System } from '../../ecs';
 
 export class ColliderRemoveSystem extends System {
   constructor(private readonly world: World) {

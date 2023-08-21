@@ -1,3 +1,4 @@
+export * from './constants';
 export * from './barrier';
 export * from './bullet';
 export * from './bulletSpawn';
@@ -11,4 +12,4 @@ export * from './roadSegment';
 export * from './update';
 export * from './view';
 export * from './road';
-export * from './constants';
+export * from './closestBarrierPointer';
