@@ -18,9 +18,9 @@ export class ClosestBarrierPointerUpdateSystem extends System<GameState> {
     const { position } = components.get(TransformComponent);
     const { pan } = components.get(ClosestBarrierPointerComponent);
     const visibilityComponent = components.get(VisibilityComponent);
-    const { road } = state.gameModel;
+    const { gameModel } = state;
 
-    const closestBarrierSegment = road.getClosestBarrierSegment();
+    const closestBarrierSegment = gameModel.getNextBarrierSegment();
 
     if (closestBarrierSegment === undefined) {
       visibilityComponent.visible = false;
@@ -29,8 +29,8 @@ export class ClosestBarrierPointerUpdateSystem extends System<GameState> {
 
     position.set(
       pan.x,
-      road.barrierHeight + pan.y,
-      closestBarrierSegment.distance
+      gameModel.getBarrierHeight() + pan.y,
+      closestBarrierSegment.position
     );
     visibilityComponent.visible = true;
   }

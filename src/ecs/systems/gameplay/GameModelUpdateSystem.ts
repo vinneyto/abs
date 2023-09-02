@@ -26,6 +26,19 @@ export class GameModelUpdateSystem extends System<GameState> {
       this.listenGameModel(state.gameModel);
     }
 
+    const { gameModel, renderer } = state;
+
+    gameModel.headCollisionEnabled = false;
+
+    const session = renderer.xr.getSession();
+    if (session) {
+      gameModel.headCollisionEnabled = true;
+
+      const camera = state.renderer.xr.getCamera();
+
+      gameModel.setHeadPosition(camera.position);
+    }
+
     state.gameModel.update(Time.deltaSeconds());
   }
 

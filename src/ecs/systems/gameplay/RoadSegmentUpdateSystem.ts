@@ -17,6 +17,6 @@ export class RoadSegmentUpdateSystem extends System<GameState> {
       return;
     }
 
-    position.z = segment.distance;
+    position.z = segment.position;
   }
 }

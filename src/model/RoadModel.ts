@@ -7,22 +7,22 @@ export class RoadSegment {
 
   constructor(
     public hasBarrier = true,
-    public distance = 0,
-    public previousDistance = 0
+    public position = 0,
+    public nextPosition = 0
   ) {}
 
   update(delta: number, velocity: number) {
-    this.previousDistance = this.distance;
+    this.nextPosition = this.position;
 
     const distDelta = delta * velocity;
-    this.distance += distDelta;
+    this.position += distDelta;
+    this.nextPosition = this.position + distDelta;
   }
 }
 
 export enum RoadEvent {
   AddSegment = 'AddSegment',
   RemoveSegment = 'RemoveSegment',
-  ClosestBarrierChanged = 'ClosestBarrierChanged',
 }
 
 export class RoadModel extends EventEmitter {
@@ -34,7 +34,6 @@ export class RoadModel extends EventEmitter {
   public segmentCount = 0;
   public barrierFrequency = 2;
   public barrierHeight = BARRIER_HEIGHT;
-  public closestBarrierId?: number;
 
   deleteBackSegments() {
     let continueDeleting = this.segments.length > 0;
@@ -42,7 +41,7 @@ export class RoadModel extends EventEmitter {
     while (continueDeleting) {
       const segment = this.segments[0];
 
-      if (segment.distance > this.backDistance) {
+      if (segment.position > this.backDistance) {
         this.segments.splice(0, 1);
 
         this.emit(RoadEvent.RemoveSegment, segment.id);
@@ -57,7 +56,7 @@ export class RoadModel extends EventEmitter {
 
     if (this.segments.length > 0) {
       const segment = this.segments[this.segments.length - 1];
-      backDistance = segment.distance - this.segmentSize;
+      backDistance = segment.position - this.segmentSize;
     }
 
     const { frontDistance, segmentSize } = this;
@@ -73,20 +72,6 @@ export class RoadModel extends EventEmitter {
     }
   }
 
-  updateClosestBarrierId() {
-    const closestBarrierId = this.getClosestBarrier(
-      this.segmentSize * this.barrierFrequency
-    );
-
-    if (this.closestBarrierId !== closestBarrierId) {
-      this.closestBarrierId = closestBarrierId;
-
-      if (this.closestBarrierId !== undefined) {
-        this.emit(RoadEvent.ClosestBarrierChanged, this.closestBarrierId);
-      }
-    }
-  }
-
   updateSegments(delta: number) {
     for (const segment of this.segments) {
       segment.update(delta, this.velocity);
@@ -97,7 +82,6 @@ export class RoadModel extends EventEmitter {
     this.deleteBackSegments();
     this.addFrontSegments();
     this.updateSegments(delta);
-    this.updateClosestBarrierId();
   }
 
   getSegmentById(id: number) {
@@ -109,20 +93,16 @@ export class RoadModel extends EventEmitter {
     return undefined;
   }
 
-  getClosestBarrierSegment() {
-    if (this.closestBarrierId === undefined) {
-      return undefined;
-    }
-    return this.getSegmentById(this.closestBarrierId);
-  }
-
-  private getClosestBarrier(distance: number) {
+  getClosestBarrier(to: number) {
     // reverse order
     for (let i = this.segments.length - 1; i >= 0; i--) {
       const segment = this.segments[i];
       if (segment.hasBarrier) {
-        if (segment.distance > -distance) {
-          return segment.id;
+        if (
+          segment.position >
+          -(this.segmentSize * this.barrierFrequency) + to
+        ) {
+          return this.getSegmentById(segment.id);
         }
       }
     }

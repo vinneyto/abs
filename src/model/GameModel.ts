@@ -1,36 +1,79 @@
 import EventEmitter from 'eventemitter3';
-import { HeadModel, HeadEvent } from './HeadModel';
-import { RoadModel, RoadEvent } from './RoadModel';
+import { RoadEvent, RoadModel, RoadSegment } from './RoadModel';
+import { Vector3 } from 'three';
 
 export class GameModel extends EventEmitter {
   public road = new RoadModel();
-  public head = new HeadModel();
+
+  public headPosition = new Vector3();
+  public headCollisionEnabled = true;
+
+  public nextBarrierSegment?: RoadSegment;
 
   public passedCount = 0;
   public attemptCount = 3;
 
+  private segmentPassedMap = new Set<number>();
+
   constructor() {
     super();
 
-    this.road.on(RoadEvent.ClosestBarrierChanged, this.onClosestBarrierChanged);
-    this.head.on(HeadEvent.BarrierCollision, this.onHeadBarrierCollision);
+    this.road.on(RoadEvent.RemoveSegment, (segmentId: number) => {
+      this.segmentPassedMap.delete(segmentId);
+    });
   }
 
-  update(delta: number) {
+  updateRoad(delta: number) {
     this.road.update(delta);
+  }
 
-    const closestBarrier = this.road.getClosestBarrierSegment();
+  updateNextBarrier() {
+    const nextBarrierSegment = this.road.getClosestBarrier(this.headPosition.z);
 
-    if (closestBarrier !== undefined) {
-      this.head.checkBarrierCollision(closestBarrier, this.road.barrierHeight);
+    if (nextBarrierSegment === undefined) {
+      return;
+    }
+
+    if (!this.segmentPassedMap.has(nextBarrierSegment.id)) {
+      this.segmentPassedMap.add(nextBarrierSegment.id);
+
+      this.nextBarrierSegment = nextBarrierSegment;
+      this.updatePassesCount();
+      this.updateAttemptCount();
     }
   }
 
-  onClosestBarrierChanged = () => {
+  updatePassesCount() {
     this.passedCount++;
-  };
+  }
+
+  updateAttemptCount() {
+    if (
+      this.headPosition.y > this.road.barrierHeight &&
+      this.attemptCount > 0
+    ) {
+      this.attemptCount--;
+    }
+  }
+
+  update(delta: number) {
+    this.updateRoad(delta);
+    this.updateNextBarrier();
+  }
 
   onHeadBarrierCollision = () => {
     this.attemptCount--;
   };
+
+  getNextBarrierSegment() {
+    return this.nextBarrierSegment;
+  }
+
+  getBarrierHeight() {
+    return this.road.barrierHeight;
+  }
+
+  setHeadPosition(position: Vector3) {
+    this.headPosition.copy(position);
+  }
 }
