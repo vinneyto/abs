@@ -11,5 +11,6 @@ export * from './roadSegment';
 export * from './update';
 export * from './view';
 export * from './closestBarrierPointer';
-export * from './closestBarrierLabel';
+export * from './closestBarrierCount';
+export * from './closestBarrierAttempts';
 export * from './text';

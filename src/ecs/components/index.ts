@@ -10,6 +10,7 @@ export * from './ViewComponent';
 export * from './VisibilityComponent';
 export * from './ClosestBarrierPointerComponent';
 export * from './ClosestBarrierCountComponent';
+export * from './ClosestBarrierAttemptsComponent';
 export * from './RoadSegmentIdComponent';
 export * from './RoadSegmentBarrierComponent';
 export * from './TextComponent';

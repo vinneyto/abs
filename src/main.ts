@@ -31,7 +31,8 @@ import {
   BulletSpawnSystem,
   TurntableCameraSystem,
   ClosestBarrierPointerUpdateSystem,
-  ClosestBarrierLabelUpdateSystem,
+  ClosestBarrierCountUpdateSystem,
+  ClosestBarrierAttemptsUpdateSystem,
   TextUpdateSystem,
   RoadSegmentUpdateSystem,
   RoadBarrierUpdateSystem,
@@ -41,9 +42,10 @@ import {
   canvasSize,
   update,
   gun,
-  closestBarrierLabel,
+  closestBarrierCount,
   roadSegment,
   barrier,
+  closestBarrierAttempts,
 } from './ecs/entities';
 import 'normalize.css';
 import './style.css';
@@ -148,7 +150,8 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     ecs.addSystem(new RoadBarrierUpdateSystem());
 
     ecs.addSystem(new ClosestBarrierPointerUpdateSystem());
-    ecs.addSystem(new ClosestBarrierLabelUpdateSystem());
+    ecs.addSystem(new ClosestBarrierCountUpdateSystem());
+    ecs.addSystem(new ClosestBarrierAttemptsUpdateSystem());
 
     ecs.addSystem(new BulletSpawnSystem());
     ecs.addSystem(new DestroyCountdownSystem());
@@ -184,7 +187,8 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   ecs.addEntity(canvasSize());
   ecs.addEntity(update());
-  ecs.addEntity(closestBarrierLabel());
+  ecs.addEntity(closestBarrierCount());
+  ecs.addEntity(closestBarrierAttempts());
 
   // ground
   // ecs.addEntity(
