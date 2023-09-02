@@ -28,11 +28,11 @@ export class GameModelUpdateSystem extends System<GameState> {
 
     const { gameModel, renderer } = state;
 
-    gameModel.headCollisionEnabled = false;
+    gameModel.setHeadCollisionEnabled(false);
 
     const session = renderer.xr.getSession();
     if (session) {
-      gameModel.headCollisionEnabled = true;
+      gameModel.setHeadCollisionEnabled(true);
 
       const camera = state.renderer.xr.getCamera();
 
@@ -43,8 +43,8 @@ export class GameModelUpdateSystem extends System<GameState> {
   }
 
   private listenGameModel(gameModel: GameModel) {
-    gameModel.road.on(RoadEvent.AddSegment, this.onAddRoadSegment);
-    gameModel.road.on(RoadEvent.RemoveSegment, this.onRemoveRoadSegment);
+    gameModel.getRoad().on(RoadEvent.AddSegment, this.onAddRoadSegment);
+    gameModel.getRoad().on(RoadEvent.RemoveSegment, this.onRemoveRoadSegment);
   }
 
   private onAddRoadSegment = (segment: RoadSegment) => {

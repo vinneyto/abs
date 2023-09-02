@@ -43,20 +43,16 @@ import {
   update,
   gun,
   closestBarrierCount,
-  roadSegment,
-  barrier,
   closestBarrierAttempts,
 } from './ecs/entities';
 import 'normalize.css';
 import './style.css';
 import { Time } from './Time';
 import { Sky } from 'three/addons/objects/Sky.js';
-import { Assets, loadAssets } from './Assets';
+import { loadAssets } from './Assets';
 import { MAIN_SCENE } from './ecs/components';
 import { GameState } from './ecs/GameState';
 import { GameModel } from './model/GameModel';
-import { RoadEvent, RoadSegment } from './model/RoadModel';
-import { destroyEntity } from './ecs/selectors';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -94,7 +90,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   sun.intensity = 3;
   scene.add(sun);
 
-  const { gameModel } = createGameModel(ecs, assets);
+  const gameModel = new GameModel();
 
   // const helper = new CameraHelper(sun.shadow.camera);
   // scene.add(helper);
@@ -242,39 +238,4 @@ const createRenderer = () => {
   document.getElementById('app')!.appendChild(renderer.domElement);
 
   return renderer;
-};
-
-const createGameModel = (ecs: ECS<GameState>, assets: Assets) => {
-  const gameModel = new GameModel();
-
-  const roadSegmentEntityMap = new Map<
-    number,
-    { segment: Entity; barrier?: Entity }
-  >();
-
-  gameModel.road.on(RoadEvent.AddSegment, (segment: RoadSegment) => {
-    const segmentEntity = ecs.addEntity(roadSegment(assets, segment.id));
-
-    let barrierEntity: Entity | undefined;
-    if (segment.hasBarrier) {
-      barrierEntity = ecs.addEntity(barrier(assets, segment.id));
-    }
-
-    roadSegmentEntityMap.set(segment.id, {
-      segment: segmentEntity,
-      barrier: barrierEntity,
-    });
-  });
-
-  gameModel.road.on(RoadEvent.RemoveSegment, segmentId => {
-    const segment = roadSegmentEntityMap.get(segmentId);
-    if (segment !== undefined) {
-      destroyEntity(ecs, segment.segment);
-      if (segment.barrier) {
-        destroyEntity(ecs, segment.barrier);
-      }
-    }
-  });
-
-  return { gameModel, roadSegmentEntityMap };
 };

@@ -14,7 +14,7 @@ export class RoadBarrierUpdateSystem extends System<GameState> {
 
     const { position } = components.get(TransformComponent);
 
-    position.y = state.gameModel.road.barrierHeight;
+    position.y = state.gameModel.getRoad().barrierHeight;
     position.x = BARRIER_WIDTH / 2;
   }
 }

@@ -11,7 +11,7 @@ export class RoadSegmentUpdateSystem extends System<GameState> {
     const { id: segmentId } = components.get(RoadSegmentIdComponent);
     const { position } = components.get(TransformComponent);
 
-    const segment = state.gameModel.road.getSegmentById(segmentId);
+    const segment = state.gameModel.getRoad().getSegmentById(segmentId);
 
     if (!segment) {
       return;

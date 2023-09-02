@@ -12,7 +12,7 @@ export class ClosestBarrierAttemptsUpdateSystem extends System<GameState> {
     const components = this.ecs.getComponents(entity);
     const textComponent = components.get(TextComponent);
 
-    const countText = state.gameModel.attemptCount.toString();
+    const countText = state.gameModel.getAttemptCount().toString();
 
     if (countText !== textComponent.text) {
       textComponent.text = countText;

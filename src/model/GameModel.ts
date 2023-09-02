@@ -3,15 +3,15 @@ import { RoadEvent, RoadModel, RoadSegment } from './RoadModel';
 import { Vector3 } from 'three';
 
 export class GameModel extends EventEmitter {
-  public road = new RoadModel();
+  private road = new RoadModel();
 
-  public headPosition = new Vector3();
-  public headCollisionEnabled = true;
+  private headPosition = new Vector3();
+  private headCollisionEnabled = true;
 
-  public nextBarrierSegment?: RoadSegment;
+  private nextBarrierSegment?: RoadSegment;
 
-  public passedCount = 0;
-  public attemptCount = 3;
+  private passedCount = 0;
+  private attemptCount = 3;
 
   private segmentPassedMap = new Set<number>();
 
@@ -49,6 +49,7 @@ export class GameModel extends EventEmitter {
 
   updateAttemptCount() {
     if (
+      this.headCollisionEnabled &&
       this.headPosition.y > this.road.barrierHeight &&
       this.attemptCount > 0
     ) {
@@ -75,5 +76,20 @@ export class GameModel extends EventEmitter {
 
   setHeadPosition(position: Vector3) {
     this.headPosition.copy(position);
+  }
+
+  setHeadCollisionEnabled(value: boolean) {
+    this.headCollisionEnabled = value;
+  }
+
+  getRoad() {
+    return this.road;
+  }
+
+  getAttemptCount() {
+    return this.attemptCount;
+  }
+  getPassedCount() {
+    return this.passedCount;
   }
 }
