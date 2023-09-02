@@ -1,7 +1,7 @@
 import { Object3D } from 'three';
 import { ControllerComponent, TransformComponent } from '../../components';
 import { System } from '../../ecs';
-import { GameState } from '../../model/GameState';
+import { GameState } from '../../GameState';
 
 export class ControllerTransformSystem extends System<GameState> {
   constructor(private readonly controllers: Object3D[]) {

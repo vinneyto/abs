@@ -1,16 +1,13 @@
 import { Collider } from '@dimforge/rapier3d';
 import {
-  HeadComponent,
   LifeCircle,
   LifeCircleComponent,
-  RoadComponent,
-  RoadSegmentComponent,
   TransformComponent,
   ViewComponent,
   VisibilityComponent,
 } from './components';
 import { ECS, Entity } from './ecs';
-import { GameState } from './model/GameState';
+import { GameState } from './GameState';
 
 export type GameECS = ECS<GameState>;
 
@@ -36,21 +33,6 @@ export function getLifeCircle(ecs: GameECS, entity: Entity) {
 
 export function destroyEntity(ecs: GameECS, entity: Entity) {
   getLifeCircle(ecs, entity).state = LifeCircle.Destroy;
-}
-
-export function getRoadComponent(ecs: GameECS, state: GameState) {
-  const components = ecs.getComponents(state.entities.road);
-  return components.get(RoadComponent);
-}
-
-export function getHeadComponent(ecs: GameECS, state: GameState) {
-  const components = ecs.getComponents(state.entities.head);
-  return components.get(HeadComponent);
-}
-
-export function getRoadSegmentComponent(ecs: GameECS, entity: Entity) {
-  const components = ecs.getComponents(entity);
-  return components.get(RoadSegmentComponent);
 }
 
 export function getColliderEntity(collider: Collider) {

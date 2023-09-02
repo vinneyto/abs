@@ -1,6 +1,6 @@
 import { UpdateComponent } from '../../components';
 import { Entity, System } from '../../ecs';
-import { GameState } from '../../model/GameState';
+import { GameState } from '../../GameState';
 
 export class RenderSystem extends System<GameState> {
   public componentsRequired = [UpdateComponent];

@@ -4,7 +4,7 @@ import {
   ViewComponent,
 } from '../../components';
 import { System } from '../../ecs';
-import { GameState } from '../../model/GameState';
+import { GameState } from '../../GameState';
 
 export class ViewRemoveSystem extends System<GameState> {
   public componentsRequired = [LifeCircleComponent, ViewComponent];

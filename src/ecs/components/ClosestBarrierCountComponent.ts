@@ -1,6 +1,3 @@
-import { Component, Entity } from '../ecs';
+import { Component } from '../ecs';
 
-export class ClosestBarrierCountComponent extends Component {
-  count = 0;
-  closestBarrierEntity?: Entity;
-}
+export class ClosestBarrierCountComponent extends Component {}

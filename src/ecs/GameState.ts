@@ -1,16 +1,12 @@
 import RAPIER, { World } from '@dimforge/rapier3d';
-import { Entity } from '../ecs';
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { RapierModule } from '../../types';
-import { Assets } from '../../Assets';
+import { RapierModule } from '../types';
+import { Assets } from '../Assets';
+import { GameModel } from '../model/GameModel';
 
 interface IntersectionPair {
   collider1: RAPIER.Collider;
   collider2: RAPIER.Collider;
-}
-
-export class GameStateEntities {
-  constructor(public readonly road: Entity, public readonly head: Entity) {}
 }
 
 export class GameState {
@@ -23,6 +19,6 @@ export class GameState {
     public readonly renderer: WebGLRenderer,
     public readonly RAPIER: RapierModule,
     public readonly assets: Assets,
-    public readonly entities: GameStateEntities
+    public readonly gameModel: GameModel
   ) {}
 }

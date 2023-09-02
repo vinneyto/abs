@@ -1,6 +1,6 @@
 import { UpdateComponent } from '../../components';
 import { System } from '../../ecs';
-import { GameState } from '../../model/GameState';
+import { GameState } from '../../GameState';
 
 export class IntersectionsCleanSystem extends System<GameState> {
   public componentsRequired = [UpdateComponent];

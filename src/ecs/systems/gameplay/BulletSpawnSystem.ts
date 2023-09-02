@@ -7,7 +7,7 @@ import {
 } from '../../components';
 import { System } from '../../ecs';
 import { bullet } from '../../entities';
-import { GameState } from '../../model/GameState';
+import { GameState } from '../../GameState';
 
 export class BulletSpawnSystem extends System<GameState> {
   public componentsRequired = [

@@ -14,3 +14,4 @@ export * from './ViewAddSystem';
 export * from './ViewRemoveSystem';
 export * from './ViewTransformSystem';
 export * from './ViewVisibilitySystem';
+export * from './TextUpdateSystem';

@@ -1,7 +1,7 @@
 import { Vector2, Vector3 } from 'three';
 import { UpdateComponent } from '../../components';
 import { Entity, System } from '../../ecs';
-import { GameState } from '../../model/GameState';
+import { GameState } from '../../GameState';
 
 export class TurntableCameraSystem extends System<GameState> {
   public componentsRequired = [UpdateComponent];

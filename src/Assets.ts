@@ -5,6 +5,9 @@ import modelsUrl from './data/models.glb';
 export const TYPE_GUN = 'gun';
 export const TYPE_BULLET_SPAWN = 'bullet_spawn';
 
+export const BARRIER_HEIGHT = 1.25;
+export const BARRIER_WIDTH = 10;
+
 interface Trimesh {
   vertices: Float32Array;
   indices: Uint32Array;
@@ -67,6 +70,7 @@ function extractRoad(gltf: GLTF) {
 
 function extractBarrier(gltf: GLTF) {
   const barrier = getObjectByType(gltf.scene, 'barrier');
+  barrier.position.y = -BARRIER_HEIGHT;
   const model = bakeTransform(barrier);
   const trimesh = getFirstTrimesh(model);
 

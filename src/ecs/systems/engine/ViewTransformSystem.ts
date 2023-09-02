@@ -1,6 +1,6 @@
 import { TransformComponent, ViewComponent } from '../../components';
 import { System } from '../../ecs';
-import { GameState } from '../../model/GameState';
+import { GameState } from '../../GameState';
 
 export class ViewTransformSystem extends System<GameState> {
   public componentsRequired = [ViewComponent, TransformComponent];

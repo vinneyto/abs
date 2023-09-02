@@ -5,7 +5,7 @@ import {
   TransformComponent,
 } from '../../components';
 import { Entity, System } from '../../ecs';
-import { GameState } from '../../model/GameState';
+import { GameState } from '../../GameState';
 
 export class ColliderAddSystem extends System<GameState> {
   public componentsRequired = [

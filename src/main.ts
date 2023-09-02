@@ -1,7 +1,7 @@
 import {
   AmbientLight,
   AxesHelper,
-  CameraHelper,
+  // CameraHelper,
   Color,
   DirectionalLight,
   MathUtils,
@@ -10,7 +10,7 @@ import {
   WebGLRenderer,
 } from 'three';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
-import { ECS } from './ecs/ecs';
+import { ECS, Entity } from './ecs/ecs';
 import {
   CanvasResizeSystem,
   ViewAddSystem,
@@ -29,29 +29,32 @@ import {
   ControllerTransformSystem,
   ControllerGamepadSystem,
   BulletSpawnSystem,
-  RoadManageSystem,
   TurntableCameraSystem,
-  RoadMovementSystem,
-  HeadBarrierHitSystem,
   ClosestBarrierPointerUpdateSystem,
   ClosestBarrierLabelUpdateSystem,
+  TextUpdateSystem,
+  RoadSegmentUpdateSystem,
+  RoadBarrierUpdateSystem,
+  GameModelUpdateSystem,
 } from './ecs/systems';
 import {
   canvasSize,
   update,
   gun,
-  head,
-  road,
-  closestBarrierPointer,
   closestBarrierLabel,
+  roadSegment,
+  barrier,
 } from './ecs/entities';
 import 'normalize.css';
 import './style.css';
 import { Time } from './Time';
 import { Sky } from 'three/addons/objects/Sky.js';
-import { loadAssets } from './Assets';
+import { Assets, loadAssets } from './Assets';
 import { MAIN_SCENE } from './ecs/components';
-import { GameState, GameStateEntities } from './ecs/model/GameState';
+import { GameState } from './ecs/GameState';
+import { GameModel } from './model/GameModel';
+import { RoadEvent, RoadSegment } from './model/RoadModel';
+import { destroyEntity } from './ecs/selectors';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -88,8 +91,10 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   sun.shadow.camera.bottom = -10;
   scene.add(sun);
 
-  const helper = new CameraHelper(sun.shadow.camera);
-  scene.add(helper);
+  const { gameModel } = createGameModel(ecs, assets);
+
+  // const helper = new CameraHelper(sun.shadow.camera);
+  // scene.add(helper);
 
   const sky = new Sky();
   sky.scale.setScalar(10000);
@@ -138,15 +143,15 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   // logic systems
   {
-    ecs.addSystem(new BulletSpawnSystem());
-    ecs.addSystem(new DestroyCountdownSystem());
+    ecs.addSystem(new GameModelUpdateSystem());
+    ecs.addSystem(new RoadSegmentUpdateSystem());
+    ecs.addSystem(new RoadBarrierUpdateSystem());
 
-    // logic systems - road
     ecs.addSystem(new ClosestBarrierPointerUpdateSystem());
     ecs.addSystem(new ClosestBarrierLabelUpdateSystem());
-    ecs.addSystem(new RoadMovementSystem());
-    ecs.addSystem(new RoadManageSystem());
-    ecs.addSystem(new HeadBarrierHitSystem());
+
+    ecs.addSystem(new BulletSpawnSystem());
+    ecs.addSystem(new DestroyCountdownSystem());
   }
 
   // engine system
@@ -163,6 +168,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     ecs.addSystem(new ColliderTransformSystem());
     ecs.addSystem(new ViewTransformSystem());
     ecs.addSystem(new ViewVisibilitySystem());
+    ecs.addSystem(new TextUpdateSystem());
 
     // destroy systems
     ecs.addSystem(new ViewRemoveSystem());
@@ -178,7 +184,6 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   ecs.addEntity(canvasSize());
   ecs.addEntity(update());
-  ecs.addEntity(closestBarrierPointer());
   ecs.addEntity(closestBarrierLabel());
 
   // ground
@@ -204,9 +209,6 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   // ecs.addEntity(cuboid(RAPIER, new Vector3(0.5, 0.5, -3), 1, 1, 1));
   // ecs.addEntity(cuboid(RAPIER, new Vector3(0.0, 1.5, -3), 1, 1, 1));
 
-  const headEntity = ecs.addEntity(head(RAPIER));
-  const roadEntity = ecs.addEntity(road());
-
   const gameState = new GameState(
     scene,
     camera,
@@ -214,7 +216,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     renderer,
     RAPIER,
     assets,
-    new GameStateEntities(roadEntity, headEntity)
+    gameModel
   );
 
   document.body.appendChild(VRButton.createButton(renderer));
@@ -223,10 +225,6 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   renderer.setAnimationLoop(() => {
     ecs.update(gameState);
-
-    // if (gamepad0 && gamepad0.buttons.some(b => b.pressed)) {
-    //   console.log('pressed', JSON.stringify(gamepad0.buttons));
-    // }
 
     Time.update();
   });
@@ -239,4 +237,39 @@ const createRenderer = () => {
   document.getElementById('app')!.appendChild(renderer.domElement);
 
   return renderer;
+};
+
+const createGameModel = (ecs: ECS<GameState>, assets: Assets) => {
+  const gameModel = new GameModel();
+
+  const roadSegmentEntityMap = new Map<
+    number,
+    { segment: Entity; barrier?: Entity }
+  >();
+
+  gameModel.road.on(RoadEvent.AddSegment, (segment: RoadSegment) => {
+    const segmentEntity = ecs.addEntity(roadSegment(assets, segment.id));
+
+    let barrierEntity: Entity | undefined;
+    if (segment.hasBarrier) {
+      barrierEntity = ecs.addEntity(barrier(assets, segment.id));
+    }
+
+    roadSegmentEntityMap.set(segment.id, {
+      segment: segmentEntity,
+      barrier: barrierEntity,
+    });
+  });
+
+  gameModel.road.on(RoadEvent.RemoveSegment, segmentId => {
+    const segment = roadSegmentEntityMap.get(segmentId);
+    if (segment !== undefined) {
+      destroyEntity(ecs, segment.segment);
+      if (segment.barrier) {
+        destroyEntity(ecs, segment.barrier);
+      }
+    }
+  });
+
+  return { gameModel, roadSegmentEntityMap };
 };

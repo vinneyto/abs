@@ -1,27 +1,16 @@
-import { view } from './view';
 import { component } from '../ecs';
 import {
   ClosestBarrierCountComponent,
   ClosestBarrierPointerComponent,
 } from '../components';
-// @ts-ignore
-import { Text } from 'troika-three-text';
 import { Vector2 } from 'three';
+import { text } from './text';
 
 export function closestBarrierLabel() {
-  const text = new Text();
-  text.text = '0';
-  text.fontSize = 0.9;
-  text.position.z = -2;
-  text.color = 0xff0000;
-  text.sync();
-
   return [
-    ...view({
-      view: text,
-    }),
+    ...text(),
     component(ClosestBarrierPointerComponent).assign({
-      pan: new Vector2(-1.5, 3.7),
+      pan: new Vector2(0, 1.5),
     }),
     component(ClosestBarrierCountComponent),
   ];

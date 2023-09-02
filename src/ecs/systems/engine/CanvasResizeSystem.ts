@@ -1,6 +1,6 @@
 import { CanvasSizeComponent } from '../../components';
 import { Entity, System } from '../../ecs';
-import { GameState } from '../../model/GameState';
+import { GameState } from '../../GameState';
 
 export class CanvasResizeSystem extends System<GameState> {
   public componentsRequired = [CanvasSizeComponent];
