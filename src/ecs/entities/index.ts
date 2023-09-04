@@ -14,3 +14,4 @@ export * from './closestBarrierPointer';
 export * from './closestBarrierCount';
 export * from './closestBarrierAttempts';
 export * from './text';
+export * from './enemy';

@@ -132,4 +132,27 @@ export class ECS<State> {
       this.destroyEntity(this.entitiesToDestroy.pop()!);
     }
   }
+  public find(
+    query: Function[],
+    predicate: (
+      _components: ComponentContainer,
+      _entity: Entity
+    ) => boolean = () => true
+  ) {
+    for (const [entity, have] of this.entities.entries()) {
+      if (have.hasAll(query) && predicate(have, entity)) {
+        return entity;
+      }
+    }
+    return undefined;
+  }
+  public findAll(query: Function[]) {
+    const entities: Entity[] = [];
+    for (const [entity, have] of this.entities.entries()) {
+      if (have.hasAll(query)) {
+        entities.push(entity);
+      }
+    }
+    return entities;
+  }
 }

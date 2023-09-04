@@ -14,3 +14,4 @@ export * from './ClosestBarrierAttemptsComponent';
 export * from './RoadSegmentIdComponent';
 export * from './RoadSegmentBarrierComponent';
 export * from './TextComponent';
+export * from './EnemyIdComponent';

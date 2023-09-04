@@ -11,6 +11,7 @@ export function barrier(assets: Assets, id: number) {
     ...view({
       view: assets.barrier.model.clone(),
       castShadow: true,
+      receiveShadow: false,
     }),
     component(RoadSegmentIdComponent).assign({ id }),
     component(RoadSegmentBarrierComponent),

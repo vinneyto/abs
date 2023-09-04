@@ -1,17 +1,26 @@
 import { Assets } from '../../../Assets';
 import { Time } from '../../../Time';
-import { UpdateComponent } from '../../components';
+import { EnemyIdComponent, UpdateComponent } from '../../components';
 import { Entity, System } from '../../ecs';
-import { barrier, roadSegment } from '../../entities';
-import { GameModel, RoadEvent, RoadSegment } from '../../../model';
+import { barrier, enemy, roadSegment } from '../../entities';
+import {
+  EnemiesEvent,
+  Enemy,
+  GameModel,
+  RoadEvent,
+  RoadSegment,
+} from '../../../model';
 import { GameState } from '../../GameState';
 import { destroyEntity } from '../../selectors';
+import { RapierModule } from '../../../types';
+import { Vector3 } from 'three';
 
 export class GameModelUpdateSystem extends System<GameState> {
   public componentsRequired = [UpdateComponent];
 
   private firstTime = true;
   private assets!: Assets;
+  private RAPIER!: RapierModule;
 
   private roadSegmentEntityMap = new Map<
     number,
@@ -20,10 +29,9 @@ export class GameModelUpdateSystem extends System<GameState> {
 
   public update(_: number, state: GameState): void {
     if (this.firstTime) {
-      this.assets = state.assets;
       this.firstTime = false;
 
-      this.listenGameModel(state.gameModel);
+      this.initGameModel(state);
     }
 
     const { gameModel, renderer } = state;
@@ -42,9 +50,21 @@ export class GameModelUpdateSystem extends System<GameState> {
     state.gameModel.update(Time.deltaSeconds());
   }
 
+  private initGameModel(state: GameState) {
+    this.assets = state.assets;
+    this.RAPIER = state.RAPIER;
+
+    this.listenGameModel(state.gameModel);
+
+    state.gameModel.getEnemies().spawnEnemy(new Vector3(0, 5, -10), 1);
+  }
+
   private listenGameModel(gameModel: GameModel) {
     gameModel.getRoad().on(RoadEvent.AddSegment, this.onAddRoadSegment);
     gameModel.getRoad().on(RoadEvent.RemoveSegment, this.onRemoveRoadSegment);
+
+    gameModel.getEnemies().on(EnemiesEvent.AddEnemy, this.onAddEnemy);
+    gameModel.getEnemies().on(EnemiesEvent.DeleteEnemy, this.onRemoveEnemy);
   }
 
   private onAddRoadSegment = (segment: RoadSegment) => {
@@ -63,15 +83,35 @@ export class GameModelUpdateSystem extends System<GameState> {
     });
   };
 
-  private onRemoveRoadSegment = (segmentId: number) => {
+  private onRemoveRoadSegment = (segment: RoadSegment) => {
     const { ecs, roadSegmentEntityMap } = this;
 
-    const segment = roadSegmentEntityMap.get(segmentId);
-    if (segment !== undefined) {
-      destroyEntity(ecs, segment.segment);
-      if (segment.barrier) {
-        destroyEntity(ecs, segment.barrier);
+    const entity = roadSegmentEntityMap.get(segment.id);
+    if (entity !== undefined) {
+      destroyEntity(ecs, entity.segment);
+      if (entity.barrier) {
+        destroyEntity(ecs, entity.barrier);
       }
+      roadSegmentEntityMap.delete(segment.id);
+    }
+  };
+
+  private onAddEnemy = (enemyModel: Enemy) => {
+    const { RAPIER, ecs } = this;
+
+    ecs.addEntity(enemy(RAPIER, enemyModel.id));
+  };
+
+  private onRemoveEnemy = (enemyModel: Enemy) => {
+    const { ecs } = this;
+
+    const enemyEntity = ecs.find(
+      [EnemyIdComponent],
+      components => components.get(EnemyIdComponent).id === enemyModel.id
+    );
+
+    if (enemyEntity !== undefined) {
+      destroyEntity(ecs, enemyEntity);
     }
   };
 }

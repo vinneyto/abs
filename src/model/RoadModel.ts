@@ -44,7 +44,7 @@ export class RoadModel extends EventEmitter {
       if (segment.position > this.backDistance) {
         this.segments.splice(0, 1);
 
-        this.emit(RoadEvent.RemoveSegment, segment.id);
+        this.emit(RoadEvent.RemoveSegment, segment);
       } else {
         continueDeleting = false;
       }

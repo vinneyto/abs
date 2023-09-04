@@ -7,6 +7,8 @@ export const TYPE_BULLET_SPAWN = 'bullet_spawn';
 
 export const BARRIER_HEIGHT = 1.25;
 export const BARRIER_WIDTH = 10;
+export const ENEMY_RADIUS = 0.5;
+export const HEAD_RADIUS = 0.1;
 
 interface Trimesh {
   vertices: Float32Array;

@@ -10,7 +10,7 @@ import {
   WebGLRenderer,
 } from 'three';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
-import { ECS, Entity } from './ecs/ecs';
+import { ECS } from './ecs/ecs';
 import {
   CanvasResizeSystem,
   ViewAddSystem,
@@ -37,6 +37,7 @@ import {
   RoadSegmentUpdateSystem,
   RoadBarrierUpdateSystem,
   GameModelUpdateSystem,
+  EnemyUpdateSystem,
 } from './ecs/systems';
 import {
   canvasSize,
@@ -83,10 +84,10 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   sun.shadow.mapSize.height = 512; // default
   sun.shadow.camera.near = 0.5; // default
   sun.shadow.camera.far = 500; // default
-  sun.shadow.camera.left = -10;
-  sun.shadow.camera.right = 10;
-  sun.shadow.camera.top = 10;
-  sun.shadow.camera.bottom = -10;
+  sun.shadow.camera.left = -20;
+  sun.shadow.camera.right = 20;
+  sun.shadow.camera.top = 20;
+  sun.shadow.camera.bottom = -20;
   sun.intensity = 3;
   scene.add(sun);
 
@@ -107,7 +108,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   skyUniforms['mieDirectionalG'].value = 0.8;
 
   const parameters = {
-    elevation: 25,
+    elevation: 90,
     azimuth: 180,
   };
 
@@ -120,7 +121,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   // ambient light
   const ambientLight = new AmbientLight();
-  ambientLight.intensity = 0.5;
+  ambientLight.intensity = 0.1;
   scene.add(ambientLight);
 
   const camera = new PerspectiveCamera(75, 1, 0.01, 100);
@@ -145,6 +146,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     ecs.addSystem(new GameModelUpdateSystem());
     ecs.addSystem(new RoadSegmentUpdateSystem());
     ecs.addSystem(new RoadBarrierUpdateSystem());
+    ecs.addSystem(new EnemyUpdateSystem());
 
     ecs.addSystem(new ClosestBarrierPointerUpdateSystem());
     ecs.addSystem(new ClosestBarrierCountUpdateSystem());
