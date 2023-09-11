@@ -1,22 +1,22 @@
-import { EnemyIdComponent, TransformComponent } from '../../components';
+import { ColliderComponent, EnemyIdComponent } from '../../components';
 import { System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class EnemyUpdateSystem extends System<GameState> {
-  public componentsRequired = [TransformComponent, EnemyIdComponent];
+  public componentsRequired = [ColliderComponent, EnemyIdComponent];
 
   public update(entity: number, state: GameState): void {
     const components = this.ecs.getComponents(entity);
 
-    const { position } = components.get(TransformComponent);
+    const { rigidBody } = components.get(ColliderComponent);
     const { id: enemyId } = components.get(EnemyIdComponent);
 
     const enemy = state.gameModel.getEnemies().getEnemyById(enemyId);
 
-    if (enemy === undefined) {
+    if (enemy === undefined || rigidBody === undefined) {
       return;
     }
 
-    position.copy(enemy.body.center);
+    rigidBody.setTranslation(enemy.position, false);
   }
 }

@@ -6,14 +6,17 @@ import { RapierModule } from '../../../types';
 export function ball(RAPIER: RapierModule, position: Vector3, radius: number) {
   return [
     ...view({
-      position,
       view: new Mesh(
         new SphereGeometry(radius, 32, 32),
         new MeshPhysicalMaterial({ color: 'red' })
       ),
     }),
     ...collider(
-      RAPIER.RigidBodyDesc.dynamic(),
+      RAPIER.RigidBodyDesc.dynamic().setTranslation(
+        position.x,
+        position.y,
+        position.z
+      ),
       RAPIER.ColliderDesc.ball(radius)
     ),
   ];

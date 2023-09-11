@@ -20,7 +20,6 @@ export class ColliderAddSystem extends System<GameState> {
 
     const lifeCircleComponent = components.get(LifeCircleComponent);
     const colliderComponent = components.get(ColliderComponent);
-    const { position, quaternion } = components.get(TransformComponent);
 
     if (lifeCircleComponent.state !== LifeCircle.New) {
       return;
@@ -31,15 +30,6 @@ export class ColliderAddSystem extends System<GameState> {
       colliderComponent.rigidBodyDesc === undefined
     ) {
       throw new Error('unable to instantiate undefined collider or rigid body');
-    }
-
-    if (colliderComponent.initTransform) {
-      colliderComponent.rigidBodyDesc.setTranslation(
-        position.x,
-        position.y,
-        position.z
-      );
-      colliderComponent.rigidBodyDesc.setRotation(quaternion);
     }
 
     colliderComponent.colliderDesc

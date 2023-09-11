@@ -1,14 +1,13 @@
 import EventEmitter from 'eventemitter3';
 import { RoadEvent, RoadModel, RoadSegment } from './RoadModel';
-import { Sphere, Vector3 } from 'three';
-import { HEAD_RADIUS } from '../Assets';
-import { EnemiesModel } from '.';
+import { Vector3 } from 'three';
+import { EnemiesModel } from './EnemiesModel';
 
 export class GameModel extends EventEmitter {
   private road = new RoadModel();
   private enemies = new EnemiesModel();
 
-  private head = new Sphere(new Vector3(), HEAD_RADIUS);
+  private headPosition = new Vector3();
   private headCollisionEnabled = true;
 
   private nextBarrierSegment?: RoadSegment;
@@ -31,11 +30,11 @@ export class GameModel extends EventEmitter {
   }
 
   updateEnemies(delta: number) {
-    this.enemies.update(delta, this.head);
+    this.enemies.update(delta);
   }
 
   updateNextBarrier() {
-    const nextBarrierSegment = this.road.getClosestBarrier(this.head.center.z);
+    const nextBarrierSegment = this.road.getClosestBarrier(this.headPosition.z);
 
     if (nextBarrierSegment === undefined) {
       return;
@@ -57,9 +56,14 @@ export class GameModel extends EventEmitter {
   updateAttemptCount() {
     if (
       this.headCollisionEnabled &&
-      this.head.center.y > this.road.barrierHeight &&
-      this.attemptCount > 0
+      this.headPosition.y > this.road.barrierHeight
     ) {
+      this.decreaseAttempts();
+    }
+  }
+
+  decreaseAttempts() {
+    if (this.attemptCount > 0) {
       this.attemptCount--;
     }
   }
@@ -79,11 +83,11 @@ export class GameModel extends EventEmitter {
   }
 
   setHeadPosition(position: Vector3) {
-    this.head.center.copy(position);
+    this.headPosition.copy(position);
   }
 
   getHeadPosition() {
-    return this.head.center;
+    return this.headPosition;
   }
 
   setHeadCollisionEnabled(value: boolean) {

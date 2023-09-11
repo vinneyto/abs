@@ -30,9 +30,6 @@ export class ColliderComponent {
   public rigidBody?: RigidBody;
   public collider?: Collider;
 
-  public initTransform = true;
-  public readTransform = false;
-
   public collisionGroups = new CollisionGroups();
   public solverGroups = new CollisionGroups();
 

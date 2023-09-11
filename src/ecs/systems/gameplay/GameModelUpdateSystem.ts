@@ -13,7 +13,7 @@ import {
 import { GameState } from '../../GameState';
 import { destroyEntity } from '../../selectors';
 import { RapierModule } from '../../../types';
-import { Vector3 } from 'three';
+import { Sphere, Vector3 } from 'three';
 
 export class GameModelUpdateSystem extends System<GameState> {
   public componentsRequired = [UpdateComponent];
@@ -56,7 +56,9 @@ export class GameModelUpdateSystem extends System<GameState> {
 
     this.listenGameModel(state.gameModel);
 
-    state.gameModel.getEnemies().spawnEnemy(new Vector3(0, 5, -10), 1);
+    state.gameModel
+      .getEnemies()
+      .spawnEnemy(new Sphere(new Vector3(0, 5, -10), 3));
   }
 
   private listenGameModel(gameModel: GameModel) {

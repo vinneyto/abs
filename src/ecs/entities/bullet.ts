@@ -19,7 +19,6 @@ export function bullet(
 
   return [
     ...view({
-      position: spawn,
       view: new Mesh(bulletGeometry, bulletMaterial),
     }),
     ...collider(
@@ -27,10 +26,9 @@ export function bullet(
         .setLinvel(velocity.x, velocity.y, velocity.z)
         .setCcdEnabled(true)
         .setGravityScale(0)
-        .setAdditionalMass(1),
+        .setAdditionalMass(1)
+        .setTranslation(spawn.x, spawn.y, spawn.z),
       RAPIER.ColliderDesc.ball(BULLET_RADIUS),
-      true,
-      false,
       new CollisionGroups([GROUP_ENEMIES]) // query contacts with enemies
     ),
     ...destroyCountdown(1),

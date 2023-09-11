@@ -20,8 +20,6 @@ export function enemy(RAPIER: RapierModule, id: number) {
     ...collider(
       RAPIER.RigidBodyDesc.fixed(),
       RAPIER.ColliderDesc.ball(ENEMY_RADIUS).setSensor(true),
-      false,
-      true,
       new CollisionGroups([GROUP_ENEMIES]) // query contacts with enemies
     ),
     component(EnemyIdComponent).assign({ id }),

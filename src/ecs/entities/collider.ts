@@ -5,8 +5,6 @@ import { ColliderComponent, CollisionGroups } from '../components';
 export function collider(
   rigidBodyDesc: RigidBodyDesc,
   colliderDesc: ColliderDesc,
-  initTransform = true,
-  readTransform = false,
   collisionGroups = new CollisionGroups(),
   solverGroups = new CollisionGroups(),
   userData?: Record<string, unknown>
@@ -15,8 +13,6 @@ export function collider(
     component(ColliderComponent).assign({
       rigidBodyDesc,
       colliderDesc,
-      initTransform,
-      readTransform,
       collisionGroups,
       solverGroups,
       userData,

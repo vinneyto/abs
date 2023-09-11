@@ -12,14 +12,17 @@ export function cuboid(
 ) {
   return [
     ...view({
-      position,
       view: new Mesh(
         new BoxGeometry(width, height, depth),
         new MeshPhysicalMaterial({ color: 'red' })
       ),
     }),
     ...collider(
-      RAPIER.RigidBodyDesc.dynamic(),
+      RAPIER.RigidBodyDesc.dynamic().setTranslation(
+        position.x,
+        position.y,
+        position.z
+      ),
       RAPIER.ColliderDesc.cuboid(width * 0.5, height * 0.5, depth * 0.5)
     ),
   ];
