@@ -99,9 +99,9 @@ export class GameModelUpdateSystem extends System<GameState> {
   };
 
   private onAddEnemy = (enemyModel: Enemy) => {
-    const { RAPIER, ecs } = this;
+    const { RAPIER, assets, ecs } = this;
 
-    ecs.addEntity(enemy(RAPIER, enemyModel.id));
+    ecs.addEntity(enemy(RAPIER, assets, enemyModel.id));
   };
 
   private onRemoveEnemy = (enemyModel: Enemy) => {

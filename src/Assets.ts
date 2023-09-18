@@ -7,7 +7,7 @@ export const TYPE_BULLET_SPAWN = 'bullet_spawn';
 
 export const BARRIER_HEIGHT = 1.25;
 export const BARRIER_WIDTH = 10;
-export const ENEMY_RADIUS = 0.5;
+export const ENEMY_RADIUS = 1.0;
 export const HEAD_RADIUS = 0.1;
 
 interface Trimesh {
@@ -31,18 +31,46 @@ export interface Assets {
   gun: Gun;
   road: Model;
   barrier: Barrier;
+  helicopter: Model;
 }
 
 export async function loadAssets(): Promise<Assets> {
-  const gltf = await new Promise<GLTF>(resolve =>
-    new GLTFLoader().load(modelsUrl, resolve)
-  );
+  const gltf = await loadGLTF(modelsUrl);
 
   const gun = extractGun(gltf);
   const road = extractRoad(gltf);
   const barrier = extractBarrier(gltf);
+  const helicopter = extractHelicopter(gltf);
 
-  return { gun, road, barrier };
+  return { gun, road, barrier, helicopter };
+}
+
+function extractHelicopter(gltf: GLTF) {
+  const helicopter = getObjectByType(gltf.scene, 'helicopter');
+
+  // helicopter.children[0].scale.y = -1;
+  const root = helicopter.children[0];
+
+  root.scale.z = -1;
+
+  const model = wrapTransform(root);
+
+  return { model };
+}
+
+export function getRotors(model: Object3D) {
+  const rotors: { mainRotor?: Object3D; tailRotor?: Object3D } = {};
+
+  model.traverse(obj => {
+    if (obj.name === 'MainRotor_2') {
+      rotors.mainRotor = obj;
+    }
+    if (obj.name === 'TailRotor_1') {
+      rotors.tailRotor = obj;
+    }
+  });
+
+  return rotors;
 }
 
 function extractGun(gltf: GLTF) {
@@ -143,4 +171,10 @@ export function getObjectByType(scene: Object3D, type: string) {
   }
 
   return object;
+}
+
+export async function loadGLTF(src: string) {
+  return await new Promise<GLTF>(resolve =>
+    new GLTFLoader().load(src, resolve)
+  );
 }

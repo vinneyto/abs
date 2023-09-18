@@ -6,4 +6,5 @@ export * from './BulletSpawnSystem';
 export * from './GameModelUpdateSystem';
 export * from './RoadBarrierUpdateSystem';
 export * from './RoadSegmentUpdateSystem';
-export * from './EnemyUpdateSystem';
+export * from './EnemyPositionUpdateSystem';
+export * from './EnemyAnimationUpdateSystem';

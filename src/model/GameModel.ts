@@ -30,7 +30,7 @@ export class GameModel extends EventEmitter {
   }
 
   updateEnemies(delta: number) {
-    this.enemies.update(delta);
+    this.enemies.update(delta, this.headPosition);
   }
 
   updateNextBarrier() {

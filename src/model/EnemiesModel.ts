@@ -1,6 +1,8 @@
-import { CatmullRomCurve3, Sphere, Vector3 } from 'three';
+import { CatmullRomCurve3, Matrix4, Quaternion, Sphere, Vector3 } from 'three';
 import { Id } from './Id';
 import EventEmitter from 'eventemitter3';
+
+const up = new Vector3();
 
 export class Enemy {
   public readonly id = Id.get();
@@ -8,11 +10,14 @@ export class Enemy {
   private t: number = 0;
   private speed: number = 0.1;
   private points: Vector3[] = [];
+  private rotationMatrix = new Matrix4();
 
   public position: Vector3;
+  public quaternion: Quaternion;
 
   constructor(private arial: Sphere) {
     this.position = arial.center.clone();
+    this.quaternion = new Quaternion();
     this.generateNewCurve();
   }
 
@@ -40,7 +45,7 @@ export class Enemy {
     return new Vector3(x, y, z).add(this.arial.center);
   }
 
-  public update(delta: number) {
+  public update(delta: number, playerPosition: Vector3) {
     this.t += this.speed * delta;
 
     if (this.t > 1) {
@@ -49,6 +54,9 @@ export class Enemy {
     }
 
     this.position = this.curve.getPoint(this.t);
+
+    this.rotationMatrix.lookAt(this.position, playerPosition, up);
+    this.quaternion.setFromRotationMatrix(this.rotationMatrix);
   }
 }
 
@@ -66,9 +74,9 @@ export class EnemiesModel extends EventEmitter {
     this.emit(EnemiesEvent.AddEnemy, enemy);
   }
 
-  update(delta: number) {
+  update(delta: number, playerPosition: Vector3) {
     for (const enemy of this.enemies.values()) {
-      enemy.update(delta);
+      enemy.update(delta, playerPosition);
     }
   }
 

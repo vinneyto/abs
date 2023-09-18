@@ -37,7 +37,8 @@ import {
   RoadSegmentUpdateSystem,
   RoadBarrierUpdateSystem,
   GameModelUpdateSystem,
-  EnemyUpdateSystem,
+  EnemyPositionUpdateSystem,
+  EnemyAnimationUpdateSystem,
 } from './ecs/systems';
 import {
   canvasSize,
@@ -88,7 +89,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   sun.shadow.camera.right = 20;
   sun.shadow.camera.top = 20;
   sun.shadow.camera.bottom = -20;
-  sun.intensity = 3;
+  sun.intensity = 1;
   scene.add(sun);
 
   const gameModel = new GameModel();
@@ -121,7 +122,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   // ambient light
   const ambientLight = new AmbientLight();
-  ambientLight.intensity = 0.1;
+  ambientLight.intensity = 2;
   scene.add(ambientLight);
 
   const camera = new PerspectiveCamera(75, 1, 0.01, 100);
@@ -146,7 +147,8 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     ecs.addSystem(new GameModelUpdateSystem());
     ecs.addSystem(new RoadSegmentUpdateSystem());
     ecs.addSystem(new RoadBarrierUpdateSystem());
-    ecs.addSystem(new EnemyUpdateSystem());
+    ecs.addSystem(new EnemyPositionUpdateSystem());
+    ecs.addSystem(new EnemyAnimationUpdateSystem());
 
     ecs.addSystem(new ClosestBarrierPointerUpdateSystem());
     ecs.addSystem(new ClosestBarrierCountUpdateSystem());
