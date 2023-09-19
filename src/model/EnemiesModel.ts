@@ -1,10 +1,46 @@
-import { CatmullRomCurve3, Matrix4, Quaternion, Sphere, Vector3 } from 'three';
+import {
+  CatmullRomCurve3,
+  Euler,
+  Matrix4,
+  Quaternion,
+  Sphere,
+  Vector3,
+} from 'three';
 import { Id } from './Id';
 import EventEmitter from 'eventemitter3';
 
-const up = new Vector3();
+const up = new Vector3(0, 1, 0);
+const quat90x = new Quaternion().setFromEuler(new Euler(-Math.PI / 2, 0, 0));
 
-export class Enemy {
+export enum EnemyGunEvent {
+  Fire = 'Fire',
+}
+
+export class EnemyGun extends EventEmitter {
+  public enabled = true;
+
+  public timeToFire = 0;
+  public interval = 0.2;
+
+  constructor(public readonly enemyId = 0, public readonly index = 0) {
+    super();
+  }
+
+  update(delta: number) {
+    if (!this.enabled) {
+      return;
+    }
+
+    if (this.timeToFire <= 0) {
+      this.timeToFire = this.interval;
+      this.emit(EnemyGunEvent.Fire, this);
+    }
+
+    this.timeToFire -= delta;
+  }
+}
+
+export class Enemy extends EventEmitter {
   public readonly id = Id.get();
   private curve!: CatmullRomCurve3;
   private t: number = 0;
@@ -15,10 +51,20 @@ export class Enemy {
   public position: Vector3;
   public quaternion: Quaternion;
 
+  public guns: EnemyGun[] = [];
+
   constructor(private arial: Sphere) {
+    super();
     this.position = arial.center.clone();
     this.quaternion = new Quaternion();
     this.generateNewCurve();
+
+    for (let i = 0; i < 4; i++) {
+      const gun = new EnemyGun(this.id, i);
+      gun.timeToFire *= i;
+      gun.on(EnemyGunEvent.Fire, g => this.emit(EnemyGunEvent.Fire, g));
+      this.guns.push(gun);
+    }
   }
 
   private generateNewCurve() {
@@ -55,8 +101,14 @@ export class Enemy {
 
     this.position = this.curve.getPoint(this.t);
 
-    this.rotationMatrix.lookAt(this.position, playerPosition, up);
-    this.quaternion.setFromRotationMatrix(this.rotationMatrix);
+    this.rotationMatrix.lookAt(playerPosition, this.position, up);
+    this.quaternion
+      .setFromRotationMatrix(this.rotationMatrix)
+      .multiply(quat90x);
+
+    for (const gun of this.guns) {
+      gun.update(delta);
+    }
   }
 }
 
@@ -72,6 +124,7 @@ export class EnemiesModel extends EventEmitter {
     const enemy = new Enemy(arial);
     this.enemies.set(enemy.id, enemy);
     this.emit(EnemiesEvent.AddEnemy, enemy);
+    return enemy;
   }
 
   update(delta: number, playerPosition: Vector3) {

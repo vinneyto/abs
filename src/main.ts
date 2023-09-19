@@ -89,7 +89,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   sun.shadow.camera.right = 20;
   sun.shadow.camera.top = 20;
   sun.shadow.camera.bottom = -20;
-  sun.intensity = 1;
+  sun.intensity = 2;
   scene.add(sun);
 
   const gameModel = new GameModel();
@@ -122,7 +122,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   // ambient light
   const ambientLight = new AmbientLight();
-  ambientLight.intensity = 2;
+  ambientLight.intensity = 1;
   scene.add(ambientLight);
 
   const camera = new PerspectiveCamera(75, 1, 0.01, 100);

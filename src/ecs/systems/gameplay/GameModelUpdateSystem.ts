@@ -1,11 +1,13 @@
 import { Assets } from '../../../Assets';
 import { Time } from '../../../Time';
-import { EnemyIdComponent, UpdateComponent } from '../../components';
+import { UpdateComponent } from '../../components';
 import { Entity, System } from '../../ecs';
 import { barrier, enemy, roadSegment } from '../../entities';
 import {
   EnemiesEvent,
   Enemy,
+  EnemyGun,
+  EnemyGunEvent,
   GameModel,
   RoadEvent,
   RoadSegment,
@@ -21,6 +23,8 @@ export class GameModelUpdateSystem extends System<GameState> {
   private firstTime = true;
   private assets!: Assets;
   private RAPIER!: RapierModule;
+
+  private entitiesMap = new Map<number, Entity>();
 
   private roadSegmentEntityMap = new Map<
     number,
@@ -56,9 +60,11 @@ export class GameModelUpdateSystem extends System<GameState> {
 
     this.listenGameModel(state.gameModel);
 
-    state.gameModel
+    const enemy = state.gameModel
       .getEnemies()
       .spawnEnemy(new Sphere(new Vector3(0, 5, -10), 3));
+
+    enemy.on(EnemyGunEvent.Fire, this.onEnemyFire);
   }
 
   private listenGameModel(gameModel: GameModel) {
@@ -101,19 +107,22 @@ export class GameModelUpdateSystem extends System<GameState> {
   private onAddEnemy = (enemyModel: Enemy) => {
     const { RAPIER, assets, ecs } = this;
 
-    ecs.addEntity(enemy(RAPIER, assets, enemyModel.id));
+    const entity = ecs.addEntity(enemy(RAPIER, assets, enemyModel.id));
+
+    this.entitiesMap.set(enemyModel.id, entity);
   };
 
   private onRemoveEnemy = (enemyModel: Enemy) => {
     const { ecs } = this;
 
-    const enemyEntity = ecs.find(
-      [EnemyIdComponent],
-      components => components.get(EnemyIdComponent).id === enemyModel.id
-    );
+    const enemyEntity = this.entitiesMap.get(enemyModel.id);
 
     if (enemyEntity !== undefined) {
       destroyEntity(ecs, enemyEntity);
     }
+  };
+
+  private onEnemyFire = (_gun: EnemyGun) => {
+    // console.log(gun.enemyId, gun.index);
   };
 }

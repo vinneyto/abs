@@ -7,7 +7,6 @@ export const TYPE_BULLET_SPAWN = 'bullet_spawn';
 
 export const BARRIER_HEIGHT = 1.25;
 export const BARRIER_WIDTH = 10;
-export const ENEMY_RADIUS = 1.0;
 export const HEAD_RADIUS = 0.1;
 
 interface Trimesh {
@@ -27,11 +26,15 @@ interface Gun extends Model {
   bulletSpawnTransform: Matrix4;
 }
 
+interface Helicopter extends Model {
+  trimesh: Trimesh;
+}
+
 export interface Assets {
   gun: Gun;
   road: Model;
   barrier: Barrier;
-  helicopter: Model;
+  helicopter: Helicopter;
 }
 
 export async function loadAssets(): Promise<Assets> {
@@ -45,17 +48,22 @@ export async function loadAssets(): Promise<Assets> {
   return { gun, road, barrier, helicopter };
 }
 
-function extractHelicopter(gltf: GLTF) {
-  const helicopter = getObjectByType(gltf.scene, 'helicopter');
+function extractHelicopter(gltf: GLTF): Helicopter {
+  const helicopter = getObjectByName(gltf.scene, 'helicopter');
 
   // helicopter.children[0].scale.y = -1;
   const root = helicopter.children[0];
 
-  root.scale.z = -1;
-
   const model = wrapTransform(root);
 
-  return { model };
+  const helicopterBody = getObjectByName(root, 'helicopter_body') as Mesh;
+
+  const vertices = helicopterBody.geometry.attributes.position
+    .array as Float32Array;
+
+  const indices = new Uint32Array(helicopterBody.geometry.getIndex()?.array!);
+
+  return { model, trimesh: { vertices, indices } };
 }
 
 export function getRotors(model: Object3D) {
@@ -168,6 +176,22 @@ export function getObjectByType(scene: Object3D, type: string) {
 
   if (object === undefined) {
     throw new Error(`object ${type} is not found in assets`);
+  }
+
+  return object;
+}
+
+export function getObjectByName(scene: Object3D, name: string) {
+  let object: Object3D | undefined;
+
+  scene.traverse(child => {
+    if (object === undefined && child.name === name) {
+      object = child;
+    }
+  });
+
+  if (object === undefined) {
+    throw new Error(`object ${name} is not found in assets`);
   }
 
   return object;
