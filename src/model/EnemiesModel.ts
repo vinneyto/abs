@@ -67,6 +67,11 @@ export class Enemy extends EventEmitter {
     }
   }
 
+  update(delta: number, playerPosition: Vector3) {
+    this.updatePosition(delta, playerPosition);
+    this.updateGuns(delta);
+  }
+
   private generateNewCurve() {
     this.points = [];
 
@@ -91,7 +96,7 @@ export class Enemy extends EventEmitter {
     return new Vector3(x, y, z).add(this.arial.center);
   }
 
-  public update(delta: number, playerPosition: Vector3) {
+  private updatePosition(delta: number, playerPosition: Vector3) {
     this.t += this.speed * delta;
 
     if (this.t > 1) {
@@ -105,7 +110,9 @@ export class Enemy extends EventEmitter {
     this.quaternion
       .setFromRotationMatrix(this.rotationMatrix)
       .multiply(quat90x);
+  }
 
+  private updateGuns(delta: number) {
     for (const gun of this.guns) {
       gun.update(delta);
     }

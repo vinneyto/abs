@@ -1,5 +1,9 @@
 import { Object3D } from 'three';
-import { ControllerComponent, TransformComponent } from '../../components';
+import {
+  ControllerComponent,
+  PositionComponent,
+  RotationComponent,
+} from '../../components';
 import { System } from '../../ecs';
 import { GameState } from '../../GameState';
 
@@ -8,16 +12,20 @@ export class ControllerTransformSystem extends System<GameState> {
     super();
   }
 
-  public componentsRequired = [ControllerComponent, TransformComponent];
+  public componentsRequired = [
+    ControllerComponent,
+    PositionComponent,
+    RotationComponent,
+  ];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
 
     const { index } = components.get(ControllerComponent);
-    const { position, quaternion, scale } = components.get(TransformComponent);
+    const { position } = components.get(PositionComponent);
+    const { quaternion } = components.get(RotationComponent);
 
     position.copy(this.controllers[index].position);
     quaternion.copy(this.controllers[index].quaternion);
-    scale.copy(this.controllers[index].scale);
   }
 }

@@ -3,7 +3,8 @@ import { Time } from '../../../Time';
 import {
   BulletSpawnComponent,
   ControllerComponent,
-  TransformComponent,
+  PositionComponent,
+  RotationComponent,
 } from '../../components';
 import { System } from '../../ecs';
 import { bullet } from '../../entities';
@@ -13,7 +14,8 @@ export class BulletSpawnSystem extends System<GameState> {
   public componentsRequired = [
     BulletSpawnComponent,
     ControllerComponent,
-    TransformComponent,
+    PositionComponent,
+    RotationComponent,
   ];
 
   public update(entity: number, state: GameState): void {
@@ -23,7 +25,8 @@ export class BulletSpawnSystem extends System<GameState> {
 
     const bulletSpawnComponent = components.get(BulletSpawnComponent);
     const { gamepad } = components.get(ControllerComponent);
-    const { position, quaternion, scale } = components.get(TransformComponent);
+    const { position } = components.get(PositionComponent);
+    const { quaternion } = components.get(RotationComponent);
 
     if (!gamepad) {
       return;
@@ -33,7 +36,7 @@ export class BulletSpawnSystem extends System<GameState> {
 
     if (firePressed && bulletSpawnComponent.countdownToSpawn <= 0) {
       const bulletSpawnMatrix = new Matrix4()
-        .compose(position, quaternion, scale)
+        .compose(position, quaternion, new Vector3(1, 1, 1))
         .multiply(assets.gun.bulletSpawnTransform);
 
       const spawnPoint = new Vector3();

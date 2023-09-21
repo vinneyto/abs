@@ -2,7 +2,6 @@ import { Collider } from '@dimforge/rapier3d';
 import {
   LifeCircle,
   LifeCircleComponent,
-  TransformComponent,
   ViewComponent,
   VisibilityComponent,
 } from './components';
@@ -14,11 +13,6 @@ export type GameECS = ECS<GameState>;
 export function getView(ecs: GameECS, entity: Entity) {
   const components = ecs.getComponents(entity);
   return components.get(ViewComponent);
-}
-
-export function getTransform(ecs: GameECS, entity: Entity) {
-  const components = ecs.getComponents(entity);
-  return components.get(TransformComponent);
 }
 
 export function getVisibility(ecs: GameECS, entity: Entity) {

@@ -1,6 +1,6 @@
 import {
   ClosestBarrierPointerComponent,
-  TransformComponent,
+  PositionComponent,
   VisibilityComponent,
 } from '../../components';
 import { System } from '../../ecs';
@@ -9,13 +9,13 @@ import { GameState } from '../../GameState';
 export class ClosestBarrierPointerUpdateSystem extends System<GameState> {
   public componentsRequired = [
     ClosestBarrierPointerComponent,
-    TransformComponent,
+    PositionComponent,
     VisibilityComponent,
   ];
 
   public update(entity: number, state: GameState): void {
     const components = this.ecs.getComponents(entity);
-    const { position } = components.get(TransformComponent);
+    const { position } = components.get(PositionComponent);
     const { pan } = components.get(ClosestBarrierPointerComponent);
     const visibilityComponent = components.get(VisibilityComponent);
     const { gameModel } = state;

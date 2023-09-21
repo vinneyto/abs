@@ -2,17 +2,12 @@ import {
   ColliderComponent,
   LifeCircle,
   LifeCircleComponent,
-  TransformComponent,
 } from '../../components';
 import { Entity, System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class ColliderAddSystem extends System<GameState> {
-  public componentsRequired = [
-    LifeCircleComponent,
-    ColliderComponent,
-    TransformComponent,
-  ];
+  public componentsRequired = [LifeCircleComponent, ColliderComponent];
 
   public update(entity: Entity, state: GameState): void {
     const { world } = state;
