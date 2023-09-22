@@ -1,7 +1,7 @@
 import { Assets } from '../../../Assets';
 import { Time } from '../../../Time';
 import { UpdateComponent } from '../../components';
-import { Entity, System } from '../../ecs';
+import { Entity, System } from '@abs/core';
 import { barrier, enemy, roadSegment } from '../../entities';
 import {
   EnemiesEvent,

@@ -1,5 +1,5 @@
 import { CanvasSizeComponent } from '../../components';
-import { Entity, System } from '../../ecs';
+import { Entity, System } from '@abs/core';
 import { GameState } from '../../GameState';
 
 export class CanvasResizeSystem extends System<GameState> {

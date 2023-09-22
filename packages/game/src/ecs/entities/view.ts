@@ -6,7 +6,7 @@ import {
   ViewComponent,
   VisibilityComponent,
 } from '../components';
-import { component } from '../ecs';
+import { component } from '@abs/core';
 
 export interface ViewDescriptor {
   position?: Vector3;

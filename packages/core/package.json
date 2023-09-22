@@ -1,0 +1,12 @@
+{
+  "name": "@abs/core",
+  "private": true,
+  "version": "0.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "rm -rf dist && tsc"
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.1"
+  }
+}

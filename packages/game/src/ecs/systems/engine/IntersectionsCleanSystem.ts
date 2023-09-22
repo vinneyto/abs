@@ -1,5 +1,5 @@
 import { UpdateComponent } from '../../components';
-import { System } from '../../ecs';
+import { System } from '@abs/core';
 import { GameState } from '../../GameState';
 
 export class IntersectionsCleanSystem extends System<GameState> {

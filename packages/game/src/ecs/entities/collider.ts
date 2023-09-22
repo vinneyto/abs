@@ -1,5 +1,5 @@
 import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d';
-import { component } from '../ecs';
+import { component } from '@abs/core';
 import { ColliderComponent, CollisionGroups } from '../components';
 
 export function collider(

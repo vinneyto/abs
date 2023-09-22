@@ -2,5 +2,12 @@
   "name": "abs",
   "private": true,
   "version": "0.0.0",
-  "workspaces": ["packages/**"]
+  "workspaces": [
+    "packages/**"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.6.3",
+    "prettier": "^2.8.8",
+    "typescript": "^5.0.2"
+  }
 }

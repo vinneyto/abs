@@ -1,7 +1,7 @@
 // @ts-ignore
 import { Text } from 'troika-three-text';
 import { view } from './view';
-import { component } from '../ecs';
+import { component } from '@abs/core';
 import { TextComponent } from '../components';
 
 export function text(text = '') {

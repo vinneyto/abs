@@ -1,7 +1,7 @@
 // import { Time } from '../../../Time';
 import { Time } from '../../../Time';
 import { EnemyIdComponent, EnemyRotorsComponent } from '../../components';
-import { System } from '../../ecs';
+import { System } from '@abs/core';
 import { GameState } from '../../GameState';
 
 export class EnemyAnimationUpdateSystem extends System<GameState> {

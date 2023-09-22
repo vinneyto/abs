@@ -6,7 +6,7 @@ import {
   PositionComponent,
   RotationComponent,
 } from '../../components';
-import { System } from '../../ecs';
+import { System } from '@abs/core';
 import { bullet } from '../../entities';
 import { GameState } from '../../GameState';
 

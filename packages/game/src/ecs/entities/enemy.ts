@@ -9,7 +9,7 @@ import {
 } from '../components';
 import { GROUP_ENEMIES } from './constants';
 import { Assets, getRotors } from '../../Assets';
-import { component } from '../ecs';
+import { component } from '@abs/core';
 
 export function enemy(RAPIER: RapierModule, assets: Assets, id: number) {
   const root = assets.helicopter.model.clone();

@@ -1,6 +1,6 @@
 import { ConeGeometry, Mesh, MeshBasicMaterial } from 'three';
 import { view } from './view';
-import { component } from '../ecs';
+import { component } from '@abs/core';
 import { ClosestBarrierPointerComponent } from '../components';
 
 export function closestBarrierPointer() {

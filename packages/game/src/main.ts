@@ -10,7 +10,6 @@ import {
   WebGLRenderer,
 } from 'three';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
-import { ECS } from './ecs/ecs';
 import {
   CanvasResizeSystem,
   ViewAddSystem,
@@ -55,6 +54,7 @@ import { loadAssets } from './Assets';
 import { MAIN_SCENE } from './ecs/components';
 import { GameState } from './ecs/GameState';
 import { GameModel } from './model/GameModel';
+import { ECS } from '@abs/core';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();

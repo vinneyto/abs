@@ -1,4 +1,4 @@
-import { Component } from '../ecs';
+import { Component } from '@abs/core';
 
 export class TextComponent extends Component {
   text = '';

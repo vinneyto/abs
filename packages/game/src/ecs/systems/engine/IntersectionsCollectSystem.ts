@@ -1,5 +1,5 @@
 import { World } from '@dimforge/rapier3d';
-import { System } from '../../ecs';
+import { System } from '@abs/core';
 import { GameState } from '../../GameState';
 import { ColliderComponent } from '../../components';
 

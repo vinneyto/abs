@@ -1,4 +1,4 @@
-import { component } from '../ecs';
+import { component } from '@abs/core';
 import {
   ClosestBarrierAttemptsComponent,
   ClosestBarrierPointerComponent,

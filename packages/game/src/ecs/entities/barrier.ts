@@ -1,6 +1,6 @@
 import { Assets } from '../../Assets';
 import { view } from './view';
-import { component } from '../ecs';
+import { component } from '@abs/core';
 import {
   RoadSegmentBarrierComponent,
   RoadSegmentIdComponent,

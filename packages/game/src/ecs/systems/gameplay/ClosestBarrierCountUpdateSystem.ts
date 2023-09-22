@@ -1,5 +1,5 @@
 import { ClosestBarrierCountComponent, TextComponent } from '../../components';
-import { System } from '../../ecs';
+import { System } from '@abs/core';
 import { GameState } from '../../GameState';
 
 export class ClosestBarrierCountUpdateSystem extends System<GameState> {

@@ -1,5 +1,5 @@
 import { Object3D } from 'three';
-import { Component } from '../ecs';
+import { Component } from '@abs/core';
 
 export const MAIN_SCENE = 'main_scene';
 

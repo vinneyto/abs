@@ -1,5 +1,5 @@
 import { RoadSegmentIdComponent, PositionComponent } from '../../components';
-import { System } from '../../ecs';
+import { System } from '@abs/core';
 import { GameState } from '../../GameState';
 
 export class RoadSegmentUpdateSystem extends System<GameState> {

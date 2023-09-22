@@ -1,5 +1,5 @@
 import { UpdateComponent } from '../../components';
-import { Entity, System } from '../../ecs';
+import { Entity, System } from '@abs/core';
 import { GameState } from '../../GameState';
 
 export class PhysicsSystem extends System<GameState> {
