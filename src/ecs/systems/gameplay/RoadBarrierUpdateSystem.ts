@@ -1,4 +1,4 @@
-import { BARRIER_WIDTH } from '../../../Assets';
+import { BARRIER_WIDTH } from '../../../constants';
 import {
   RoadSegmentBarrierComponent,
   TransformComponent,

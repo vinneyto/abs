@@ -76,13 +76,13 @@ export class GameModelUpdateSystem extends System<GameState> {
   }
 
   private onAddRoadSegment = (segment: RoadSegment) => {
-    const { ecs, assets, roadSegmentEntityMap } = this;
+    const { ecs, roadSegmentEntityMap } = this;
 
-    const segmentEntity = ecs.addEntity(roadSegment(assets, segment.id));
+    const segmentEntity = ecs.addEntity(roadSegment(segment.id));
 
     let barrierEntity: Entity | undefined;
     if (segment.hasBarrier) {
-      barrierEntity = ecs.addEntity(barrier(assets, segment.id));
+      barrierEntity = ecs.addEntity(barrier(segment.id));
     }
 
     roadSegmentEntityMap.set(segment.id, {

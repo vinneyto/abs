@@ -1,12 +1,11 @@
-import { Assets } from '../../Assets';
-import { view } from './view';
+import { base } from './base';
 import { component } from '../ecs';
-import { RoadSegmentIdComponent } from '../components';
+import { RoadSegmentIdComponent, Meshes } from '../components';
 
-export function roadSegment(assets: Assets, id: number) {
+export function roadSegment(id: number) {
   return [
-    ...view({
-      view: assets.road.model.clone(),
+    ...base({
+      mesh: Meshes.RoadSegment,
     }),
     component(RoadSegmentIdComponent).assign({ id }),
   ];

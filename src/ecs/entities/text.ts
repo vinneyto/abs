@@ -1,13 +1,11 @@
-// @ts-ignore
-import { Text } from 'troika-three-text';
-import { view } from './view';
+import { base } from './base';
 import { component } from '../ecs';
-import { TextComponent } from '../components';
+import { TextComponent, Meshes } from '../components';
 
 export function text(text = '') {
   return [
-    ...view({
-      view: new Text(),
+    ...base({
+      mesh: Meshes.Text,
     }),
     component(TextComponent).assign({ text }),
   ];

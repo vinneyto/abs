@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
-import { BARRIER_HEIGHT } from '../Assets';
 import { Id } from './Id';
+import { BARRIER_HEIGHT } from '../constants';
 
 export class RoadSegment {
   public readonly id = Id.get();

@@ -5,7 +5,7 @@ import {
 } from '../components';
 import { Vector2 } from 'three';
 import { text } from './text';
-import { BARRIER_WIDTH } from '../../Assets';
+import { BARRIER_WIDTH } from '../../constants';
 
 export function closestBarrierAttempts() {
   return [

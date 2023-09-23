@@ -1,8 +1,9 @@
-import { Object3D, Quaternion, Vector3 } from 'three';
+import { Quaternion, Vector3 } from 'three';
 import {
   LifeCircleComponent,
   TransformComponent,
-  ViewComponent,
+  MeshComponent,
+  Meshes,
   VisibilityComponent,
 } from '../components';
 import { component } from '../ecs';
@@ -11,14 +12,13 @@ export interface ViewDescriptor {
   position?: Vector3;
   quaternion?: Quaternion;
   scale?: Vector3;
-  view?: Object3D;
-  addTo?: string;
+  mesh?: Meshes;
   visible?: boolean;
   castShadow?: boolean;
   receiveShadow?: boolean;
 }
 
-export function view(dsc: ViewDescriptor) {
+export function base(dsc: ViewDescriptor) {
   return [
     component(LifeCircleComponent),
     component(VisibilityComponent).assign({ visible: dsc.visible }),
@@ -27,9 +27,8 @@ export function view(dsc: ViewDescriptor) {
       quaternion: dsc.quaternion,
       scale: dsc.scale,
     }),
-    component(ViewComponent).assign({
-      view: dsc.view,
-      addTo: dsc.addTo,
+    component(MeshComponent).assign({
+      mesh: dsc.mesh,
       castShadow: dsc.castShadow,
       receiveShadow: dsc.receiveShadow,
     }),

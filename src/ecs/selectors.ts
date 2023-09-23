@@ -3,7 +3,7 @@ import {
   LifeCircle,
   LifeCircleComponent,
   TransformComponent,
-  ViewComponent,
+  MeshComponent,
   VisibilityComponent,
 } from './components';
 import { ECS, Entity } from './ecs';
@@ -13,7 +13,7 @@ export type GameECS = ECS<GameState>;
 
 export function getView(ecs: GameECS, entity: Entity) {
   const components = ecs.getComponents(entity);
-  return components.get(ViewComponent);
+  return components.get(MeshComponent);
 }
 
 export function getTransform(ecs: GameECS, entity: Entity) {

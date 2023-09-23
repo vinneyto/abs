@@ -1,4 +1,3 @@
-export * from './constants';
 export * from './barrier';
 export * from './bullet';
 export * from './bulletSpawn';
@@ -9,8 +8,7 @@ export * from './destroyCountdown';
 export * from './gun';
 export * from './roadSegment';
 export * from './update';
-export * from './view';
-export * from './closestBarrierPointer';
+export * from './base';
 export * from './closestBarrierCount';
 export * from './closestBarrierAttempts';
 export * from './text';

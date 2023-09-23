@@ -7,4 +7,3 @@ export * from './GameModelUpdateSystem';
 export * from './RoadBarrierUpdateSystem';
 export * from './RoadSegmentUpdateSystem';
 export * from './EnemyPositionUpdateSystem';
-export * from './EnemyAnimationUpdateSystem';

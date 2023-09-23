@@ -1,15 +1,15 @@
-import { Assets } from '../../Assets';
-import { view } from './view';
+import { base } from './base';
 import { component } from '../ecs';
 import {
   RoadSegmentBarrierComponent,
   RoadSegmentIdComponent,
+  Meshes,
 } from '../components';
 
-export function barrier(assets: Assets, id: number) {
+export function barrier(id: number) {
   return [
-    ...view({
-      view: assets.barrier.model.clone(),
+    ...base({
+      mesh: Meshes.Barrier,
       castShadow: true,
       receiveShadow: false,
     }),

@@ -1,14 +1,10 @@
-import { Mesh, MeshBasicMaterial, SphereGeometry, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { collider } from './collider';
-import { view } from './view';
+import { base } from './base';
 import { destroyCountdown } from './destroyCountdown';
 import { RapierModule } from '../../types';
-import { CollisionGroups } from '../components';
-import { GROUP_ENEMIES } from './constants';
-
-const BULLET_RADIUS = 0.03;
-const bulletGeometry = new SphereGeometry(BULLET_RADIUS, 16, 16);
-const bulletMaterial = new MeshBasicMaterial({ color: 0xff0000 });
+import { CollisionGroups, Meshes } from '../components';
+import { BULLET_RADIUS, GROUP_ENEMIES } from '../../constants';
 
 export function bullet(
   RAPIER: RapierModule,
@@ -18,8 +14,8 @@ export function bullet(
   const velocity = direction.clone().multiplyScalar(500);
 
   return [
-    ...view({
-      view: new Mesh(bulletGeometry, bulletMaterial),
+    ...base({
+      mesh: Meshes.Bullet,
     }),
     ...collider(
       RAPIER.RigidBodyDesc.dynamic()

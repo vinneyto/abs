@@ -1,12 +1,12 @@
-import { Assets } from '../../Assets';
 import { bulletSpawn } from './bulletSpawn';
 import { controller } from './controller';
-import { view } from './view';
+import { base } from './base';
+import { Meshes } from '../components';
 
-export function gun(assets: Assets, handIndex: number) {
+export function gun(handIndex: number) {
   return [
-    ...view({
-      view: assets.gun.model.clone(),
+    ...base({
+      mesh: Meshes.Gun,
     }),
     ...controller(handIndex),
     ...bulletSpawn(),

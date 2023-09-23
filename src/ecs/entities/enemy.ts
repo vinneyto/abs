@@ -1,31 +1,16 @@
-import { AxesHelper, Euler, Quaternion } from 'three';
+import { Euler, Quaternion } from 'three';
 import { collider } from './collider';
-import { view } from './view';
+import { base } from './base';
 import { RapierModule } from '../../types';
-import {
-  CollisionGroups,
-  EnemyIdComponent,
-  EnemyRotorsComponent,
-} from '../components';
-import { GROUP_ENEMIES } from './constants';
-import { Assets, getRotors } from '../../Assets';
+import { CollisionGroups, EnemyIdComponent, Meshes } from '../components';
+import { Assets } from '../../Assets';
 import { component } from '../ecs';
+import { GROUP_ENEMIES } from '../../constants';
 
 export function enemy(RAPIER: RapierModule, assets: Assets, id: number) {
-  const root = assets.helicopter.model.clone();
-  root.add(new AxesHelper(10));
-
-  const rotors = getRotors(root);
-
-  if (!rotors.mainRotor || !rotors.tailRotor) {
-    throw new Error('where are rotors?!');
-  }
-
-  const { mainRotor, tailRotor } = rotors;
-
   return [
-    ...view({
-      view: root,
+    ...base({
+      mesh: Meshes.Enemy,
       receiveShadow: false,
       castShadow: true,
     }),
@@ -40,9 +25,5 @@ export function enemy(RAPIER: RapierModule, assets: Assets, id: number) {
       new CollisionGroups([GROUP_ENEMIES]) // query contacts with enemies
     ),
     component(EnemyIdComponent).assign({ id }),
-    component(EnemyRotorsComponent).assign({
-      mainRotor,
-      tailRotor,
-    }),
   ];
 }

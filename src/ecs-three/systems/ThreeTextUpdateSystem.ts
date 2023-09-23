@@ -1,15 +1,16 @@
-import { TextComponent, ViewComponent } from '../../components';
-import { System } from '../../ecs';
-import { GameState } from '../../GameState';
+import { ThreeViewComponent } from '..';
+import { TextComponent } from '../../ecs/components';
+import { System } from '../../ecs/ecs';
+import { GameState } from '../../ecs/GameState';
 
-export class TextUpdateSystem extends System<GameState> {
-  public componentsRequired = [TextComponent, ViewComponent];
+export class ThreeTextUpdateSystem extends System<GameState> {
+  public componentsRequired = [TextComponent, ThreeViewComponent];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
 
     const textComponent = components.get(TextComponent);
-    const { view } = components.get(ViewComponent);
+    const { view } = components.get(ThreeViewComponent);
 
     if (!textComponent.needsUpdate) {
       return;

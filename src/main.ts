@@ -13,10 +13,7 @@ import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { ECS } from './ecs/ecs';
 import {
   CanvasResizeSystem,
-  ViewAddSystem,
   EntityDestroySystem,
-  ViewTransformSystem,
-  ViewRemoveSystem,
   InitFinishSystem,
   ColliderAddSystem,
   ColliderRemoveSystem,
@@ -24,7 +21,6 @@ import {
   DestroyCountdownSystem,
   PhysicsSystem,
   RenderSystem,
-  ViewVisibilitySystem,
   ControllerVisibilitySystem,
   ControllerTransformSystem,
   ControllerGamepadSystem,
@@ -33,12 +29,10 @@ import {
   ClosestBarrierPointerUpdateSystem,
   ClosestBarrierCountUpdateSystem,
   ClosestBarrierAttemptsUpdateSystem,
-  TextUpdateSystem,
   RoadSegmentUpdateSystem,
   RoadBarrierUpdateSystem,
   GameModelUpdateSystem,
   EnemyPositionUpdateSystem,
-  EnemyAnimationUpdateSystem,
 } from './ecs/systems';
 import {
   canvasSize,
@@ -52,9 +46,17 @@ import './style.css';
 import { Time } from './Time';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { loadAssets } from './Assets';
-import { MAIN_SCENE } from './ecs/components';
 import { GameState } from './ecs/GameState';
 import { GameModel } from './model/GameModel';
+import {
+  ThreeViewAddSystem,
+  ThreeViewRemoveSystem,
+  ThreeViewTransformSystem,
+  ThreeViewVisibilitySystem,
+} from './ecs-three';
+import { ThreeTextUpdateSystem } from './ecs-three/systems/ThreeTextUpdateSystem';
+import { ThreeEnemyDecorationAddSystem } from './ecs-three/systems/ThreeEnemyDecorationAddSystem';
+import { ThreeEnemyDecorationAnimateSystem } from './ecs-three/systems/ThreeEnemyDecorationAnimateSystem';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -65,7 +67,6 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   const ecs = new ECS<GameState>();
   const scene = new Scene();
-  scene.name = MAIN_SCENE;
 
   renderer.xr.enabled = true;
 
@@ -148,7 +149,6 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     ecs.addSystem(new RoadSegmentUpdateSystem());
     ecs.addSystem(new RoadBarrierUpdateSystem());
     ecs.addSystem(new EnemyPositionUpdateSystem());
-    ecs.addSystem(new EnemyAnimationUpdateSystem());
 
     ecs.addSystem(new ClosestBarrierPointerUpdateSystem());
     ecs.addSystem(new ClosestBarrierCountUpdateSystem());
@@ -163,19 +163,23 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     ecs.addSystem(new TurntableCameraSystem());
 
     // initialize systems
-    ecs.addSystem(new ViewAddSystem());
+    ecs.addSystem(new ThreeViewAddSystem());
+    ecs.addSystem(new ThreeEnemyDecorationAddSystem());
+
     ecs.addSystem(new ColliderAddSystem());
     ecs.addSystem(new InitFinishSystem());
 
     // world update systems
     ecs.addSystem(new PhysicsSystem());
     ecs.addSystem(new ColliderTransformSystem());
-    ecs.addSystem(new ViewTransformSystem());
-    ecs.addSystem(new ViewVisibilitySystem());
-    ecs.addSystem(new TextUpdateSystem());
+
+    ecs.addSystem(new ThreeViewTransformSystem());
+    ecs.addSystem(new ThreeViewVisibilitySystem());
+    ecs.addSystem(new ThreeTextUpdateSystem());
+    ecs.addSystem(new ThreeEnemyDecorationAnimateSystem());
 
     // destroy systems
-    ecs.addSystem(new ViewRemoveSystem());
+    ecs.addSystem(new ThreeViewRemoveSystem());
     ecs.addSystem(new ColliderRemoveSystem(world));
     ecs.addSystem(new EntityDestroySystem());
 
@@ -207,8 +211,8 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   // );
 
   // guns - left and right
-  ecs.addEntity(gun(assets, 1));
-  ecs.addEntity(gun(assets, 0));
+  ecs.addEntity(gun(1));
+  ecs.addEntity(gun(0));
 
   // ecs.addEntity(cuboid(RAPIER, new Vector3(-0.5, 0.5, -3), 1, 1, 1));
   // ecs.addEntity(cuboid(RAPIER, new Vector3(0.5, 0.5, -3), 1, 1, 1));
