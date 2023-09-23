@@ -1,5 +1,5 @@
 {
-  "name": "@abs/core",
+  "name": "@abs/math",
   "private": true,
   "version": "0.0.0",
   "main": "src/index.ts",
@@ -7,7 +7,7 @@
     "build": "rm -rf dist && tsc"
   },
   "dependencies": {
-    "eventemitter3": "^5.0.1",
-    "@abs/math": "0.0.0"
+    "three": "0.156.0",
+    "@types/three": "^0.155.1"
   }
 }

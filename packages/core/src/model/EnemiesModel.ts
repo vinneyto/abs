@@ -5,7 +5,7 @@ import {
   Quaternion,
   Sphere,
   Vector3,
-} from 'three';
+} from '@abs/math';
 import { Id } from './Id';
 import EventEmitter from 'eventemitter3';
 

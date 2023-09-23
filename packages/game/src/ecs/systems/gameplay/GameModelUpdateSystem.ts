@@ -1,17 +1,18 @@
 import { Assets } from '../../../Assets';
 import { Time } from '../../../Time';
 import { UpdateComponent } from '../../components';
-import { Entity, System } from '@abs/core';
-import { barrier, enemy, roadSegment } from '../../entities';
 import {
   EnemiesEvent,
   Enemy,
   EnemyGun,
   EnemyGunEvent,
+  Entity,
   GameModel,
   RoadEvent,
   RoadSegment,
-} from '../../../model';
+  System,
+} from '@abs/core';
+import { barrier, enemy, roadSegment } from '../../entities';
 import { GameState } from '../../GameState';
 import { destroyEntity } from '../../selectors';
 import { RapierModule } from '../../../types';

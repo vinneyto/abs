@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import { RoadEvent, RoadModel, RoadSegment } from './RoadModel';
-import { Vector3 } from 'three';
+import { Vector3 } from '@abs/math';
 import { EnemiesModel } from './EnemiesModel';
 
 export class GameModel extends EventEmitter {

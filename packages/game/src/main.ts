@@ -53,8 +53,7 @@ import { Sky } from 'three/addons/objects/Sky.js';
 import { loadAssets } from './Assets';
 import { MAIN_SCENE } from './ecs/components';
 import { GameState } from './ecs/GameState';
-import { GameModel } from './model/GameModel';
-import { ECS } from '@abs/core';
+import { ECS, GameModel } from '@abs/core';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();

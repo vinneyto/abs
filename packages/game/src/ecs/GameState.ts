@@ -2,14 +2,14 @@ import RAPIER, { World } from '@dimforge/rapier3d';
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { RapierModule } from '../types';
 import { Assets } from '../Assets';
-import { GameModel } from '../model/GameModel';
+import { GameModel, State } from '@abs/core';
 
 interface IntersectionPair {
   collider1: RAPIER.Collider;
   collider2: RAPIER.Collider;
 }
 
-export class GameState {
+export class GameState implements State {
   public intersections: IntersectionPair[] = [];
 
   constructor(
