@@ -1,9 +1,9 @@
 import { Object3D } from 'three';
-import { ControllerComponent } from '../../components';
-import { System } from '../../ecs';
-import { GameState } from '../../GameState';
+import { GameState } from '../../ecs/GameState';
+import { ControllerComponent } from '../../ecs/components';
+import { System } from '../../ecs/ecs';
 
-export class ControllerGamepadSystem extends System<GameState> {
+export class ThreeControllerGamepadSystem extends System<GameState> {
   private gamepads: Array<Gamepad | undefined> = [];
 
   constructor(controllers: Object3D[]) {
@@ -26,6 +26,8 @@ export class ControllerGamepadSystem extends System<GameState> {
     const components = this.ecs.getComponents(entity);
     const controllerComponent = components.get(ControllerComponent);
 
-    controllerComponent.gamepad = this.gamepads[controllerComponent.index];
+    const gamepad = this.gamepads[controllerComponent.index];
+
+    controllerComponent.trigger = gamepad?.buttons[0].value || 0;
   }
 }

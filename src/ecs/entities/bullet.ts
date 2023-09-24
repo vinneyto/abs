@@ -27,6 +27,6 @@ export function bullet(
       RAPIER.ColliderDesc.ball(BULLET_RADIUS),
       new CollisionGroups([GROUP_ENEMIES]) // query contacts with enemies
     ),
-    ...destroyCountdown(1),
+    ...destroyCountdown(2),
   ];
 }

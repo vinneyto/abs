@@ -22,14 +22,10 @@ export class BulletSpawnSystem extends System<GameState> {
     const components = this.ecs.getComponents(entity);
 
     const bulletSpawnComponent = components.get(BulletSpawnComponent);
-    const { gamepad } = components.get(ControllerComponent);
+    const { trigger } = components.get(ControllerComponent);
     const { position, quaternion, scale } = components.get(TransformComponent);
 
-    if (!gamepad) {
-      return;
-    }
-
-    const firePressed = gamepad.buttons[0].pressed;
+    const firePressed = trigger > 0;
 
     if (firePressed && bulletSpawnComponent.countdownToSpawn <= 0) {
       const bulletSpawnMatrix = new Matrix4()

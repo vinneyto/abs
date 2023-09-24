@@ -21,9 +21,6 @@ import {
   DestroyCountdownSystem,
   PhysicsSystem,
   RenderSystem,
-  ControllerVisibilitySystem,
-  ControllerTransformSystem,
-  ControllerGamepadSystem,
   BulletSpawnSystem,
   TurntableCameraSystem,
   ClosestBarrierPointerUpdateSystem,
@@ -49,6 +46,9 @@ import { loadAssets } from './Assets';
 import { GameState } from './ecs/GameState';
 import { GameModel } from './model/GameModel';
 import {
+  ThreeControllerGamepadSystem,
+  ThreeControllerTransformSystem,
+  ThreeControllerVisibilitySystem,
   ThreeViewAddSystem,
   ThreeViewRemoveSystem,
   ThreeViewTransformSystem,
@@ -138,9 +138,9 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   // input system
   {
-    ecs.addSystem(new ControllerGamepadSystem(controllers));
-    ecs.addSystem(new ControllerVisibilitySystem(controllers));
-    ecs.addSystem(new ControllerTransformSystem(controllers));
+    ecs.addSystem(new ThreeControllerGamepadSystem(controllers));
+    ecs.addSystem(new ThreeControllerVisibilitySystem(controllers));
+    ecs.addSystem(new ThreeControllerTransformSystem(controllers));
   }
 
   // logic systems
