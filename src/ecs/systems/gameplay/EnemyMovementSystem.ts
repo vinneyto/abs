@@ -7,7 +7,11 @@ import {
   Vector3,
 } from 'three';
 import { GameState } from '../../GameState';
-import { EnemyMotionComponent, TransformComponent } from '../../components';
+import {
+  ColliderComponent,
+  EnemyMotionComponent,
+  TransformComponent,
+} from '../../components';
 import { System } from '../../ecs';
 import { Time } from '../../../Time';
 
@@ -16,13 +20,14 @@ const quat90x = new Quaternion().setFromEuler(new Euler(-Math.PI / 2, 0, 0));
 const rotationMatrix = new Matrix4();
 
 export class EnemyMotionSystem extends System<GameState> {
-  componentsRequired = [EnemyMotionComponent, TransformComponent];
+  query = [EnemyMotionComponent, TransformComponent, ColliderComponent];
 
   public update(entity: number, state: GameState): void {
     const components = this.ecs.getComponents(entity);
 
     const motion = components.get(EnemyMotionComponent);
     const { position, quaternion } = components.get(TransformComponent);
+    const { rigidBody } = components.get(ColliderComponent);
 
     motion.t += motion.speed * Time.deltaSeconds();
 
@@ -35,6 +40,13 @@ export class EnemyMotionSystem extends System<GameState> {
 
     rotationMatrix.lookAt(state.gameModel.getHeadPosition(), position, up);
     quaternion.setFromRotationMatrix(rotationMatrix).multiply(quat90x);
+
+    if (!rigidBody) {
+      return;
+    }
+
+    rigidBody.setTranslation(position, false);
+    rigidBody.setRotation(quaternion, false);
   }
 }
 
@@ -45,7 +57,6 @@ function generateNewCurve(position: Vector3, arial: Sphere) {
   for (let i = 0; i < 3; i++) {
     points.push(getRandomPointInSphere(arial));
   }
-  points.push(position.clone());
 
   return new CatmullRomCurve3(points);
 }

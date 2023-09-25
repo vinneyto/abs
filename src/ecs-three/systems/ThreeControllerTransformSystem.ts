@@ -8,7 +8,7 @@ export class ThreeControllerTransformSystem extends System<GameState> {
     super();
   }
 
-  public componentsRequired = [ControllerComponent, TransformComponent];
+  public query = [ControllerComponent, TransformComponent];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);

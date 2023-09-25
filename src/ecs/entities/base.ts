@@ -1,10 +1,10 @@
 import { Quaternion, Vector3 } from 'three';
 import {
-  LifeCircleComponent,
   TransformComponent,
   MeshComponent,
   Meshes,
   VisibilityComponent,
+  OnAdd,
 } from '../components';
 import { component } from '../ecs';
 
@@ -20,7 +20,7 @@ export interface ViewDescriptor {
 
 export function base(dsc: ViewDescriptor) {
   return [
-    component(LifeCircleComponent),
+    component(OnAdd),
     component(VisibilityComponent).assign({ visible: dsc.visible }),
     component(TransformComponent).assign({
       position: dsc.position,

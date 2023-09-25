@@ -4,34 +4,20 @@ import {
 } from '../components';
 import { getRotors } from '../../Assets';
 import { GameState } from '../../ecs/GameState';
-import {
-  LifeCircle,
-  LifeCircleComponent,
-  MeshComponent,
-  Meshes,
-} from '../../ecs/components';
-import { System } from '../../ecs/ecs';
+import { MeshComponent, Meshes, OnAdd } from '../../ecs/components';
+import { System, predicate } from '../../ecs/ecs';
 
 export class ThreeEnemyDecorationAddSystem extends System<GameState> {
-  public componentsRequired = [
-    LifeCircleComponent,
-    MeshComponent,
+  public query = [
+    OnAdd,
     ThreeViewComponent,
+    predicate(MeshComponent, ({ mesh }) => mesh === Meshes.Enemy),
   ];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
 
-    const lifeCircleComponent = components.get(LifeCircleComponent);
-    const meshComponent = components.get(MeshComponent);
     const { view } = components.get(ThreeViewComponent);
-
-    if (
-      lifeCircleComponent.state !== LifeCircle.New ||
-      meshComponent.mesh !== Meshes.Enemy
-    ) {
-      return;
-    }
 
     const rotors = getRotors(view);
 

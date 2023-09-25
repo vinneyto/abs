@@ -8,7 +8,7 @@ export class RoadSegment {
   constructor(
     public hasBarrier = true,
     public position = 0,
-    public nextPosition = 0
+    public nextPosition = 0,
   ) {}
 
   update(delta: number, velocity: number) {

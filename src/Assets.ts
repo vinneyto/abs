@@ -193,6 +193,6 @@ export function getObjectByName(scene: Object3D, name: string) {
 
 export async function loadGLTF(src: string) {
   return await new Promise<GLTF>(resolve =>
-    new GLTFLoader().load(src, resolve)
+    new GLTFLoader().load(src, resolve),
   );
 }

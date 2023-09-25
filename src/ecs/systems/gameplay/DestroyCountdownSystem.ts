@@ -1,22 +1,17 @@
 import { Time } from '../../../Time';
-import {
-  LifeCircle,
-  LifeCircleComponent,
-  DestroyCountdownComponent,
-} from '../../components';
+import { DestroyCountdownComponent, OnDestroy } from '../../components';
 import { System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class DestroyCountdownSystem extends System<GameState> {
-  public componentsRequired = [LifeCircleComponent, DestroyCountdownComponent];
+  public query = [DestroyCountdownComponent];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
-    const lifeCircleComponent = components.get(LifeCircleComponent);
     const countdownComponent = components.get(DestroyCountdownComponent);
 
     if (countdownComponent.countdown <= 0) {
-      lifeCircleComponent.state = LifeCircle.Destroy;
+      this.ecs.addComponent(entity, new OnDestroy());
 
       console.log('destroy by countdown', entity);
 

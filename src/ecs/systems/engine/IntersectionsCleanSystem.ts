@@ -3,7 +3,7 @@ import { System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class IntersectionsCleanSystem extends System<GameState> {
-  public componentsRequired = [UpdateComponent];
+  public query = [UpdateComponent];
 
   constructor(private readonly state: GameState) {
     super();

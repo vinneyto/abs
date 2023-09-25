@@ -1,29 +1,15 @@
-import {
-  ColliderComponent,
-  LifeCircle,
-  LifeCircleComponent,
-  TransformComponent,
-} from '../../components';
+import { ColliderComponent, OnAdd, TransformComponent } from '../../components';
 import { Entity, System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class ColliderAddSystem extends System<GameState> {
-  public componentsRequired = [
-    LifeCircleComponent,
-    ColliderComponent,
-    TransformComponent,
-  ];
+  public query = [OnAdd, ColliderComponent, TransformComponent];
 
   public update(entity: Entity, state: GameState): void {
     const { world } = state;
     const components = this.ecs.getComponents(entity);
 
-    const lifeCircleComponent = components.get(LifeCircleComponent);
     const colliderComponent = components.get(ColliderComponent);
-
-    if (lifeCircleComponent.state !== LifeCircle.New) {
-      return;
-    }
 
     if (
       colliderComponent.colliderDesc === undefined ||
@@ -40,7 +26,7 @@ export class ColliderAddSystem extends System<GameState> {
 
     const collider = world.createCollider(
       colliderComponent.colliderDesc,
-      rigidBody
+      rigidBody,
     );
 
     colliderComponent.rigidBody = rigidBody;

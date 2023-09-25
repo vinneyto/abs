@@ -7,7 +7,7 @@ export function collider(
   colliderDesc: ColliderDesc,
   collisionGroups = new CollisionGroups(),
   solverGroups = new CollisionGroups(),
-  userData?: Record<string, unknown>
+  userData?: Record<string, unknown>,
 ) {
   return [
     component(ColliderComponent).assign({

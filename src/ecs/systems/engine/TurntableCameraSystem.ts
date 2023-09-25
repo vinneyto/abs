@@ -4,7 +4,7 @@ import { Entity, System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class TurntableCameraSystem extends System<GameState> {
-  public componentsRequired = [UpdateComponent];
+  public query = [UpdateComponent];
 
   public onRotate?: () => void;
 
@@ -15,7 +15,7 @@ export class TurntableCameraSystem extends System<GameState> {
     private readonly radius = 20,
     private readonly sensitivity = 0.01,
     private readonly center = new Vector3(0, 0, 0),
-    public startPredicate = (_coord: Vector2) => true
+    public startPredicate = (_coord: Vector2) => true,
   ) {
     super();
 
@@ -26,7 +26,7 @@ export class TurntableCameraSystem extends System<GameState> {
       if (e instanceof TouchEvent) {
         lastCoords.set(
           e.changedTouches[0].clientX,
-          e.changedTouches[0].clientY
+          e.changedTouches[0].clientY,
         );
       } else {
         lastCoords.set(e.clientX, e.clientY);
@@ -80,7 +80,7 @@ export class TurntableCameraSystem extends System<GameState> {
     const position = new Vector3(
       r * cos(abs(theta)) * sin(phi),
       r * sin(theta),
-      r * cos(abs(theta)) * cos(phi)
+      r * cos(abs(theta)) * cos(phi),
     );
 
     camera.position.copy(position);

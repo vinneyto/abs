@@ -6,7 +6,7 @@ import { System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class ClosestBarrierAttemptsUpdateSystem extends System<GameState> {
-  public componentsRequired = [ClosestBarrierAttemptsComponent, TextComponent];
+  public query = [ClosestBarrierAttemptsComponent, TextComponent];
 
   public update(entity: number, state: GameState): void {
     const components = this.ecs.getComponents(entity);

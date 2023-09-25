@@ -1,9 +1,5 @@
 import { World } from '@dimforge/rapier3d';
-import {
-  ColliderComponent,
-  LifeCircle,
-  LifeCircleComponent,
-} from '../../components';
+import { ColliderComponent, OnDestroy } from '../../components';
 import { System } from '../../ecs';
 import { GameState } from '../../GameState';
 
@@ -12,17 +8,12 @@ export class ColliderRemoveSystem extends System<GameState> {
     super();
   }
 
-  public componentsRequired = [LifeCircleComponent, ColliderComponent];
+  public query = [OnDestroy, ColliderComponent];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
 
-    const lifeCircleComponent = components.get(LifeCircleComponent);
     const colliderComponent = components.get(ColliderComponent);
-
-    if (lifeCircleComponent.state !== LifeCircle.Destroy) {
-      return;
-    }
 
     if (
       colliderComponent.collider === undefined ||

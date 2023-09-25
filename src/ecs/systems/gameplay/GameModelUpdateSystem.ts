@@ -1,15 +1,15 @@
 import { Assets } from '../../../Assets';
 import { Time } from '../../../Time';
-import { UpdateComponent } from '../../components';
+import { OnDestroy, UpdateComponent } from '../../components';
 import { Entity, System } from '../../ecs';
 import { barrier, enemy, roadSegment } from '../../entities';
 import { GameModel, RoadEvent, RoadSegment } from '../../../model';
-import { CollisionEvent, CollisionObject, GameState } from '../../GameState';
-import { destroyEntity } from '../../selectors';
+import { GameEvent, CollisionObject, GameState } from '../../GameState';
 import { RapierModule } from '../../../types';
+import { Vector3 } from 'three';
 
 export class GameModelUpdateSystem extends System<GameState> {
-  public componentsRequired = [UpdateComponent];
+  public query = [UpdateComponent];
 
   private firstTime = true;
   private assets!: Assets;
@@ -49,17 +49,14 @@ export class GameModelUpdateSystem extends System<GameState> {
 
     this.listenGameModel(state.gameModel);
 
-    this.ecs.addEntity(enemy(this.RAPIER, this.assets));
+    this.ecs.addEntity(enemy(this.RAPIER, this.assets, new Vector3(0, 30, 0)));
 
-    state.collisions.on(
-      CollisionEvent.Collide,
-      (collision: CollisionObject) => {
-        const components1 = this.ecs.getComponents(collision.entity1);
-        const components2 = this.ecs.getComponents(collision.entity2);
+    state.events.on(GameEvent.Collide, (collision: CollisionObject) => {
+      const components1 = this.ecs.getComponents(collision.entity1);
+      const components2 = this.ecs.getComponents(collision.entity2);
 
-        console.log(components1, components2);
-      }
-    );
+      console.log(components1, components2);
+    });
   }
 
   private listenGameModel(gameModel: GameModel) {
@@ -88,9 +85,9 @@ export class GameModelUpdateSystem extends System<GameState> {
 
     const entity = roadSegmentEntityMap.get(segment.id);
     if (entity !== undefined) {
-      destroyEntity(ecs, entity.segment);
+      ecs.addComponent(entity.segment, new OnDestroy());
       if (entity.barrier) {
-        destroyEntity(ecs, entity.barrier);
+        ecs.addComponent(entity.segment, new OnDestroy());
       }
       roadSegmentEntityMap.delete(segment.id);
     }

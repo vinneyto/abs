@@ -3,7 +3,7 @@ import { Entity, System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class CanvasResizeSystem extends System<GameState> {
-  public componentsRequired = [CanvasSizeComponent];
+  public query = [CanvasSizeComponent];
 
   public update(entity: Entity, state: GameState): void {
     const { renderer } = state;

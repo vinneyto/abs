@@ -4,11 +4,11 @@ import { GameState } from '../../GameState';
 import { ColliderComponent } from '../../components';
 
 export class IntersectionsCollectSystem extends System<GameState> {
-  public componentsRequired = [ColliderComponent];
+  public query = [ColliderComponent];
 
   constructor(
     private readonly world: World,
-    private readonly state: GameState
+    private readonly state: GameState,
   ) {
     super();
   }

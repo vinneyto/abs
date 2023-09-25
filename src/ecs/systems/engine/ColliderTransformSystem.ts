@@ -3,7 +3,7 @@ import { System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class ColliderTransformSystem extends System<GameState> {
-  public componentsRequired = [ColliderComponent, TransformComponent];
+  public query = [ColliderComponent, TransformComponent];
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);
     const { position, quaternion } = components.get(TransformComponent);

@@ -1,7 +1,26 @@
 export type Entity = number;
 export abstract class Component {}
+export type ComponentCtor<T extends Component = Component> = new () => T;
+export abstract class Query {
+  abstract match(components: Map<ComponentCtor, Component>): boolean;
+}
+export class Predicate<T extends Component> extends Query {
+  constructor(
+    private readonly componentClass: ComponentCtor<T>,
+    private readonly condition: (c: T) => boolean,
+  ) {
+    super();
+  }
+  match(components: Map<ComponentCtor, Component>): boolean {
+    const component = components.get(this.componentClass);
+    if (component === undefined) {
+      return false;
+    }
+    return this.condition(component as T);
+  }
+}
 export abstract class System<State> {
-  public abstract componentsRequired: Function[];
+  public abstract query: Array<ComponentCtor | Query>;
   public abstract update(entity: Entity, state: State): void;
   public updateAll(entities: Set<Entity>, state: State) {
     for (const entity of entities) {
@@ -12,25 +31,31 @@ export abstract class System<State> {
 }
 export type ComponentClass<T extends Component> = new (...args: any[]) => T;
 export class ComponentContainer {
-  private map = new Map<Function, Component>();
+  private map = new Map<ComponentCtor, Component>();
   public add(component: Component): void {
-    this.map.set(component.constructor, component);
+    this.map.set(component.constructor as ComponentCtor, component);
   }
   public get<T extends Component>(componentClass: ComponentClass<T>): T {
     return this.map.get(componentClass) as T;
   }
-  public has(componentClass: Function): boolean {
+  public has(componentClass: ComponentCtor): boolean {
     return this.map.has(componentClass);
   }
-  public hasAll(componentClasses: Iterable<Function>): boolean {
-    for (let cls of componentClasses) {
-      if (!this.map.has(cls)) {
-        return false;
+  public hasAll(queries: Iterable<ComponentCtor | Query>): boolean {
+    for (let q of queries) {
+      if (q instanceof Query) {
+        if (!q.match(this.map)) {
+          return false;
+        }
+      } else {
+        if (!this.map.has(q)) {
+          return false;
+        }
       }
     }
     return true;
   }
-  public delete(componentClass: Function): void {
+  public delete(componentClass: ComponentCtor): void {
     this.map.delete(componentClass);
   }
 }
@@ -58,6 +83,13 @@ export class ComponentBuilder<T extends Component = Component> {
 
 export function component<T extends Component>(C: new () => T) {
   return new ComponentBuilder(C);
+}
+
+export function predicate<T extends Component>(
+  componentClass: ComponentCtor<T>,
+  condition: (c: T) => boolean,
+) {
+  return new Predicate(componentClass, condition);
 }
 
 export class ECS<State> {
@@ -92,7 +124,7 @@ export class ECS<State> {
   public getComponents(entity: Entity): ComponentContainer {
     return this.entities.get(entity)!;
   }
-  public removeComponent(entity: Entity, componentClass: Function): void {
+  public removeComponent(entity: Entity, componentClass: ComponentCtor): void {
     this.entities.get(entity)?.delete(componentClass);
     this.checkE(entity);
   }
@@ -103,7 +135,7 @@ export class ECS<State> {
   }
   private checkES(entity: Entity, system: System<State>): void {
     let have = this.entities.get(entity);
-    let need = system.componentsRequired;
+    let need = system.query;
     if (have?.hasAll(need)) {
       this.systems.get(system)?.add(entity); // no-op if already has it
     } else {
@@ -111,7 +143,7 @@ export class ECS<State> {
     }
   }
   public addSystem(system: System<State>): void {
-    if (system.componentsRequired.length == 0) {
+    if (system.query.length == 0) {
       console.warn('System ' + system + ' not added: empty components list.');
       return;
     }
@@ -133,11 +165,11 @@ export class ECS<State> {
     }
   }
   public find(
-    query: Function[],
+    query: ComponentCtor[],
     predicate: (
       _components: ComponentContainer,
-      _entity: Entity
-    ) => boolean = () => true
+      _entity: Entity,
+    ) => boolean = () => true,
   ) {
     for (const [entity, have] of this.entities.entries()) {
       if (have.hasAll(query) && predicate(have, entity)) {
@@ -146,7 +178,7 @@ export class ECS<State> {
     }
     return undefined;
   }
-  public findAll(query: Function[]) {
+  public findAll(query: ComponentCtor[]) {
     const entities: Entity[] = [];
     for (const [entity, have] of this.entities.entries()) {
       if (have.hasAll(query)) {

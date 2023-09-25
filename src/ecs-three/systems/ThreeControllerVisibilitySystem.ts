@@ -8,7 +8,7 @@ export class ThreeControllerVisibilitySystem extends System<GameState> {
     super();
   }
 
-  public componentsRequired = [ControllerComponent, VisibilityComponent];
+  public query = [ControllerComponent, VisibilityComponent];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);

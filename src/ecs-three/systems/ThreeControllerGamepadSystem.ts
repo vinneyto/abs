@@ -20,7 +20,7 @@ export class ThreeControllerGamepadSystem extends System<GameState> {
     });
   }
 
-  public componentsRequired = [ControllerComponent];
+  public query = [ControllerComponent];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);

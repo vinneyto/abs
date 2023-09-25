@@ -3,7 +3,7 @@ import { System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class RoadSegmentUpdateSystem extends System<GameState> {
-  public componentsRequired = [RoadSegmentIdComponent, TransformComponent];
+  public query = [RoadSegmentIdComponent, TransformComponent];
 
   public update(entity: number, state: GameState): void {
     const components = this.ecs.getComponents(entity);

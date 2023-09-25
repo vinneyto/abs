@@ -18,7 +18,7 @@ export class CollisionGroups {
   getMask() {
     return combineBitMasks(
       encodeLayersToBitMask(this.membership),
-      encodeLayersToBitMask(this.filter)
+      encodeLayersToBitMask(this.filter),
     );
   }
 }

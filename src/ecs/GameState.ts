@@ -6,7 +6,7 @@ import { GameModel } from '../model/GameModel';
 import EventEmitter from 'eventemitter3';
 import { Entity } from './ecs';
 
-export enum CollisionEvent {
+export enum GameEvent {
   Collide = 'Collide',
 }
 
@@ -24,6 +24,6 @@ export class GameState {
     public readonly RAPIER: RapierModule,
     public readonly assets: Assets,
     public readonly gameModel: GameModel,
-    public readonly collisions: EventEmitter
+    public readonly events: EventEmitter,
   ) {}
 }

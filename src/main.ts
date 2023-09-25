@@ -29,7 +29,7 @@ import {
   RoadSegmentUpdateSystem,
   RoadBarrierUpdateSystem,
   GameModelUpdateSystem,
-  EnemyPositionUpdateSystem,
+  EnemyMotionSystem,
 } from './ecs/systems';
 import {
   canvasSize,
@@ -49,14 +49,16 @@ import {
   ThreeControllerGamepadSystem,
   ThreeControllerTransformSystem,
   ThreeControllerVisibilitySystem,
+  ThreeEnemyDecorationAddSystem,
+  ThreeEnemyDecorationAnimateSystem,
+  ThreeEnemyHealthBarPositionUpdateSystem,
+  ThreeEnemyHealthBarAddSystem,
+  ThreeTextUpdateSystem,
   ThreeViewAddSystem,
   ThreeViewRemoveSystem,
   ThreeViewTransformSystem,
   ThreeViewVisibilitySystem,
 } from './ecs-three';
-import { ThreeTextUpdateSystem } from './ecs-three/systems/ThreeTextUpdateSystem';
-import { ThreeEnemyDecorationAddSystem } from './ecs-three/systems/ThreeEnemyDecorationAddSystem';
-import { ThreeEnemyDecorationAnimateSystem } from './ecs-three/systems/ThreeEnemyDecorationAnimateSystem';
 import EventEmitter from 'eventemitter3';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
@@ -151,7 +153,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     ecs.addSystem(new GameModelUpdateSystem());
     ecs.addSystem(new RoadSegmentUpdateSystem());
     ecs.addSystem(new RoadBarrierUpdateSystem());
-    ecs.addSystem(new EnemyPositionUpdateSystem());
+    ecs.addSystem(new EnemyMotionSystem());
 
     ecs.addSystem(new ClosestBarrierPointerUpdateSystem());
     ecs.addSystem(new ClosestBarrierCountUpdateSystem());
@@ -168,6 +170,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     // initialize systems
     ecs.addSystem(new ThreeViewAddSystem());
     ecs.addSystem(new ThreeEnemyDecorationAddSystem());
+    ecs.addSystem(new ThreeEnemyHealthBarAddSystem());
 
     ecs.addSystem(new ColliderAddSystem());
     ecs.addSystem(new InitFinishSystem());
@@ -179,7 +182,9 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     ecs.addSystem(new ThreeViewTransformSystem());
     ecs.addSystem(new ThreeViewVisibilitySystem());
     ecs.addSystem(new ThreeTextUpdateSystem());
+
     ecs.addSystem(new ThreeEnemyDecorationAnimateSystem());
+    ecs.addSystem(new ThreeEnemyHealthBarPositionUpdateSystem());
 
     // destroy systems
     ecs.addSystem(new ThreeViewRemoveSystem());
@@ -229,7 +234,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     RAPIER,
     assets,
     gameModel,
-    new EventEmitter()
+    new EventEmitter(),
   );
 
   document.body.appendChild(VRButton.createButton(renderer));

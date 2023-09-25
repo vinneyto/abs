@@ -7,7 +7,7 @@ import { System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class ClosestBarrierPointerUpdateSystem extends System<GameState> {
-  public componentsRequired = [
+  public query = [
     ClosestBarrierPointerComponent,
     TransformComponent,
     VisibilityComponent,
@@ -30,7 +30,7 @@ export class ClosestBarrierPointerUpdateSystem extends System<GameState> {
     position.set(
       pan.x,
       gameModel.getBarrierHeight() + pan.y,
-      closestBarrierSegment.position
+      closestBarrierSegment.position,
     );
     visibilityComponent.visible = true;
   }

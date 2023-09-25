@@ -3,7 +3,7 @@ import { System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class ClosestBarrierCountUpdateSystem extends System<GameState> {
-  public componentsRequired = [ClosestBarrierCountComponent, TextComponent];
+  public query = [ClosestBarrierCountComponent, TextComponent];
 
   public update(entity: number, state: GameState): void {
     const components = this.ecs.getComponents(entity);

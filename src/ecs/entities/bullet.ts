@@ -10,7 +10,7 @@ import { component } from '../ecs';
 export function bullet(
   RAPIER: RapierModule,
   spawn: Vector3,
-  direction: Vector3
+  direction: Vector3,
 ) {
   const velocity = direction.clone().multiplyScalar(500);
 
@@ -26,7 +26,7 @@ export function bullet(
         .setAdditionalMass(1)
         .setTranslation(spawn.x, spawn.y, spawn.z),
       RAPIER.ColliderDesc.ball(BULLET_RADIUS),
-      new CollisionGroups([GROUP_ENEMIES]) // query contacts with enemies
+      new CollisionGroups([GROUP_ENEMIES]), // query contacts with enemies
     ),
     ...destroyCountdown(2),
     component(BulletComponent),

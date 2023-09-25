@@ -4,7 +4,7 @@ import { System } from '../../ecs/ecs';
 import { GameState } from '../../ecs/GameState';
 
 export class ThreeTextUpdateSystem extends System<GameState> {
-  public componentsRequired = [TextComponent, ThreeViewComponent];
+  public query = [TextComponent, ThreeViewComponent];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);

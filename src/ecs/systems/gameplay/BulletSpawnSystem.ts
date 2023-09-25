@@ -10,7 +10,7 @@ import { bullet } from '../../entities';
 import { GameState } from '../../GameState';
 
 export class BulletSpawnSystem extends System<GameState> {
-  public componentsRequired = [
+  public query = [
     BulletSpawnComponent,
     ControllerComponent,
     TransformComponent,

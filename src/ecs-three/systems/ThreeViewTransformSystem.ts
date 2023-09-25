@@ -4,7 +4,7 @@ import { TransformComponent } from '../../ecs/components';
 import { System } from '../../ecs/ecs';
 
 export class ThreeViewTransformSystem extends System<GameState> {
-  public componentsRequired = [TransformComponent, ThreeViewComponent];
+  public query = [TransformComponent, ThreeViewComponent];
 
   public update(entity: number): void {
     const components = this.ecs.getComponents(entity);

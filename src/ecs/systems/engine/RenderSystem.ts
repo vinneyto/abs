@@ -3,7 +3,7 @@ import { Entity, System } from '../../ecs';
 import { GameState } from '../../GameState';
 
 export class RenderSystem extends System<GameState> {
-  public componentsRequired = [UpdateComponent];
+  public query = [UpdateComponent];
 
   public update(_: Entity, state: GameState): void {
     const { renderer, scene, camera } = state;

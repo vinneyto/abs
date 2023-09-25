@@ -1,10 +1,10 @@
 import { EventQueue } from '@dimforge/rapier3d';
 import { UpdateComponent } from '../../components';
 import { Entity, System } from '../../ecs';
-import { CollisionEvent, GameState } from '../../GameState';
+import { GameEvent, GameState } from '../../GameState';
 
 export class PhysicsSystem extends System<GameState> {
-  public componentsRequired = [UpdateComponent];
+  public query = [UpdateComponent];
 
   constructor(private readonly eventQueue: EventQueue) {
     super();
@@ -20,7 +20,7 @@ export class PhysicsSystem extends System<GameState> {
       const entity1 = (c1.parent()?.userData as { entity: number }).entity;
       const entity2 = (c2.parent()?.userData as { entity: number }).entity;
 
-      state.collisions.emit(CollisionEvent.Collide, { entity1, entity2 });
+      state.events.emit(GameEvent.Collide, { entity1, entity2 });
     });
   }
 }

@@ -3,28 +3,18 @@ import { Text } from 'troika-three-text';
 import { Mesh, MeshBasicMaterial, Object3D, SphereGeometry } from 'three';
 import { ThreeViewComponent } from '..';
 import { Assets } from '../../Assets';
-import {
-  LifeCircle,
-  LifeCircleComponent,
-  MeshComponent,
-  Meshes,
-} from '../../ecs/components';
+import { MeshComponent, Meshes, OnAdd } from '../../ecs/components';
 import { System } from '../../ecs/ecs';
 import { GameState } from '../../ecs/GameState';
 import { BULLET_RADIUS } from '../../constants';
 
 export class ThreeViewAddSystem extends System<GameState> {
-  public componentsRequired = [LifeCircleComponent, MeshComponent];
+  public query = [OnAdd, MeshComponent];
 
   public update(entity: number, state: GameState): void {
     const { assets, scene } = state;
     const components = this.ecs.getComponents(entity);
-    const lifeCircleComponent = components.get(LifeCircleComponent);
     const { mesh, castShadow, receiveShadow } = components.get(MeshComponent);
-
-    if (lifeCircleComponent.state !== LifeCircle.New) {
-      return;
-    }
 
     const view = createThreeView(assets, mesh);
 
