@@ -25,9 +25,7 @@ export class BulletSpawnSystem extends System<GameState> {
     const { trigger } = components.get(ControllerComponent);
     const { position, quaternion, scale } = components.get(TransformComponent);
 
-    const firePressed = trigger > 0;
-
-    if (firePressed && bulletSpawnComponent.countdownToSpawn <= 0) {
+    if (trigger.pressed && bulletSpawnComponent.countdownToSpawn <= 0) {
       const bulletSpawnMatrix = new Matrix4()
         .compose(position, quaternion, scale)
         .multiply(assets.gun.bulletSpawnTransform);

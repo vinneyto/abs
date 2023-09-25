@@ -3,8 +3,9 @@ import { collider } from './collider';
 import { base } from './base';
 import { destroyCountdown } from './destroyCountdown';
 import { RapierModule } from '../../types';
-import { CollisionGroups, Meshes } from '../components';
+import { BulletComponent, CollisionGroups, Meshes } from '../components';
 import { BULLET_RADIUS, GROUP_ENEMIES } from '../../constants';
+import { component } from '../ecs';
 
 export function bullet(
   RAPIER: RapierModule,
@@ -28,5 +29,6 @@ export function bullet(
       new CollisionGroups([GROUP_ENEMIES]) // query contacts with enemies
     ),
     ...destroyCountdown(2),
+    component(BulletComponent),
   ];
 }

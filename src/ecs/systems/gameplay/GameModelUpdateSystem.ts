@@ -3,19 +3,10 @@ import { Time } from '../../../Time';
 import { UpdateComponent } from '../../components';
 import { Entity, System } from '../../ecs';
 import { barrier, enemy, roadSegment } from '../../entities';
-import {
-  EnemiesEvent,
-  Enemy,
-  EnemyGun,
-  EnemyGunEvent,
-  GameModel,
-  RoadEvent,
-  RoadSegment,
-} from '../../../model';
-import { GameState } from '../../GameState';
+import { GameModel, RoadEvent, RoadSegment } from '../../../model';
+import { CollisionEvent, CollisionObject, GameState } from '../../GameState';
 import { destroyEntity } from '../../selectors';
 import { RapierModule } from '../../../types';
-import { Sphere, Vector3 } from 'three';
 
 export class GameModelUpdateSystem extends System<GameState> {
   public componentsRequired = [UpdateComponent];
@@ -23,8 +14,6 @@ export class GameModelUpdateSystem extends System<GameState> {
   private firstTime = true;
   private assets!: Assets;
   private RAPIER!: RapierModule;
-
-  private entitiesMap = new Map<number, Entity>();
 
   private roadSegmentEntityMap = new Map<
     number,
@@ -60,19 +49,22 @@ export class GameModelUpdateSystem extends System<GameState> {
 
     this.listenGameModel(state.gameModel);
 
-    const enemy = state.gameModel
-      .getEnemies()
-      .spawnEnemy(new Sphere(new Vector3(0, 5, -10), 3));
+    this.ecs.addEntity(enemy(this.RAPIER, this.assets));
 
-    enemy.on(EnemyGunEvent.Fire, this.onEnemyFire);
+    state.collisions.on(
+      CollisionEvent.Collide,
+      (collision: CollisionObject) => {
+        const components1 = this.ecs.getComponents(collision.entity1);
+        const components2 = this.ecs.getComponents(collision.entity2);
+
+        console.log(components1, components2);
+      }
+    );
   }
 
   private listenGameModel(gameModel: GameModel) {
     gameModel.getRoad().on(RoadEvent.AddSegment, this.onAddRoadSegment);
     gameModel.getRoad().on(RoadEvent.RemoveSegment, this.onRemoveRoadSegment);
-
-    gameModel.getEnemies().on(EnemiesEvent.AddEnemy, this.onAddEnemy);
-    gameModel.getEnemies().on(EnemiesEvent.DeleteEnemy, this.onRemoveEnemy);
   }
 
   private onAddRoadSegment = (segment: RoadSegment) => {
@@ -104,25 +96,25 @@ export class GameModelUpdateSystem extends System<GameState> {
     }
   };
 
-  private onAddEnemy = (enemyModel: Enemy) => {
-    const { RAPIER, assets, ecs } = this;
+  // private onAddEnemy = (enemyModel: Enemy) => {
+  //   const { RAPIER, assets, ecs } = this;
 
-    const entity = ecs.addEntity(enemy(RAPIER, assets, enemyModel.id));
+  //   const entity = ecs.addEntity(enemy(RAPIER, assets, enemyModel.id));
 
-    this.entitiesMap.set(enemyModel.id, entity);
-  };
+  //   this.entitiesMap.set(enemyModel.id, entity);
+  // };
 
-  private onRemoveEnemy = (enemyModel: Enemy) => {
-    const { ecs } = this;
+  // private onRemoveEnemy = (enemyModel: Enemy) => {
+  //   const { ecs } = this;
 
-    const enemyEntity = this.entitiesMap.get(enemyModel.id);
+  //   const enemyEntity = this.entitiesMap.get(enemyModel.id);
 
-    if (enemyEntity !== undefined) {
-      destroyEntity(ecs, enemyEntity);
-    }
-  };
+  //   if (enemyEntity !== undefined) {
+  //     destroyEntity(ecs, enemyEntity);
+  //   }
+  // };
 
-  private onEnemyFire = (_gun: EnemyGun) => {
-    // console.log(gun.enemyId, gun.index);
-  };
+  // private onEnemyFire = (_gun: EnemyGun) => {
+  //   // console.log(gun.enemyId, gun.index);
+  // };
 }

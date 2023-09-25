@@ -15,3 +15,5 @@ export * from './RoadSegmentIdComponent';
 export * from './RoadSegmentBarrierComponent';
 export * from './TextComponent';
 export * from './EnemyIdComponent';
+export * from './BulletComponent';
+export * from './EnemyMotionComponent';

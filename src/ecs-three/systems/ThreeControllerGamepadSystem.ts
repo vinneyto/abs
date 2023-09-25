@@ -28,6 +28,11 @@ export class ThreeControllerGamepadSystem extends System<GameState> {
 
     const gamepad = this.gamepads[controllerComponent.index];
 
-    controllerComponent.trigger = gamepad?.buttons[0].value || 0;
+    if (!gamepad) {
+      return;
+    }
+
+    controllerComponent.trigger.pressed = gamepad.buttons[0].pressed;
+    controllerComponent.trigger.value = gamepad.buttons[0].value;
   }
 }

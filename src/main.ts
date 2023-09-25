@@ -57,6 +57,7 @@ import {
 import { ThreeTextUpdateSystem } from './ecs-three/systems/ThreeTextUpdateSystem';
 import { ThreeEnemyDecorationAddSystem } from './ecs-three/systems/ThreeEnemyDecorationAddSystem';
 import { ThreeEnemyDecorationAnimateSystem } from './ecs-three/systems/ThreeEnemyDecorationAnimateSystem';
+import EventEmitter from 'eventemitter3';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -136,6 +137,8 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   scene.background = new Color('gray');
 
+  const eventQueue = new RAPIER.EventQueue(true);
+
   // input system
   {
     ecs.addSystem(new ThreeControllerGamepadSystem(controllers));
@@ -170,7 +173,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     ecs.addSystem(new InitFinishSystem());
 
     // world update systems
-    ecs.addSystem(new PhysicsSystem());
+    ecs.addSystem(new PhysicsSystem(eventQueue));
     ecs.addSystem(new ColliderTransformSystem());
 
     ecs.addSystem(new ThreeViewTransformSystem());
@@ -225,7 +228,8 @@ import('@dimforge/rapier3d').then(async RAPIER => {
     renderer,
     RAPIER,
     assets,
-    gameModel
+    gameModel,
+    new EventEmitter()
   );
 
   document.body.appendChild(VRButton.createButton(renderer));

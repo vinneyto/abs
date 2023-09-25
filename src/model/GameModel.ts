@@ -1,11 +1,9 @@
 import EventEmitter from 'eventemitter3';
 import { RoadEvent, RoadModel, RoadSegment } from './RoadModel';
 import { Vector3 } from 'three';
-import { EnemiesModel } from './EnemiesModel';
 
 export class GameModel extends EventEmitter {
   private road = new RoadModel();
-  private enemies = new EnemiesModel();
 
   private headPosition = new Vector3();
   private headCollisionEnabled = true;
@@ -27,10 +25,6 @@ export class GameModel extends EventEmitter {
 
   updateRoad(delta: number) {
     this.road.update(delta);
-  }
-
-  updateEnemies(delta: number) {
-    this.enemies.update(delta, this.headPosition);
   }
 
   updateNextBarrier() {
@@ -71,7 +65,6 @@ export class GameModel extends EventEmitter {
   update(delta: number) {
     this.updateRoad(delta);
     this.updateNextBarrier();
-    this.updateEnemies(delta);
   }
 
   getNextBarrierSegment() {
@@ -96,10 +89,6 @@ export class GameModel extends EventEmitter {
 
   getRoad() {
     return this.road;
-  }
-
-  getEnemies() {
-    return this.enemies;
   }
 
   getAttemptCount() {
