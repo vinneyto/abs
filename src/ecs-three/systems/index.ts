@@ -10,5 +10,5 @@ export * from './ThreeEnemyDecorationAddSystem';
 export * from './ThreeEnemyDecorationAnimateSystem';
 export * from './ThreeTextUpdateSystem';
 export * from './ThreeEnemyHealthBarPositionUpdateSystem';
-// export * from './ThreeEnemyHealthBarRemoveSystem';
-// export * from './ThreeEnemyHealthUpdateSystem';
+export * from './ThreeEnemyHealthBarRemoveSystem';
+export * from './ThreeEnemyHealthBarUpdateSystem';

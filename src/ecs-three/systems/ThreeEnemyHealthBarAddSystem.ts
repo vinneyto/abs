@@ -1,4 +1,4 @@
-import { SpriteMaterial } from 'three';
+import { Color } from 'three';
 import { GameState } from '../../ecs/GameState';
 import {
   EnemyHealthComponent,
@@ -14,6 +14,12 @@ import {
   HEALTH_BAR_HEIGHT,
   HEALTH_BAR_WIDTH,
 } from '../constants';
+import { ProgressBarMaterial } from '../materials';
+
+const progressBarMaterial = new ProgressBarMaterial(
+  new Color(HEALTH_BAR_COLOR_BACK),
+  new Color(HEALTH_BAR_COLOR_FRONT),
+);
 
 export class ThreeEnemyHealthBarAddSystem extends System<GameState> {
   public query = [
@@ -25,30 +31,12 @@ export class ThreeEnemyHealthBarAddSystem extends System<GameState> {
   public update(entity: number, state: GameState): void {
     const threeHealthBarComponent = new ThreeEnemyHealthBarComponent();
 
-    const backgroundMaterial = new SpriteMaterial({
-      color: HEALTH_BAR_COLOR_BACK,
-      depthWrite: false,
-      depthTest: false,
-    });
-    const healthMaterial = new SpriteMaterial({
-      color: HEALTH_BAR_COLOR_FRONT,
-      depthWrite: false,
-      depthTest: false,
-    });
+    const { healthBar } = threeHealthBarComponent;
 
-    const { backgroundBar, healthBar, container } = threeHealthBarComponent;
-
-    backgroundBar.material = backgroundMaterial;
-    backgroundBar.scale.set(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT, 0);
-    backgroundBar.renderOrder = 1000;
-
-    healthBar.material = healthMaterial;
+    healthBar.material = progressBarMaterial;
     healthBar.scale.set(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT, 0);
-    healthBar.renderOrder = 1001;
 
-    container.add(backgroundBar, healthBar);
-
-    state.scene.add(container);
+    state.scene.add(healthBar);
 
     this.ecs.addComponent(entity, threeHealthBarComponent);
   }

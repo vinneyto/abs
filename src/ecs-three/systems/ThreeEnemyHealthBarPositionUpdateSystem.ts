@@ -11,9 +11,9 @@ export class ThreeEnemyHealthBarPositionUpdateSystem extends System<GameState> {
     const components = this.ecs.getComponents(entity);
 
     const { position } = components.get(TransformComponent);
-    const { container } = components.get(ThreeEnemyHealthBarComponent);
+    const { healthBar } = components.get(ThreeEnemyHealthBarComponent);
 
-    container.position.copy(position);
-    container.position.y += HEALTH_BAR_PAN_Y;
+    healthBar.position.copy(position);
+    healthBar.position.y += HEALTH_BAR_PAN_Y;
   }
 }

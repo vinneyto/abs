@@ -58,6 +58,8 @@ import {
   ThreeViewRemoveSystem,
   ThreeViewTransformSystem,
   ThreeViewVisibilitySystem,
+  ThreeEnemyHealthBarRemoveSystem,
+  ThreeEnemyHealthBarUpdateSystem,
 } from './ecs-three';
 import EventEmitter from 'eventemitter3';
 
@@ -185,9 +187,11 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
     ecs.addSystem(new ThreeEnemyDecorationAnimateSystem());
     ecs.addSystem(new ThreeEnemyHealthBarPositionUpdateSystem());
+    ecs.addSystem(new ThreeEnemyHealthBarUpdateSystem());
 
     // destroy systems
     ecs.addSystem(new ThreeViewRemoveSystem());
+    ecs.addSystem(new ThreeEnemyHealthBarRemoveSystem());
     ecs.addSystem(new ColliderRemoveSystem(world));
     ecs.addSystem(new EntityDestroySystem());
 
