@@ -5,8 +5,6 @@ export * from './ColliderRemoveSystem';
 export * from './ColliderTransformSystem';
 export * from './EntityDestroySystem';
 export * from './InitFinishSystem';
-export * from './IntersectionsCleanSystem';
-export * from './IntersectionsCollectSystem';
 export * from './PhysicsSystem';
 export * from './RenderSystem';
 export * from './TurntableCameraSystem';
