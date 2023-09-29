@@ -29,15 +29,14 @@ export class ThreeEnemyHealthBarAddSystem extends System<GameState> {
   ];
 
   public update(entity: number, state: GameState): void {
-    const threeHealthBarComponent = new ThreeEnemyHealthBarComponent();
-
-    const { healthBar } = threeHealthBarComponent;
+    const { healthBar } = this.ecs.addComponent(
+      entity,
+      ThreeEnemyHealthBarComponent,
+    );
 
     healthBar.material = progressBarMaterial;
     healthBar.scale.set(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT, 0);
 
     state.scene.add(healthBar);
-
-    this.ecs.addComponent(entity, threeHealthBarComponent);
   }
 }

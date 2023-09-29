@@ -11,7 +11,7 @@ export class DestroyCountdownSystem extends System<GameState> {
     const countdownComponent = components.get(DestroyCountdownComponent);
 
     if (countdownComponent.countdown <= 0) {
-      this.ecs.addComponent(entity, new OnDestroy());
+      this.ecs.addComponent(entity, OnDestroy);
 
       console.log('destroy by countdown', entity);
 

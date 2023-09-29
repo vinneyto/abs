@@ -12,6 +12,7 @@ export class ThreeViewAddSystem extends System<GameState> {
   public query = [OnAdd, MeshComponent];
 
   public update(entity: number, state: GameState): void {
+    const { ecs } = this;
     const { assets, scene } = state;
     const components = this.ecs.getComponents(entity);
     const { mesh, castShadow, receiveShadow } = components.get(MeshComponent);
@@ -25,10 +26,8 @@ export class ThreeViewAddSystem extends System<GameState> {
 
     scene.add(view);
 
-    const threeViewComponent = new ThreeViewComponent();
+    const threeViewComponent = ecs.addComponent(entity, ThreeViewComponent);
     threeViewComponent.view = view;
-
-    this.ecs.addComponent(entity, threeViewComponent);
 
     console.log('add view', threeViewComponent.view);
   }

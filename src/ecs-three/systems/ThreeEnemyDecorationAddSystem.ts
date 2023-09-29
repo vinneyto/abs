@@ -15,17 +15,17 @@ export class ThreeEnemyDecorationAddSystem extends System<GameState> {
   ];
 
   public update(entity: number): void {
+    const { ecs } = this;
+
     const components = this.ecs.getComponents(entity);
 
     const { view } = components.get(ThreeViewComponent);
 
     const rotors = getRotors(view);
 
-    const decorationComponent = new ThreeEnemyDecorationComponent();
-
-    decorationComponent.mainRotor = rotors.mainRotor;
-    decorationComponent.tailRotor = rotors.tailRotor;
-
-    this.ecs.addComponent(entity, decorationComponent);
+    ecs.addComponent(entity, ThreeEnemyDecorationComponent, {
+      mainRotor: rotors.mainRotor,
+      tailRotor: rotors.tailRotor,
+    });
   }
 }

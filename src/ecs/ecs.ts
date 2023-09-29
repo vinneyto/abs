@@ -60,24 +60,23 @@ export class ComponentContainer {
   }
 }
 
-export class ComponentBuilder<T extends Component = Component> {
-  private component: T;
+export type ComponentProps<T> = Partial<{ [key in keyof T]: T[key] }>;
 
-  constructor(C: new () => T) {
-    this.component = new C();
+export class ComponentBuilder<T extends Component = Component> {
+  private componentCtor: ComponentCtor<T>;
+  private props: ComponentProps<T> = {};
+
+  constructor(Ctor: ComponentCtor<T>) {
+    this.componentCtor = Ctor;
   }
 
-  assign(props: Partial<{ [key in keyof T]: T[key] }>) {
-    for (const key of Object.keys(props) as Array<keyof T>) {
-      if (props[key] !== undefined) {
-        this.component[key] = props[key] as T[keyof T];
-      }
-    }
+  assign(props: ComponentProps<T>) {
+    Object.assign(this.props, props);
     return this;
   }
 
-  build() {
-    return this.component;
+  build(): [ComponentCtor<T>, ComponentProps<T>] {
+    return [this.componentCtor, this.props];
   }
 }
 
@@ -92,6 +91,23 @@ export function predicate<T extends Component>(
   return new Predicate(componentClass, condition);
 }
 
+export function instantiate<T extends Component>(
+  Ctor: ComponentCtor<T>,
+  props?: ComponentProps<T>,
+) {
+  const component = new Ctor();
+
+  if (props) {
+    for (const key of Object.keys(props) as Array<keyof T>) {
+      if (props[key] !== undefined) {
+        component[key] = props[key] as T[keyof T];
+      }
+    }
+  }
+
+  return component;
+}
+
 export class ECS<State> {
   private nextEntityID = 1;
   private entitiesToDestroy = new Array<Entity>();
@@ -103,7 +119,7 @@ export class ECS<State> {
     this.entities.set(entity, new ComponentContainer());
     for (const somponentSet of componentSets) {
       for (const component of somponentSet) {
-        this.addComponent(entity, component.build());
+        this.addComponent(entity, ...component.build());
       }
     }
     return entity;
@@ -117,9 +133,16 @@ export class ECS<State> {
       entities.delete(entity); // no-op if doesn't have it
     }
   }
-  public addComponent(entity: Entity, component: Component): void {
+  public addComponent<T extends Component>(
+    entity: Entity,
+    Ctor: ComponentCtor<T>,
+    props?: ComponentProps<T>,
+  ): T {
+    const component = instantiate(Ctor, props);
+
     this.entities.get(entity)?.add(component);
     this.checkE(entity);
+    return component;
   }
   public getComponents(entity: Entity): ComponentContainer {
     return this.entities.get(entity)!;
