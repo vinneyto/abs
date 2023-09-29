@@ -87,7 +87,7 @@ export class GameModelUpdateSystem extends System<GameState> {
     if (entity !== undefined) {
       ecs.addComponent(entity.segment, new OnDestroy());
       if (entity.barrier) {
-        ecs.addComponent(entity.segment, new OnDestroy());
+        ecs.addComponent(entity.barrier, new OnDestroy());
       }
       roadSegmentEntityMap.delete(segment.id);
     }
