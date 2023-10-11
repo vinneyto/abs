@@ -115,7 +115,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   skyUniforms['mieDirectionalG'].value = 0.8;
 
   const parameters = {
-    elevation: 90,
+    elevation: 50,
     azimuth: 180,
   };
 
