@@ -5,5 +5,11 @@
   "author": "vinneyto <vinneyto@gmail.com>",
   "license": "MIT",
   "private": true,
-  "workspaces": ["packages/*"]
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "typescript": "^5.1.3",
+    "prettier": "^3.0.3"
+  }
 }

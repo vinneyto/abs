@@ -1,0 +1,10 @@
+{
+  "name": "training-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start:db": "docker-compose up -d",
+    "stop:db": "docker-compose down"
+  }
+}
