@@ -5,6 +5,17 @@
   "license": "MIT",
   "scripts": {
     "start:db": "docker-compose up -d",
-    "stop:db": "docker-compose down"
+    "stop:db": "docker-compose down",
+    "dev": "ts-node src/app.ts"
+  },
+  "dependencies": {
+    "@types/koa": "^2.13.9",
+    "@types/koa-bodyparser": "^4.3.10",
+    "@types/koa-router": "^7.4.5",
+    "@types/mongoose": "^5.11.97",
+    "koa": "^2.14.2",
+    "koa-bodyparser": "^4.4.1",
+    "koa-router": "^11.0.2",
+    "mongoose": "^7.6.2"
   }
 }
