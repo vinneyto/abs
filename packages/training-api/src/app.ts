@@ -15,6 +15,9 @@ router.get('/', async ctx => {
 
 router.post('/training-data', async ctx => {
   const trainingData = new TrainingDataModel(ctx.request.body);
+
+  console.log(ctx.request.body);
+
   try {
     const savedData = await trainingData.save();
     ctx.body = savedData;

@@ -1,5 +1,11 @@
+import wasm from 'vite-plugin-wasm';
+import topLevelAwait from 'vite-plugin-top-level-await';
+
 // vite.config.js
 export default {
+  plugins: [wasm(), topLevelAwait()],
+  assetsInclude: ['**/*.glb'],
+  base: './',
   server: {
     proxy: {
       '/api': {

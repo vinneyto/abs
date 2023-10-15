@@ -5,14 +5,19 @@ interface Transform {
   quaternion: { x: number; y: number; z: number; w: number };
 }
 
-interface TrainingDataDocument extends Document {
-  bottom: boolean;
-  headTransform: Transform;
-  leftHandTransform: Transform;
-  rightHandTransform: Transform;
+interface Head {
+  pitch: Number;
+  y: Number;
 }
 
-const TransformSchema: Schema = new Schema({
+interface TrainingDataDocument extends Document {
+  bottom: boolean;
+  head: Head;
+  leftHandCameraLocal: Transform;
+  rightHandCameraLocal: Transform;
+}
+
+const TransformSchema = new Schema({
   position: {
     x: { type: Number, required: true },
     y: { type: Number, required: true },
@@ -26,11 +31,16 @@ const TransformSchema: Schema = new Schema({
   },
 });
 
+const HeadSchema = new Schema({
+  pitch: { type: Number, required: true },
+  y: { type: Number, required: true },
+});
+
 const TrainingDataSchema: Schema = new Schema({
   bottom: { type: Boolean, required: true },
-  headTransform: TransformSchema,
-  leftHandTransform: TransformSchema,
-  rightHandTransform: TransformSchema,
+  head: HeadSchema,
+  leftHandCameraLocal: TransformSchema,
+  rightHandCameraLocal: TransformSchema,
 });
 
 const TrainingDataModel = mongoose.model<TrainingDataDocument>(
