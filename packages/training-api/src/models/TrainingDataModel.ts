@@ -1,5 +1,19 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+interface TrainingSessionDocument extends Document {
+  createdAt: Date;
+}
+
+const TrainingSessionSchema = new Schema({
+  createdAt: { type: Date, default: Date.now },
+});
+
+export const TrainingSessionModel = mongoose.model<TrainingSessionDocument>(
+  'TrainingSession',
+  TrainingSessionSchema,
+  'trainingSessions',
+);
+
 interface Transform {
   position: { x: number; y: number; z: number };
   quaternion: { x: number; y: number; z: number; w: number };
@@ -11,6 +25,7 @@ interface Head {
 }
 
 interface TrainingDataDocument extends Document {
+  trainingSession: TrainingSessionDocument['_id'];
   bottom: boolean;
   head: Head;
   leftHandCameraLocal: Transform;
@@ -37,6 +52,11 @@ const HeadSchema = new Schema({
 });
 
 const TrainingDataSchema: Schema = new Schema({
+  trainingSession: {
+    type: Schema.Types.ObjectId,
+    ref: 'TrainingSession',
+    required: true,
+  },
   bottom: { type: Boolean, required: true },
   head: HeadSchema,
   leftHandCameraLocal: TransformSchema,
