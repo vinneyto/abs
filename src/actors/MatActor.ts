@@ -77,16 +77,16 @@ export class MatActor extends Actor {
 
     const currentPosition = this.currentController.position.clone();
 
-    const v = currentPosition.clone().sub(this.initialPosition);
-    const n = new Vector3(0, 1, 0);
-    const u = new Vector3().crossVectors(n, v).normalize();
-    n.crossVectors(v, u);
+    const zi = currentPosition.clone().sub(this.initialPosition);
+    const yi = new Vector3(0, 1, 0);
+    const xi = new Vector3().crossVectors(yi, zi).normalize();
+    yi.crossVectors(zi, xi);
 
     const midPoint = new Vector3()
       .addVectors(currentPosition, this.initialPosition)
       .divideScalar(2);
 
-    planeMesh.matrix.makeBasis(u, n, v);
+    planeMesh.matrix.makeBasis(xi, yi, zi);
     planeMesh.matrix.setPosition(midPoint.x, midPoint.y, midPoint.z);
     planeMesh.matrix.decompose(
       planeMesh.position,
