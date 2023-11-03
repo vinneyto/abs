@@ -1,4 +1,5 @@
 import {
+  AxesHelper,
   DoubleSide,
   Mesh,
   MeshBasicMaterial,
@@ -8,11 +9,14 @@ import {
 } from 'three';
 import { Facade, GameInputEvent } from '../Facade';
 import { Actor } from './Actor';
+import { SitupsTrainerActor } from '.';
+import { ControllerSelectEvent } from '../types';
 
 export class MatActor extends Actor {
   private initialPosition = new Vector3();
   private currentController?: Object3D;
   private planeMesh: Mesh;
+  private situpsTrainer: SitupsTrainerActor;
 
   constructor() {
     super();
@@ -21,7 +25,7 @@ export class MatActor extends Actor {
     Facade.input.on(GameInputEvent.SelectEnd, this.onDeselect);
 
     this.planeMesh = new Mesh(
-      new PlaneGeometry(1, 0.5),
+      new PlaneGeometry(0.5, 1).rotateX(Math.PI / 2),
       new MeshBasicMaterial({
         color: 'blue',
         transparent: true,
@@ -30,12 +34,18 @@ export class MatActor extends Actor {
       }),
     );
 
+    this.planeMesh.add(new AxesHelper(1));
+
     this.add(this.planeMesh);
 
     this.planeMesh.visible = false;
+
+    this.situpsTrainer = new SitupsTrainerActor();
+
+    this.add(this.situpsTrainer);
   }
 
-  onSelect = (event: { target: Object3D }) => {
+  onSelect = (event: ControllerSelectEvent) => {
     if (this.currentController) {
       return;
     }
@@ -43,12 +53,19 @@ export class MatActor extends Actor {
     this.currentController = event.target;
     this.initialPosition.copy(this.currentController.position);
     this.planeMesh.visible = true;
+    this.situpsTrainer.hide();
   };
 
-  onDeselect = (event: { target: Object3D }) => {
+  onDeselect = (event: ControllerSelectEvent) => {
     if (this.currentController === event.target) {
       this.currentController = undefined;
     }
+
+    this.situpsTrainer.visible = true;
+    this.situpsTrainer.position.copy(this.planeMesh.position);
+    this.situpsTrainer.quaternion.copy(this.planeMesh.quaternion);
+    this.situpsTrainer.fadeIn();
+    this.situpsTrainer.play();
   };
 
   update() {
@@ -60,16 +77,16 @@ export class MatActor extends Actor {
 
     const currentPosition = this.currentController.position.clone();
 
-    const u = currentPosition.clone().sub(this.initialPosition);
+    const v = currentPosition.clone().sub(this.initialPosition);
     const n = new Vector3(0, 1, 0);
-    const v = new Vector3().crossVectors(u, n).normalize();
-    n.crossVectors(u, v);
+    const u = new Vector3().crossVectors(n, v).normalize();
+    n.crossVectors(v, u);
 
     const midPoint = new Vector3()
       .addVectors(currentPosition, this.initialPosition)
       .divideScalar(2);
 
-    planeMesh.matrix.makeBasis(u, v, n);
+    planeMesh.matrix.makeBasis(u, n, v);
     planeMesh.matrix.setPosition(midPoint.x, midPoint.y, midPoint.z);
     planeMesh.matrix.decompose(
       planeMesh.position,

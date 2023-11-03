@@ -1,6 +1,6 @@
 import './style.css';
 import {
-  AxesHelper,
+  Color,
   HemisphereLight,
   PerspectiveCamera,
   Scene,
@@ -14,6 +14,7 @@ import { ARButton } from './ARButton';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { XREstimatedLight } from 'three/examples/jsm/webxr/XREstimatedLight.js';
 import { MatActor } from './actors';
+import { ControllerMoveEvent, ControllerSelectEvent } from './types';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -42,6 +43,18 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   Facade.instance.init(world, assets, RAPIER);
 
+  // background
+
+  scene.background = new Color(0x333333);
+
+  renderer.xr.addEventListener('sessionstart', () => {
+    scene.background = null;
+  });
+
+  renderer.xr.addEventListener('sessionend', () => {
+    scene.background = new Color(0x333333);
+  });
+
   // xr light
 
   const defaultLight = new HemisphereLight(0xffffff, 0xbbbbff, 1);
@@ -68,7 +81,6 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   // actors
 
-  scene.add(new AxesHelper(2));
   scene.add(new MatActor());
 
   // controllers
@@ -79,12 +91,16 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   scene.add(leftController);
   scene.add(rightController);
 
-  function onSelectStart(event: { data: XRInputSource }) {
+  function onSelectStart(event: ControllerSelectEvent) {
     Facade.input.emit(GameInputEvent.SelectStart, event);
   }
 
-  function onSelectEnd(event: { data: XRInputSource }) {
+  function onSelectEnd(event: ControllerSelectEvent) {
     Facade.input.emit(GameInputEvent.SelectEnd, event);
+  }
+
+  function onMove(event: ControllerMoveEvent) {
+    Facade.input.emit(GameInputEvent.Move, event);
   }
 
   leftController.addEventListener('selectstart', onSelectStart);
@@ -92,6 +108,9 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   leftController.addEventListener('selectend', onSelectEnd);
   rightController.addEventListener('selectend', onSelectEnd);
+
+  leftController.addEventListener('move', onMove);
+  rightController.addEventListener('move', onMove);
 
   const gun = assets.gun.scene.clone();
   gun.scale.set(0.1, 0.1, 0.1);

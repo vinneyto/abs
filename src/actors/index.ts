@@ -4,3 +4,4 @@ export * from './CollisionShape';
 export * from './GroundActor';
 export * from './RigidBodyActor';
 export * from './MatActor';
+export * from './SitupsTrainerActor';
