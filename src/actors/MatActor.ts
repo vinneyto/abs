@@ -4,45 +4,64 @@ import {
   Mesh,
   MeshBasicMaterial,
   Object3D,
+  Object3DEventMap,
   PlaneGeometry,
   Vector3,
 } from 'three';
-import { Facade, GameInputEvent } from '../Facade';
+import { Context } from '../Context';
 import { Actor } from './Actor';
-import { SitupsTrainerActor } from '.';
 import { ControllerSelectEvent } from '../types';
 
-export class MatActor extends Actor {
+const matPlaneGeometry = new PlaneGeometry(0.5, 1).rotateX(Math.PI / 2);
+const matPlaneMaterial = new MeshBasicMaterial({
+  color: 'blue',
+  transparent: true,
+  opacity: 0.5,
+  side: DoubleSide,
+});
+
+export interface MatEvent {
+  target: MatActor;
+}
+
+export interface MatEventMap extends Object3DEventMap {
+  startDrag: MatEvent;
+  placed: MatEvent;
+}
+
+export class MatActor extends Actor<MatEventMap> {
   private initialPosition = new Vector3();
   private currentController?: Object3D;
   private planeMesh: Mesh;
-  private situpsTrainer: SitupsTrainerActor;
 
-  constructor() {
-    super();
+  constructor(context: Context) {
+    super(context);
 
-    Facade.input.on(GameInputEvent.SelectStart, this.onSelect);
-    Facade.input.on(GameInputEvent.SelectEnd, this.onDeselect);
-
-    this.planeMesh = new Mesh(
-      new PlaneGeometry(0.5, 1).rotateX(Math.PI / 2),
-      new MeshBasicMaterial({
-        color: 'blue',
-        transparent: true,
-        opacity: 0.5,
-        side: DoubleSide,
-      }),
-    );
+    this.planeMesh = new Mesh(matPlaneGeometry, matPlaneMaterial);
 
     this.planeMesh.add(new AxesHelper(1));
-
+    this.planeMesh.visible = false;
     this.add(this.planeMesh);
 
-    this.planeMesh.visible = false;
+    this.addControllersListeners();
+  }
 
-    this.situpsTrainer = new SitupsTrainerActor();
+  private addControllersListeners() {
+    for (let i = 0; i < 2; i++) {
+      const ctrl = this.context.renderer.xr.getController(i);
 
-    this.add(this.situpsTrainer);
+      ctrl.addEventListener('selectstart', this.onSelect);
+      ctrl.addEventListener('selectend', this.onDeselect);
+    }
+  }
+
+  private removeControllersListeners() {
+    for (let i = 0; i < 2; i++) {
+      const ctrl = this.context.renderer.xr.getController(i);
+
+      ctrl.removeEventListener('selectstart', this.onSelect);
+      ctrl.removeEventListener('selectend', this.onDeselect);
+    }
   }
 
   onSelect = (event: ControllerSelectEvent) => {
@@ -53,7 +72,8 @@ export class MatActor extends Actor {
     this.currentController = event.target;
     this.initialPosition.copy(this.currentController.position);
     this.planeMesh.visible = true;
-    this.situpsTrainer.hide();
+
+    this.dispatchEvent({ type: 'startDrag', target: this });
   };
 
   onDeselect = (event: ControllerSelectEvent) => {
@@ -61,11 +81,7 @@ export class MatActor extends Actor {
       this.currentController = undefined;
     }
 
-    this.situpsTrainer.visible = true;
-    this.situpsTrainer.position.copy(this.planeMesh.position);
-    this.situpsTrainer.quaternion.copy(this.planeMesh.quaternion);
-    this.situpsTrainer.fadeIn();
-    this.situpsTrainer.play();
+    this.dispatchEvent({ type: 'placed', target: this });
   };
 
   update() {
@@ -80,7 +96,7 @@ export class MatActor extends Actor {
     const zi = currentPosition.clone().sub(this.initialPosition);
     const yi = new Vector3(0, 1, 0);
     const xi = new Vector3().crossVectors(yi, zi).normalize();
-    yi.crossVectors(zi, xi);
+    yi.crossVectors(zi, xi).normalize();
 
     const midPoint = new Vector3()
       .addVectors(currentPosition, this.initialPosition)
@@ -96,6 +112,14 @@ export class MatActor extends Actor {
 
     const dist = currentPosition.distanceTo(this.initialPosition);
     (planeMesh.material as MeshBasicMaterial).opacity = smoothStep(dist) * 0.5;
+  }
+
+  getPlaneMesh() {
+    return this.planeMesh;
+  }
+
+  dispose() {
+    this.removeControllersListeners();
   }
 }
 

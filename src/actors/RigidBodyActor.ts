@@ -2,14 +2,15 @@ import { Actor } from './Actor';
 import { rotToQuat, transToVec, vetToTrans } from '../helpers';
 import { CollisionShape } from './CollisionShape';
 import { Mesh, Vector3 } from 'three';
-import { Facade } from '../Facade';
+import { Context } from '../Context';
 
 export class RigidBodyActor extends Actor {
   constructor(
+    public context: Context,
     public collisionShape: CollisionShape,
     public debugMesh: Mesh,
   ) {
-    super();
+    super(context);
 
     this.add(collisionShape);
     this.add(debugMesh);
@@ -21,7 +22,7 @@ export class RigidBodyActor extends Actor {
     this.position.copy(transToVec(rigidBody.translation()));
     this.quaternion.copy(rotToQuat(rigidBody.rotation()));
 
-    this.debugMesh.visible = Facade.instance.debugPhysics;
+    this.debugMesh.visible = this.context.debugPhysics;
   }
 
   dispose() {

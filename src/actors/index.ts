@@ -5,3 +5,5 @@ export * from './GroundActor';
 export * from './RigidBodyActor';
 export * from './MatActor';
 export * from './SitupsTrainerActor';
+export * from './GameRootActor';
+export * from './PortageActor';

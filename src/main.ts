@@ -6,15 +6,14 @@ import {
   Scene,
   WebGLRenderer,
 } from 'three';
-import { GameInputEvent, Facade } from './Facade';
+import { Context } from './Context';
 import { loadAssets } from './loadAssets';
 import { postUpdateTree, updateTree } from './helpers';
 import { Time } from './Time';
 import { ARButton } from './ARButton';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { XREstimatedLight } from 'three/examples/jsm/webxr/XREstimatedLight.js';
-import { MatActor } from './actors';
-import { ControllerMoveEvent, ControllerSelectEvent } from './types';
+import { GameRootActor } from './actors';
 
 import('@dimforge/rapier3d').then(async RAPIER => {
   const assets = await loadAssets();
@@ -41,7 +40,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   // facade
 
-  Facade.instance.init(world, assets, RAPIER);
+  const context = new Context(world, assets, RAPIER, renderer);
 
   // background
 
@@ -81,36 +80,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   // actors
 
-  scene.add(new MatActor());
-
-  // controllers
-
-  const leftController = renderer.xr.getController(1);
-  const rightController = renderer.xr.getController(0);
-
-  scene.add(leftController);
-  scene.add(rightController);
-
-  function onSelectStart(event: ControllerSelectEvent) {
-    Facade.input.emit(GameInputEvent.SelectStart, event);
-  }
-
-  function onSelectEnd(event: ControllerSelectEvent) {
-    Facade.input.emit(GameInputEvent.SelectEnd, event);
-  }
-
-  function onMove(event: ControllerMoveEvent) {
-    Facade.input.emit(GameInputEvent.Move, event);
-  }
-
-  leftController.addEventListener('selectstart', onSelectStart);
-  rightController.addEventListener('selectstart', onSelectStart);
-
-  leftController.addEventListener('selectend', onSelectEnd);
-  rightController.addEventListener('selectend', onSelectEnd);
-
-  leftController.addEventListener('move', onMove);
-  rightController.addEventListener('move', onMove);
+  scene.add(new GameRootActor(context));
 
   const gun = assets.gun.scene.clone();
   gun.scale.set(0.1, 0.1, 0.1);

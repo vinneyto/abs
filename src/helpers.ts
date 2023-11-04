@@ -1,4 +1,4 @@
-import { Object3D, Quaternion, Vector3 } from 'three';
+import { Mesh, Object3D, Quaternion, Vector3 } from 'three';
 import { Actor } from './actors/Actor';
 import { Rotation, Vector } from '@dimforge/rapier3d';
 
@@ -17,6 +17,17 @@ export function updateTree(root: Object3D, delta: number) {
   }
   if (root instanceof Actor) {
     root.update(delta);
+  }
+}
+
+export function setOpacity(root: Object3D, opacity: number) {
+  if (root instanceof Mesh && root.material) {
+    root.material.transparent = true;
+    root.material.opacity = opacity;
+  }
+
+  for (const child of root.children) {
+    setOpacity(child, opacity);
   }
 }
 
