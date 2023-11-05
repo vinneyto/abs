@@ -91,9 +91,18 @@ export class MatActor extends Actor<MatEventMap> {
 
     const { planeMesh } = this;
 
+    planeMesh.visible = true;
+
     const currentPosition = this.currentController.position.clone();
 
-    const zi = currentPosition.clone().sub(this.initialPosition);
+    const dir = currentPosition.clone().sub(this.initialPosition);
+
+    if (dir.length() < 0.00001) {
+      this.planeMesh.visible = false;
+      return;
+    }
+
+    const zi = dir;
     const yi = new Vector3(0, 1, 0);
     const xi = new Vector3().crossVectors(yi, zi).normalize();
     yi.crossVectors(zi, xi).normalize();
@@ -111,6 +120,7 @@ export class MatActor extends Actor<MatEventMap> {
     );
 
     const dist = currentPosition.distanceTo(this.initialPosition);
+
     (planeMesh.material as MeshBasicMaterial).opacity = smoothStep(dist) * 0.5;
   }
 

@@ -1,13 +1,15 @@
 import { Actor } from './Actor';
-import { rotToQuat, transToVec, vetToTrans } from '../helpers';
-import { CollisionShape } from './CollisionShape';
-import { Mesh, Vector3 } from 'three';
+import { rotToQuat, transToVec } from '../helpers';
+import { CollisionShapeActor } from './CollisionShapeActor';
+import { Mesh, Object3DEventMap } from 'three';
 import { Context } from '../Context';
 
-export class RigidBodyActor extends Actor {
+export class RigidBodyActor<
+  TEventMap extends Object3DEventMap = Object3DEventMap,
+> extends Actor<TEventMap> {
   constructor(
     public context: Context,
-    public collisionShape: CollisionShape,
+    public collisionShape: CollisionShapeActor,
     public debugMesh: Mesh,
   ) {
     super(context);
@@ -17,7 +19,7 @@ export class RigidBodyActor extends Actor {
   }
 
   postUpdate(): void {
-    const { rigidBody } = this.collisionShape;
+    const rigidBody = this.collisionShape.getRigidBody();
 
     this.position.copy(transToVec(rigidBody.translation()));
     this.quaternion.copy(rotToQuat(rigidBody.rotation()));
@@ -29,7 +31,7 @@ export class RigidBodyActor extends Actor {
     this.collisionShape.dispose();
   }
 
-  setTranslation(vector: Vector3) {
-    this.collisionShape.rigidBody.setTranslation(vetToTrans(vector), true);
+  getCollisionShape() {
+    return this.collisionShape;
   }
 }

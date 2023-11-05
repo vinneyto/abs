@@ -3,20 +3,20 @@ import { Actor } from './actors/Actor';
 import { Rotation, Vector } from '@dimforge/rapier3d';
 
 export function postUpdateTree(root: Object3D) {
-  for (const child of root.children) {
-    postUpdateTree(child);
-  }
   if (root instanceof Actor) {
     root.postUpdate();
+  }
+  for (const child of root.children) {
+    postUpdateTree(child);
   }
 }
 
 export function updateTree(root: Object3D, delta: number) {
-  for (const child of root.children) {
-    updateTree(child, delta);
-  }
   if (root instanceof Actor) {
     root.update(delta);
+  }
+  for (const child of root.children) {
+    updateTree(child, delta);
   }
 }
 
@@ -48,8 +48,4 @@ export function rotToQuat(rotation: Rotation) {
   quat.z = rotation.z;
   quat.w = rotation.w;
   return quat;
-}
-
-export function vetToTrans(vec: Vector3) {
-  return new Vector3(vec.x, vec.y, vec.z);
 }

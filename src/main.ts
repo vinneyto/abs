@@ -22,6 +22,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   const renderer = createRenderer();
   const scene = new Scene();
   const camera = new PerspectiveCamera(75, 1, 0.01, 100);
+  const eventQueue = new RAPIER.EventQueue(true);
 
   document.body.appendChild(
     ARButton.createButton(renderer, {
@@ -40,7 +41,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
   // facade
 
-  const context = new Context(world, assets, RAPIER, renderer);
+  const context = new Context(world, assets, RAPIER, renderer, eventQueue);
 
   // background
 
@@ -86,9 +87,6 @@ import('@dimforge/rapier3d').then(async RAPIER => {
   gun.scale.set(0.1, 0.1, 0.1);
   gun.rotateY(Math.PI / 2);
 
-  // leftController.add(gun.clone());
-  // rightController.add(gun.clone());
-
   // event loop
 
   Time.init();
@@ -111,7 +109,7 @@ import('@dimforge/rapier3d').then(async RAPIER => {
 
     const delta = Time.deltaSeconds();
 
-    world.step();
+    world.step(eventQueue);
 
     updateTree(scene, delta);
     postUpdateTree(scene);

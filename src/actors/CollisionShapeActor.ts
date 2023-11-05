@@ -6,10 +6,16 @@ import {
 } from '@dimforge/rapier3d';
 import { Context } from '../Context';
 import { Actor } from './Actor';
+import { RigidBodyActor } from '.';
 
-export class CollisionShape extends Actor {
-  public rigidBody: RigidBody;
-  public collider: Collider;
+export class CollisionShapeActor extends Actor {
+  public static getActor(rigidBody: RigidBody) {
+    return (rigidBody.userData as Record<string, any>)
+      .collisionShapeActor as CollisionShapeActor;
+  }
+
+  private rigidBody: RigidBody;
+  private collider: Collider;
 
   constructor(
     context: Context,
@@ -22,10 +28,24 @@ export class CollisionShape extends Actor {
       colliderDesc,
       this.rigidBody,
     );
+
+    this.rigidBody.userData = { collisionShapeActor: this };
   }
 
   dispose() {
     this.context.world.removeCollider(this.collider, true);
     this.context.world.removeRigidBody(this.rigidBody);
+  }
+
+  getRigidBody() {
+    return this.rigidBody;
+  }
+
+  getCollider() {
+    return this.collider;
+  }
+
+  getRigidBodyActor() {
+    return this.parent as RigidBodyActor;
   }
 }

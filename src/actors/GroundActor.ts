@@ -1,11 +1,11 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import { Context } from '../Context';
-import { CollisionShape } from './CollisionShape';
+import { CollisionShapeActor } from './CollisionShapeActor';
 import { RigidBodyActor } from './RigidBodyActor';
 
 export class GroundActor extends RigidBodyActor {
   constructor(size = new Vector3(10, 0.5, 10)) {
-    const shape = new CollisionShape(
+    const shape = new CollisionShapeActor(
       Context.RAPIER.RigidBodyDesc.fixed().setTranslation(0, 0, 0),
       Context.RAPIER.ColliderDesc.cuboid(
         size.x * 0.5,
