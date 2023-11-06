@@ -6,11 +6,11 @@ import {
   Object3D,
   Object3DEventMap,
   PlaneGeometry,
-  Vector3,
 } from 'three';
 import { Context } from '../Context';
 import { Actor } from './Actor';
 import { ControllerSelectEvent } from '../types';
+import { Mat } from '../model';
 
 const matPlaneGeometry = new PlaneGeometry(0.5, 1).rotateX(Math.PI / 2);
 const matPlaneMaterial = new MeshBasicMaterial({
@@ -30,7 +30,8 @@ export interface MatEventMap extends Object3DEventMap {
 }
 
 export class MatActor extends Actor<MatEventMap> {
-  private initialPosition = new Vector3();
+  public readonly model = new Mat();
+
   private currentController?: Object3D;
   private planeMesh: Mesh;
 
@@ -40,7 +41,6 @@ export class MatActor extends Actor<MatEventMap> {
     this.planeMesh = new Mesh(matPlaneGeometry, matPlaneMaterial);
 
     this.planeMesh.add(new AxesHelper(1));
-    this.planeMesh.visible = false;
     this.add(this.planeMesh);
 
     this.addControllersListeners();
@@ -70,10 +70,8 @@ export class MatActor extends Actor<MatEventMap> {
     }
 
     this.currentController = event.target;
-    this.initialPosition.copy(this.currentController.position);
-    this.planeMesh.visible = true;
 
-    this.dispatchEvent({ type: 'startDrag', target: this });
+    this.model.startDrag(this.currentController.position);
   };
 
   onDeselect = (event: ControllerSelectEvent) => {
@@ -81,47 +79,22 @@ export class MatActor extends Actor<MatEventMap> {
       this.currentController = undefined;
     }
 
-    this.dispatchEvent({ type: 'placed', target: this });
+    this.model.stopDrag();
   };
 
   update() {
-    if (!this.currentController) {
-      return;
-    }
-
     const { planeMesh } = this;
+    const { position, quaternion, scale } = planeMesh;
 
-    planeMesh.visible = true;
-
-    const currentPosition = this.currentController.position.clone();
-
-    const dir = currentPosition.clone().sub(this.initialPosition);
-
-    if (dir.length() < 0.00001) {
-      this.planeMesh.visible = false;
-      return;
+    if (this.currentController) {
+      this.model.setControllerPosition(this.currentController.position);
     }
 
-    const zi = dir;
-    const yi = new Vector3(0, 1, 0);
-    const xi = new Vector3().crossVectors(yi, zi).normalize();
-    yi.crossVectors(zi, xi).normalize();
+    this.model.update();
+    this.model.getTransform().decompose(position, quaternion, scale);
 
-    const midPoint = new Vector3()
-      .addVectors(currentPosition, this.initialPosition)
-      .divideScalar(2);
-
-    planeMesh.matrix.makeBasis(xi, yi, zi);
-    planeMesh.matrix.setPosition(midPoint.x, midPoint.y, midPoint.z);
-    planeMesh.matrix.decompose(
-      planeMesh.position,
-      planeMesh.quaternion,
-      planeMesh.scale,
-    );
-
-    const dist = currentPosition.distanceTo(this.initialPosition);
-
-    (planeMesh.material as MeshBasicMaterial).opacity = smoothStep(dist) * 0.5;
+    planeMesh.visible = this.model.isVisible();
+    (planeMesh.material as MeshBasicMaterial).opacity = this.model.getOpacity();
   }
 
   getPlaneMesh() {
@@ -130,15 +103,5 @@ export class MatActor extends Actor<MatEventMap> {
 
   dispose() {
     this.removeControllersListeners();
-  }
-}
-
-function smoothStep(x: number) {
-  if (x < 0.2) {
-    return 0;
-  } else if (x >= 0.2 && x <= 0.4) {
-    return (x - 0.2) * (1 / (0.4 - 0.2));
-  } else {
-    return 1;
   }
 }

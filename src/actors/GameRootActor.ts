@@ -1,11 +1,4 @@
-import {
-  Euler,
-  Matrix4,
-  Object3D,
-  Quaternion,
-  Vector3,
-  XRGripSpace,
-} from 'three';
+import { Object3D, XRGripSpace } from 'three';
 import {
   Actor,
   BatteryActor,
@@ -15,6 +8,7 @@ import {
 } from '.';
 import { Context } from '../Context';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
+import { MatEvent } from '../model';
 
 const BATTERY_RADIUS = 0.2;
 const BATTERY_HEIGHT = 0.7;
@@ -36,8 +30,8 @@ export class GameRootActor extends Actor {
 
     this.mat = new MatActor(context);
     this.add(this.mat);
-    this.mat.addEventListener('startDrag', this.onMatStartDrag);
-    this.mat.addEventListener('placed', this.onMatPlaced);
+    this.mat.model.on(MatEvent.StartDrag, this.onMatStartDrag);
+    this.mat.model.on(MatEvent.Placed, this.onMatPlaced);
 
     this.battery = new BatteryActor(context, BATTERY_HEIGHT, BATTERY_RADIUS);
     this.battery.visible = false;
@@ -71,60 +65,11 @@ export class GameRootActor extends Actor {
   };
 
   private onMatPlaced = () => {
-    this.battery.visible = true;
-    this.placeBattery();
-  };
-
-  private placeBattery() {
     this.updateMatrixWorld();
 
-    const { matrixWorld: planeMatrixWorld } = this.mat.getPlaneMesh();
-
-    const position = new Vector3();
-    const quaternion = new Quaternion();
-    const scale = new Vector3();
-
-    // find local transform for battery
-
-    planeMatrixWorld.decompose(position, quaternion, scale);
-
-    const planeLength = scale.z;
-    const batteryRadius = this.battery.getRadius();
-
-    const batteryTranslation = new Matrix4().makeTranslation(
-      0,
-      batteryRadius + 0.1,
-      -planeLength * 0.5 + batteryRadius + 0.1,
-    );
-
-    const batteryRotation = new Matrix4().makeRotationFromEuler(
-      new Euler(0, 0, Math.PI / 2),
-    );
-
-    // apply mat matrix without scale
-
-    scale.set(1, 1, 1);
-
-    const unscaledPlaneMatrixWorld = new Matrix4().compose(
-      position,
-      quaternion,
-      scale,
-    );
-
-    // compose matrices
-
-    const batteryMatrix = new Matrix4()
-      .multiply(unscaledPlaneMatrixWorld)
-      .multiply(batteryTranslation)
-      .multiply(batteryRotation);
-
-    batteryMatrix.decompose(position, quaternion, scale);
-
-    const batteryBody = this.battery.getCollisionShape().getRigidBody();
-
-    batteryBody.setTranslation(position, false);
-    batteryBody.setRotation(quaternion, false);
-  }
+    this.battery.visible = true;
+    this.battery.placeOnMat(this.mat.model.getTransform());
+  };
 
   private collisionHandler = (handle1: number, handle2: number) => {
     const body1 = this.context.world.getRigidBody(handle1);

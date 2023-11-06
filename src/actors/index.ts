@@ -1,6 +1,5 @@
 export * from './Actor';
 export * from './CollisionShapeActor';
-export * from './GroundActor';
 export * from './RigidBodyActor';
 export * from './MatActor';
 export * from './SitupsTrainerActor';
