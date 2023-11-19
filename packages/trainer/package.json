@@ -1,0 +1,25 @@
+{
+  "name": "@abs/trainer",
+  "version": "0.0.1",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "webpack serve",
+    "build": "webpack --mode production"
+  },
+  "devDependencies": {
+    "@abs/webpack-config": "0.0.1",
+    "@tsconfig/create-react-app": "2.0.1",
+    "@types/react": "18.2.37",
+    "@types/react-dom": "18.2.15",
+    "webpack": "5.89.0",
+    "webpack-cli": "5.1.4",
+    "webpack-dev-server": "4.15.1"
+  },
+  "dependencies": {
+    "jss": "10.10.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-jss": "10.10.0"
+  }
+}

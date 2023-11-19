@@ -5,6 +5,12 @@
   "author": "vinneyto <vinneyto@gmail.com>",
   "license": "MIT",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "vite --host",
     "test": "jest",
