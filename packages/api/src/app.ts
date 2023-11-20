@@ -2,13 +2,10 @@ import 'dotenv/config';
 import Koa from 'koa';
 import Router from 'koa-router';
 import bodyParser from 'koa-body';
-import jsonwebtoken from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
-import { User } from './models';
 import { errorHandler } from './middleware';
-import { LoginError, ValidationError } from './errors';
 import { createAdminIfNotExists } from './create-admin';
+import * as routes from './routes';
 
 export async function run() {
   const app = new Koa();
@@ -19,32 +16,9 @@ export async function run() {
 
   await createAdminIfNotExists();
 
-  router.post('/login', async ctx => {
-    const { username, password } = ctx.request.body;
-
-    if (typeof username !== 'string' || typeof password !== 'string') {
-      throw new ValidationError(
-        'username and password should be presented and should be a string',
-      );
-    }
-
-    const user = await User.findOne({ username });
-
-    if (!user) {
-      throw new LoginError();
-    }
-
-    const passwordsMatch = await bcrypt.compare(password, user.password);
-
-    if (!passwordsMatch) {
-      throw new LoginError();
-    }
-
-    const token = jsonwebtoken.sign({ user: user.username }, secret, {
-      expiresIn: '30 days',
-    });
-
-    ctx.body = { token };
+  Object.values(routes).forEach(route => {
+    router[route.method](route.path, ...route.middlewares, route.handler);
+    console.log(`route: ${route.method} ${route.path}`);
   });
 
   app.use(errorHandler());

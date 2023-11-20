@@ -10,7 +10,9 @@ export const errorHandler = () => async (ctx: Context, next: Next) => {
       ctx.body = err.message;
     } else {
       ctx.status = 500;
-      ctx.message = 'internal server error';
+      ctx.body = 'internal server error';
     }
+
+    console.error(err);
   }
 };
