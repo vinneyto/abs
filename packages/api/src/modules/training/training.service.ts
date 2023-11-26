@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { Training, TrainingDocument } from './training.schema';
-import { TrainingDto } from './dto/TrainingDto';
+import { CreateTrainingDto } from './dto/CreateTrainingDto';
 
 @Injectable()
 export class TrainingService {
@@ -10,7 +10,7 @@ export class TrainingService {
     @InjectModel(Training.name) private trainingModel: Model<TrainingDocument>,
   ) {}
 
-  async create(user: TrainingDto): Promise<TrainingDocument> {
+  async create(user: CreateTrainingDto): Promise<TrainingDocument> {
     return this.trainingModel.create(user);
   }
 }

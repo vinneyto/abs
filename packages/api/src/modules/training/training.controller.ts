@@ -2,7 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { CurrentJwt } from '../auth/current-jwt.decorator';
 import { JwtPayload } from 'jsonwebtoken';
-import { TrainingDto } from './dto/TrainingDto';
+import { CreateTrainingDto } from './dto/CreateTrainingDto';
 import { Training } from './training.schema';
 import { TrainingService } from './training.service';
 
@@ -12,7 +12,7 @@ export class TrainingController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async login(@Body() trainingDto: TrainingDto) {
+  async login(@Body() trainingDto: CreateTrainingDto) {
     return this.trainingService.create(trainingDto);
   }
 }
