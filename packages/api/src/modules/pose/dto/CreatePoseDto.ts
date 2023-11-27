@@ -12,4 +12,16 @@ export class CreatePoseDto {
 
   @IsArray()
   head: number[];
+
+  constructor(
+    trainingId: string,
+    left: number[],
+    right: number[],
+    head: number[],
+  ) {
+    this.trainingId = trainingId;
+    this.left = left;
+    this.right = right;
+    this.head = head;
+  }
 }

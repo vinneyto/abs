@@ -28,3 +28,30 @@ Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZpbm
   "right": [4, 5, 6],
   "head": [7, 8, 9]
 }
+
+###
+
+POST http://localhost:3000/pose/batch
+content-type: application/json
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZpbm5leXRvIiwiaWF0IjoxNzAwOTY0MzYwLCJleHAiOjE3MDM1NTYzNjB9.6tSatlgooohDrmgaiPju6C177nwYhzV8Htme5o37268
+
+{
+  "trainingId": "6563d8d3176b0bcfe066d13f",
+  "poses": [
+    {
+      "left": [1, 2, 3],
+      "right": [4, 5, 6],
+      "head": [7, 8, 9]
+    },
+    {
+      "left": [1, 2, 3],
+      "right": [4, 5, 6],
+      "head": [7, 8, 9]
+    },
+    {
+      "left": [1, 2, 3],
+      "right": [4, 5, 6],
+      "head": [7, 8, 9]
+    }
+  ]
+}

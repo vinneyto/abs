@@ -12,7 +12,7 @@ export class TrainingController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async login(@Body() trainingDto: CreateTrainingDto) {
+  async training(@Body() trainingDto: CreateTrainingDto) {
     return this.trainingService.create(trainingDto);
   }
 }
