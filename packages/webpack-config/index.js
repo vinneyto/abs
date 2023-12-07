@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 module.exports = config => ({
-  entry: './src/index.ts',
+  entry: './src/index.tsx',
   mode: 'development',
   output: {
     path: config.path,
@@ -20,6 +20,10 @@ module.exports = config => ({
         loader: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
     ],
   },
   plugins: [
@@ -28,6 +32,7 @@ module.exports = config => ({
     }),
     new FaviconsWebpackPlugin({ logo: path.resolve(__dirname, 'logo.png') }),
   ],
+  stats: 'errors-only',
   devServer: {
     historyApiFallback: true,
     proxy: {
