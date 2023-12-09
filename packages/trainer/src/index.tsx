@@ -1,7 +1,7 @@
 import 'reset-css';
 
 import { createRoot } from 'react-dom/client';
-import { Scene } from './components/Scene/Scene';
+import { Scene } from './containers';
 
 const root = document.createElement('div');
 root.id = 'root';

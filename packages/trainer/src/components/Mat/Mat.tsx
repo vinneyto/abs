@@ -1,23 +1,10 @@
 import { useXREvent } from '@react-three/xr';
-import React, { useEffect, useRef } from 'react';
-import {
-  DoubleSide,
-  Matrix4,
-  Mesh,
-  MeshBasicMaterial,
-  Object3D,
-  PlaneGeometry,
-} from 'three';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { Matrix4, Mesh, MeshBasicMaterial, Object3D } from 'three';
 import { MatEvent, MatModel } from './MatModel';
 import { useFrame } from '@react-three/fiber';
-
-const matPlaneGeometry = new PlaneGeometry(0.5, 1).rotateX(Math.PI / 2);
-const matPlaneMaterial = new MeshBasicMaterial({
-  color: 'blue',
-  transparent: true,
-  opacity: 0.5,
-  side: DoubleSide,
-});
+import { MatGeometry } from '../../geometry';
+import { MatMaterial } from '../../material';
 
 export interface MatProps {
   onStartDrag?: () => void;
@@ -25,18 +12,13 @@ export interface MatProps {
 }
 
 export const Mat: React.FC<MatProps> = props => {
+  const model = useMemo(() => new MatModel(), []);
+  const geometry = useMemo(() => new MatGeometry(), []);
+  const material = useMemo(() => new MatMaterial(), []);
   const controllerRef = useRef<Object3D>();
-  const modelRef = useRef<MatModel>();
-  const meshRef = useRef<Mesh>(null);
+  const meshRef = useRef<Mesh>(null!);
 
   useEffect(() => {
-    if (modelRef.current) {
-      return;
-    }
-    const model = new MatModel();
-
-    modelRef.current = model;
-
     model.on(MatEvent.StartDrag, () => {
       if (props.onStartDrag) {
         props.onStartDrag();
@@ -61,7 +43,7 @@ export const Mat: React.FC<MatProps> = props => {
 
     controllerRef.current = event.target.grip;
 
-    modelRef.current!.startDrag(controllerRef.current.position);
+    model.startDrag(controllerRef.current.position);
   });
 
   useXREvent('selectend', event => {
@@ -69,34 +51,21 @@ export const Mat: React.FC<MatProps> = props => {
       controllerRef.current = undefined;
     }
 
-    modelRef.current!.stopDrag();
+    model.stopDrag();
   });
 
   useFrame(() => {
-    if (!meshRef.current || !modelRef.current) {
-      return;
-    }
-
-    const model = modelRef.current;
     const mesh = meshRef.current;
     const currentController = controllerRef.current;
-
     if (currentController) {
       model.setControllerPosition(currentController.position);
     }
-
     const { position, quaternion, scale } = mesh;
-
     model.update();
     model.getTransform().decompose(position, quaternion, scale);
-
     mesh.visible = model.isVisible();
     (mesh.material as MeshBasicMaterial).opacity = model.getOpacity();
   });
 
-  return (
-    <mesh ref={meshRef} geometry={matPlaneGeometry} material={matPlaneMaterial}>
-      <axesHelper />
-    </mesh>
-  );
+  return <mesh ref={meshRef} geometry={geometry} material={material}></mesh>;
 };
