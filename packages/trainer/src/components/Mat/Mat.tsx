@@ -3,8 +3,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { Matrix4, Mesh, MeshBasicMaterial, Object3D } from 'three';
 import { MatEvent, MatModel } from './MatModel';
 import { useFrame } from '@react-three/fiber';
-import { MatGeometry } from '../../geometry';
-import { MatMaterial } from '../../material';
+import { MatPlaceholder } from '../MatPlaceholder';
 
 export interface MatProps {
   onStartDrag?: () => void;
@@ -13,8 +12,6 @@ export interface MatProps {
 
 export const Mat: React.FC<MatProps> = props => {
   const model = useMemo(() => new MatModel(), []);
-  const geometry = useMemo(() => new MatGeometry(), []);
-  const material = useMemo(() => new MatMaterial(), []);
   const controllerRef = useRef<Object3D>();
   const meshRef = useRef<Mesh>(null!);
 
@@ -67,5 +64,5 @@ export const Mat: React.FC<MatProps> = props => {
     (mesh.material as MeshBasicMaterial).opacity = model.getOpacity();
   });
 
-  return <mesh ref={meshRef} geometry={geometry} material={material}></mesh>;
+  return <MatPlaceholder ref={meshRef} />;
 };

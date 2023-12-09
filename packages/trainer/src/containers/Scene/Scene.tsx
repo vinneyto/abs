@@ -5,14 +5,13 @@ import { ARButton, Controllers, Hands, XR } from '@react-three/xr';
 import { OrbitControls } from '@react-three/drei';
 import { SceneSetup } from '../SceneSetup';
 import { SceneChoseMode } from '../SceneChoseMode';
-
-export enum CurrentScene {
-  SceneSetup = 'sceneSetup',
-  SceneChoseMode = 'sceneChoseMode',
-}
+import { useStoreDispatch, useStoreSelector } from '../../store';
+import { CurrentScene, setCurrentScene } from '../../features';
 
 export const Scene: React.FC = () => {
-  const [currentScene, setCurrentScene] = useState(CurrentScene.SceneSetup);
+  const currentScene = useStoreSelector(state => state.router.currentScene);
+  const dispatch = useStoreDispatch();
+
   const [matBasis, setMatBasis] = useState(new Matrix4());
 
   return (
@@ -32,9 +31,7 @@ export const Scene: React.FC = () => {
                   <SceneSetup
                     onMatPlace={transform => {
                       setMatBasis(transform);
-                      setCurrentScene(CurrentScene.SceneChoseMode);
-
-                      console.log('show chose mode');
+                      dispatch(setCurrentScene(CurrentScene.SceneChoseMode));
                     }}
                   />
                 );
