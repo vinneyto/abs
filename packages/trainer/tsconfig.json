@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/create-react-app/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "target": "ESNext"
+  },
+  "include": [
+    "src"
+  ]
+}
