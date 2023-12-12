@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
 import { colors } from '../../theme/colors';
-import { RootText } from '@coconut-xr/koestlich';
 import { useController } from '@react-three/xr';
 import { useFrame } from '@react-three/fiber';
-import { Object3D, Vector3 } from 'three';
+import { Text } from '@react-three/drei';
+import { Group, Vector3 } from 'three';
 
 interface ControllerHintProps {
   handedness: XRHandedness;
@@ -14,7 +14,7 @@ export const ControllerHint: React.FC<ControllerHintProps> = ({
   handedness,
   children,
 }) => {
-  const objRef = useRef<Object3D>(null!);
+  const objRef = useRef<Group>(null!);
   const ctrl = useController(handedness);
   const controller = ctrl?.controller;
 
@@ -29,14 +29,16 @@ export const ControllerHint: React.FC<ControllerHintProps> = ({
   });
 
   return (
-    <object3D ref={objRef} visible={!!ctrl?.visible}>
-      <RootText
-        fontSize={16}
-        color={colors.white}
-        position={new Vector3(0, 0.1, 0)}
+    <group ref={objRef} visible={!!ctrl?.visible}>
+      <Text
+        position={new Vector3(0, 0.05, 0)}
+        fontSize={0.05}
+        color={colors.light}
+        anchorX="center"
+        anchorY="middle"
       >
         {children}
-      </RootText>
-    </object3D>
+      </Text>
+    </group>
   );
 };

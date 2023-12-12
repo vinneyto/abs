@@ -1,20 +1,30 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import { MeshProps } from '@react-three/fiber';
-import { MatMesh } from '../../objects/Mat';
+import { DoubleSide, MeshBasicMaterial, PlaneGeometry } from 'three';
 
 export interface MatSurfaceProps extends MeshProps {}
 
 export const MatPlaceholder: React.FC<MatSurfaceProps> = React.forwardRef(
   ({ ...props }, ref) => {
-    const mesh = useMemo(() => new MatMesh(), []);
+    const geometry = useMemo(
+      () => new PlaneGeometry(0.5, 1).rotateX(Math.PI / 2),
+      [],
+    );
+    const material = useMemo(
+      () =>
+        new MeshBasicMaterial({
+          color: 'blue',
+          transparent: true,
+          depthTest: false,
+          depthWrite: false,
+          opacity: 0.5,
+          side: DoubleSide,
+        }),
+      [],
+    );
 
     return (
-      <mesh
-        {...props}
-        ref={ref}
-        geometry={mesh.geometry}
-        material={mesh.material}
-      ></mesh>
+      <mesh {...props} ref={ref} geometry={geometry} material={material}></mesh>
     );
   },
 );

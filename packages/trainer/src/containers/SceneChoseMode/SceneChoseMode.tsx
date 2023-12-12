@@ -1,18 +1,16 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { MatPlaceholder } from '../../components/MatPlaceholder';
-import { RootObject, Text } from '@coconut-xr/koestlich';
-import { loadYoga } from '@coconut-xr/flex';
-import RectMesh from '../../objects/Rect';
-import { Card } from '../../components';
-import { colors } from '../../theme/colors';
+import { Button } from '../../components';
+import { useStoreDispatch } from '../../store';
+import { CurrentScene, setCurrentScene } from '../../features';
 
 export interface SceneChoseModeProps {
   matBasis: Matrix4;
 }
 
 export const SceneChoseMode: React.FC<SceneChoseModeProps> = ({ matBasis }) => {
-  const mesh = useMemo(() => new RectMesh(), []);
+  const dispatch = useStoreDispatch();
 
   const matPos = new Vector3();
   const matQuat = new Quaternion();
@@ -23,57 +21,34 @@ export const SceneChoseMode: React.FC<SceneChoseModeProps> = ({ matBasis }) => {
   return (
     <>
       <MatPlaceholder position={matPos} quaternion={matQuat} scale={matScale} />
-      <object3D position={matPos} quaternion={matQuat}>
-        <RootObject
-          loadYoga={loadYoga}
-          object={mesh}
-          depth={16}
-          color={0xcfaf8d}
-          padding={16}
-          flexDirection="column"
+      <group position={matPos} quaternion={matQuat}>
+        <group
           position={new Vector3(-0.5, 0.5, 0)}
           rotation={new Euler(0, Math.PI / 2, 0)}
         >
-          <Card
-            radius={16}
-            ratio={3}
-            width={150}
-            height={50}
-            marginBottom={16}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Text fontSize={16} color={colors.primary}>
-              Start new training
-            </Text>
-          </Card>
-          <Card
-            radius={16}
-            ratio={3}
-            width={150}
-            height={50}
-            marginBottom={16}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Text fontSize={16} color={colors.primary}>
-              Watch training
-            </Text>
-          </Card>
-          <Card
-            radius={16}
-            ratio={3}
-            width={150}
-            height={50}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Text fontSize={16} color={colors.primary}>
-              Replace mat
-            </Text>
-          </Card>
-        </RootObject>
-      </object3D>
+          <Button
+            position={new Vector3(0, 0.2, 0)}
+            width={0.5}
+            height={0.15}
+            label="Start new training"
+          />
+          <Button
+            position={new Vector3(0, 0, 0)}
+            width={0.5}
+            height={0.15}
+            label="Watch training"
+          />
+          <Button
+            position={new Vector3(0, -0.2, 0)}
+            width={0.5}
+            height={0.15}
+            label="Replace mat"
+            onSelect={() => {
+              dispatch(setCurrentScene(CurrentScene.SceneSetup));
+            }}
+          />
+        </group>
+      </group>
     </>
   );
 };

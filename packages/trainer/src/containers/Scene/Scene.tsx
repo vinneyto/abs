@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Matrix4 } from 'three';
 import { Canvas } from '@react-three/fiber';
-import { ARButton, Controllers, Hands, XR } from '@react-three/xr';
-import { OrbitControls } from '@react-three/drei';
+import { ARButton, Controllers, Hands, XR, useXR } from '@react-three/xr';
+import { OrbitControls, Preload, Text } from '@react-three/drei';
 import { SceneSetup } from '../SceneSetup';
 import { SceneChoseMode } from '../SceneChoseMode';
 import { useStoreDispatch, useStoreSelector } from '../../store';
@@ -13,12 +13,14 @@ export const Scene: React.FC = () => {
   const dispatch = useStoreDispatch();
 
   const [matBasis, setMatBasis] = useState(new Matrix4());
+  const [ready, setReady] = useState(false);
 
   return (
     <>
       <ARButton />
       <Canvas>
-        <XR>
+        {!ready && <Text>Trainer</Text>}
+        <XR onSessionStart={() => setReady(true)}>
           <OrbitControls />
           <Controllers />
           <Hands />
