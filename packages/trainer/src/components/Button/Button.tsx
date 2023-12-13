@@ -39,7 +39,7 @@ export const Button: React.FC<ButtonProps> = ({
             color={!hovered ? colors.primary : colors.primaryHover}
             depthWrite={false}
             depthTest={false}
-            opacity={0.5}
+            opacity={0.7}
           />
         </mesh>
         <Text

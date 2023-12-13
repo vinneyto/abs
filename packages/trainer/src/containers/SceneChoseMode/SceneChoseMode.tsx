@@ -12,18 +12,13 @@ export interface SceneChoseModeProps {
 export const SceneChoseMode: React.FC<SceneChoseModeProps> = ({ matBasis }) => {
   const dispatch = useStoreDispatch();
 
-  const matPos = new Vector3();
-  const matQuat = new Quaternion();
-  const matScale = new Vector3();
-
-  matBasis.decompose(matPos, matQuat, matScale);
-
   return (
     <>
-      <MatPlaceholder position={matPos} quaternion={matQuat} scale={matScale} />
-      <group position={matPos} quaternion={matQuat}>
+      <MatPlaceholder {...getTransform(matBasis)} />
+      <group {...getTransform(landscapeBasis(matBasis))}>
+        <axesHelper></axesHelper>
         <group
-          position={new Vector3(-0.5, 0.5, 0)}
+          position={new Vector3(-0.5, 1.2, 0)}
           rotation={new Euler(0, Math.PI / 2, 0)}
         >
           <Button
@@ -52,3 +47,32 @@ export const SceneChoseMode: React.FC<SceneChoseModeProps> = ({ matBasis }) => {
     </>
   );
 };
+
+function landscapeBasis(m: Matrix4) {
+  const x = new Vector3();
+  const y = new Vector3();
+  const z = new Vector3();
+
+  m.extractBasis(x, y, z);
+
+  y.set(0, 1, 0);
+
+  x.crossVectors(y, z).normalize();
+  z.crossVectors(x, y).normalize();
+
+  const result = new Matrix4();
+  result.makeBasis(x, y, z);
+  result.copyPosition(m);
+
+  return result;
+}
+
+function getTransform(m: Matrix4) {
+  const position = new Vector3();
+  const quaternion = new Quaternion();
+  const scale = new Vector3();
+
+  m.decompose(position, quaternion, scale);
+
+  return { position, quaternion, scale };
+}

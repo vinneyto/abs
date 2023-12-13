@@ -31,8 +31,8 @@ export const ControllerHint: React.FC<ControllerHintProps> = ({
   return (
     <group ref={objRef} visible={!!ctrl?.visible}>
       <Text
-        position={new Vector3(0, 0.05, 0)}
-        fontSize={0.05}
+        position={new Vector3(0, 0.07, 0)}
+        fontSize={0.02}
         color={colors.light}
         anchorX="center"
         anchorY="middle"
